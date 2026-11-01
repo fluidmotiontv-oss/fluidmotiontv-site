@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About &amp; Contact — FluidMotion TV</title>
+  <meta name="description" content="About FluidMotion TV: harmonic liquid dynamics, the FlowTouch archive, and the Dragon 9 network. Contact the lab, install the app, join the current.">
+  <meta name="theme-color" content="#02080f">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon-32.png">
+  <link rel="apple-touch-icon" href="assets/icons/icon-180.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="About — FluidMotion TV">
+  <meta property="og:description" content="Harmonic liquid dynamics, the FlowTouch archive, and the Dragon 9 network.">
+  <meta property="og:url" content="https://fluidmotiontv.site/about.html">
+  <meta property="og:image" content="https://fluidmotiontv.site/assets/icons/icon-512.png">
+  <meta name="twitter:card" content="summary">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body data-page="about">
+
+  <div class="poster-bg" aria-hidden="true"></div>
+  <div id="wave-canvas" data-mode="teal" aria-hidden="true"></div>
+
+  <header class="hud-nav">
+    <a class="brand" href="index.html"><span class="glyph" aria-hidden="true">FM</span> FluidMotion TV</a>
+    <nav aria-label="Primary">
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="demos.html">Demos</a></li>
+        <li><a href="shop.html">Shop</a></li>
+        <li><a href="hub.html">3D Hub</a></li>
+        <li><a href="about.html" aria-current="page">About</a></li>
+      </ul>
+    </nav>
+    <div class="nav-actions">
+      <button class="audio-toggle" type="button" aria-pressed="false">
+        <span class="audio-label-full">AUDIO: MUTED</span><span class="audio-label-short">MUTED</span>
+      </button>
+      <a class="network-switch" href="https://dragon9.online" target="_blank" rel="noopener">
+        Dragon 9 <span class="switch-label">// Network</span> ↗
+      </a>
+      <button class="menu-btn" type="button" aria-expanded="false" aria-controls="mobileMenu" aria-label="Open menu">☰</button>
+    </div>
+  </header>
+
+  <div class="mobile-menu" id="mobileMenu" role="dialog" aria-modal="true" aria-label="Site menu">
+    <button class="close-menu" type="button" aria-label="Close menu">✕</button>
+    <a href="index.html">Home</a>
+    <a href="demos.html">Demos</a>
+    <a href="shop.html">Shop</a>
+    <a href="hub.html">3D Hub</a>
+    <a href="about.html" aria-current="page">About</a>
+    <a href="https://dragon9.online" target="_blank" rel="noopener">Dragon 9 ↗</a>
+  </div>
+
+  <div class="page">
+    <main>
+      <div class="page-head wrap">
+        <p class="kicker">Signal Source</p>
+        <h1>About the Lab</h1>
+      </div>
+
+      <section class="section wrap" style="padding-top: 0;" aria-label="About FluidMotion">
+        <div class="prose">
+          <div class="panel">
+            <h3>The Current</h3>
+            <p>FluidMotion TV is a one-lab network built on a simple obsession: harmonic liquid dynamics — the point where mathematics, sound, and motion become the same thing. Every visual you see here is generated live from that math, tuned to the 432 Hz Pythagorean frequency stack.</p>
+            <p>The lab ships two kinds of work: interactive WebGL instruments (the demos and portals you're looking at) and the FlowTouch Archive — e-books and software that document the methods behind them.</p>
+          </div>
+
+          <div class="panel">
+            <h3>The Network</h3>
+            <p>FluidMotion runs parallel with <strong>Dragon 9</strong>, the network's entertainment arm. FluidMotion builds the instruments and the archive; Dragon 9 carries the media, the streams, and the noise. The switcher in the top bar jumps between the two frequencies.</p>
+            <p>Both properties are progressive web apps — installable on desktop and mobile, working offline after first load, no app store in between.</p>
+          </div>
+
+          <div class="panel">
+            <h3>Install as an App</h3>
+            <p>On desktop, look for the install icon in your browser's address bar. On mobile, use "Add to Home Screen" from the browser menu. The full site — including the demo gallery — works offline once installed.</p>
+          </div>
+
+          <div class="panel">
+            <h3>Contact the Lab</h3>
+            <p>Questions about tiers, delivery, licensing, or collaborations — one address reaches the whole network:</p>
+            <div class="contact-row">
+              <a class="btn" href="mailto:fluidmotion.tv@gmail.com">fluidmotion.tv@gmail.com</a>
+              <a class="btn btn-ghost" href="https://fluidmotiontv.tech" target="_blank" rel="noopener">.tech Portal ↗</a>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="hud-footer">
+      <div class="foot-inner">
+        <span class="protocol">Dragon 9 Protocol // Synchronise Time</span>
+        <nav aria-label="Footer">
+          <a href="https://fluidmotiontv.tech" target="_blank" rel="noopener">.tech Portal ↗</a>
+          <a href="shop.html">Shop</a>
+          <a href="hub.html">3D Hub</a>
+        </nav>
+        <span class="est">EST. 2026</span>
+      </div>
+    </footer>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="assets/js/waves.js"></script>
+  <script src="assets/js/audio.js"></script>
+  <script src="assets/js/main.js"></script>
+</body>
+</html>
