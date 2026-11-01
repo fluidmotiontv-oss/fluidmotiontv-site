@@ -456,15 +456,15 @@
         ];
 
         const appNodes = [
-            { title: "D9Enigma", subtitle: "Creative Suite & Cryptographic Engine", url: "https://fluidmotiontv-oss.github.io/D9Enigma" },
-            { title: "FlowTouch", subtitle: "Spatial 3D Touch & Product Viewer", url: "#flowtouch" },
-            { title: "Sovereign ISP", subtitle: "Decentralized Mesh Network Hub", url: "https://fluidmotiontv-oss.github.io/sovereign-isp" },
-            { title: "Fluidmotiontv-clock", subtitle: "Dragon 9 Temporal Synchronization", url: "https://fluidmotiontv-oss.github.io/Fluidmotiontv-clock" },
-            { title: "WiDio", subtitle: "Web Audio Synthesizer & 432Hz Deck", url: "#widio" },
-            { title: "WwDWS", subtitle: "Digital Video & Cinematic Pipeline", url: "#wwdws" },
-            { title: "MasterStudioServer", subtitle: "Local Node Daemon & Daemon Proxy", url: "#studio" },
-            { title: "Magic-Time", subtitle: "Harmonic Horizon & WebGL Shaders", url: "#magictime" },
-            { title: "Dragon 9 Core", subtitle: "Primary Protocol Controller", url: "#dragon9" }
+            { title: "D9Enigma", subtitle: "Creative Suite & Cryptographic Engine", url: "", live: false },
+            { title: "FlowTouch", subtitle: "Spatial 3D Touch & Product Viewer", url: "https://fluidmotiontv-oss.github.io/Infinity-Flow/", live: true },
+            { title: "Sovereign ISP", subtitle: "Decentralized Mesh Network Hub", url: "", live: false },
+            { title: "Fluidmotiontv-clock", subtitle: "Dragon 9 Temporal Synchronization", url: "", live: false },
+            { title: "WiDio", subtitle: "Web Audio Synthesizer & 432Hz Deck", url: "https://github.com/fluidmotiontv-oss/wiDio", live: true },
+            { title: "WwDWS", subtitle: "Digital Video & Cinematic Pipeline", url: "https://fluidmotiontv-oss.github.io/WwDWS/", live: true },
+            { title: "MasterStudioServer", subtitle: "Local Node Daemon & Daemon Proxy", url: "https://fluidmotiontv-oss.github.io/MasterStudioServer/", live: true },
+            { title: "Magic-Time", subtitle: "Harmonic Horizon & WebGL Shaders", url: "https://fluidmotiontv-oss.github.io/Magic-Time/", live: true },
+            { title: "Dragon 9 Core", subtitle: "Primary Protocol Controller", url: "", live: false }
         ];
 
         function roundedRect(ctx, x, y, w, h, r) {
@@ -478,7 +478,7 @@
         }
 
         // Pimped Canvas Card Texture
-        function createCardTexture(title, subtitle, accent, index) {
+        function createCardTexture(title, subtitle, accent, index, live) {
             const canvas = document.createElement('canvas');
             canvas.width = 512; canvas.height = 320;
             const ctx = canvas.getContext('2d');
@@ -523,16 +523,18 @@
             ctx.fillText(subtitle, 40, 158);
 
             // Harmonic badge
+            const badgeText = live ? '⚡ DRAGON 9 NODE' : '🕐 COMING SOON';
+            const badgeAccent = live ? accent : '#64748b';
             ctx.fillStyle = 'rgba(3, 7, 18, 0.6)';
             roundedRect(ctx, 40, 218, 196, 48, 12);
             ctx.fill();
             ctx.lineWidth = 2;
-            ctx.strokeStyle = accent;
+            ctx.strokeStyle = badgeAccent;
             roundedRect(ctx, 40, 218, 196, 48, 12);
             ctx.stroke();
-            ctx.fillStyle = accent;
+            ctx.fillStyle = badgeAccent;
             ctx.font = 'bold 18px monospace';
-            ctx.fillText('⚡ DRAGON 9 NODE', 56, 249);
+            ctx.fillText(badgeText, 56, 249);
 
             const tex = new THREE.CanvasTexture(canvas);
             tex.anisotropy = 4;
@@ -549,7 +551,7 @@
         for (let i = 0; i < cardCount; i++) {
             const app = appNodes[i];
             const accent = ACCENTS[i % ACCENTS.length];
-            const texture = createCardTexture(app.title, app.subtitle, accent, i);
+            const texture = createCardTexture(app.title, app.subtitle, accent, i, app.live);
             const material = new THREE.MeshStandardMaterial({
                 map: texture, side: THREE.DoubleSide,
                 roughness: 0.45, metalness: 0.3, transparent: true,
@@ -690,9 +692,13 @@
         // --- Modal ---
         function showModal(app) {
             document.getElementById('modalTitle').innerText = app.title;
-            document.getElementById('modalDesc').innerText = app.subtitle;
+            document.getElementById('modalDesc').innerText = app.live
+                ? app.subtitle
+                : app.subtitle + ' — this module is not deployed yet. Coming soon.';
             document.getElementById('modalTitle').style.color = app.accent || '#38bdf8';
-            document.getElementById('launchBtn').onclick = () => launchAppUrl(app.url);
+            const launchBtn = document.getElementById('launchBtn');
+            launchBtn.style.display = app.live ? '' : 'none';
+            launchBtn.onclick = () => launchAppUrl(app.url);
             document.getElementById('appModal').classList.add('visible');
             isFlowActive = false;
             document.getElementById('phase-display').innerText = 'INSPECT';
