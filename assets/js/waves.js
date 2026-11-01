@@ -58,22 +58,40 @@
 
   function frame() {
     const time = clock.getElapsedTime() * 1.5;
+
+    // anthem energy drives the mesh (fed by audio.js via window.fmtvAudio)
+    let audioLevel = 0;
+    let fbins = null;
+    const A = window.fmtvAudio;
+    if (A && A.analyser) {
+      A.analyser.getByteFrequencyData(A.freqData);
+      fbins = A.freqData;
+      let sum = 0;
+      for (let i = 0; i < fbins.length; i++) sum += fbins[i];
+      audioLevel = sum / fbins.length / 255;
+    }
+
     raycaster.setFromCamera(mouse, camera);
     const intersects = raycaster.intersectObject(plane);
 
     if (mode === "chromatic") {
       const hue = (time * 15) % 360;
       material.color.setHSL(hue / 360, 0.9, 0.6);
-      material.opacity = 0.42;
+      material.opacity = 0.42 + audioLevel * 0.3;
     } else {
       material.color.setHex(0x00ffcc);
-      material.opacity = 0.3;
+      material.opacity = 0.3 + audioLevel * 0.4;
     }
 
     for (let i = 0; i < posAttribute.count; i++) {
       const x = posAttribute.getX(i);
       const z = posAttribute.getZ(i);
-      let wave = Math.sin(x * 0.1 + time) * Math.cos(z * 0.1 + time * 0.8) * 2.5;
+      let wave = Math.sin(x * 0.1 + time) * Math.cos(z * 0.1 + time * 0.8) * (2.5 + audioLevel * 8);
+
+      // per-vertex frequency energy — the mesh dances to the anthem
+      if (audioLevel > 0.01 && fbins) {
+        wave += (fbins[i % fbins.length] / 255) * audioLevel * 6;
+      }
 
       if (intersects.length > 0) {
         const dx = x - intersects[0].point.x;
