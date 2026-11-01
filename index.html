@@ -1,137 +1,869 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>FluidMotion TV — FlowTouch Sovereign Hub</title>
-  <meta name="description" content="FluidMotion TV: harmonic liquid dynamics, interactive tech demos, the FlowTouch e-Book Archive, and the hub for every 3D shop in the network.">
-  <meta name="theme-color" content="#02080f">
-  <link rel="manifest" href="manifest.webmanifest">
-  <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon-32.png">
-  <link rel="apple-touch-icon" href="assets/icons/icon-180.png">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta property="og:type" content="website">
-  <meta property="og:title" content="FluidMotion TV — FlowTouch Sovereign Hub">
-  <meta property="og:description" content="Harmonic liquid dynamics & 432 Hz frequency. Tech demos, FlowTouch e-books, and the 3D shop hub.">
-  <meta property="og:url" content="https://fluidmotiontv.site/">
-  <meta property="og:image" content="https://fluidmotiontv.site/assets/icons/icon-512.png">
-  <meta name="twitter:card" content="summary">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/css/style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Figure-8 Dual-Phase Flow | Fluid Motion Unified Studio</title>
+    <style>
+        :root {
+            --bg-deep: #030712;
+            --surface: rgba(15, 23, 42, 0.75);
+            --surface-border: rgba(56, 189, 248, 0.2);
+            --neon-cyan: #38bdf8;
+            --neon-magenta: #e879f9;
+            --neon-gold: #facc15;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
+
+        body {
+            background-color: var(--bg-deep);
+            color: var(--text-main);
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            overflow: hidden;
+            width: 100vw;
+            height: 100vh;
+        }
+
+        #webgl-container { position: absolute; inset: 0; z-index: 1; }
+        #webgl-container canvas { display: block; cursor: grab; }
+        #webgl-container canvas.dragging { cursor: grabbing; }
+        #webgl-container canvas.hovering { cursor: pointer; }
+
+        /* HUD Overlay Layer */
+        .hud-overlay {
+            position: absolute; inset: 0; z-index: 10;
+            pointer-events: none;
+            display: flex; flex-direction: column; justify-content: space-between;
+            padding: 24px;
+        }
+
+        header, .control-dock, .card-modal, .easter-egg-banner { pointer-events: auto; }
+
+        header {
+            display: flex; justify-content: space-between; align-items: center;
+            background: var(--surface);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--surface-border);
+            padding: 16px 28px;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+        }
+
+        .brand h1 {
+            font-size: 1.25rem; font-weight: 700; letter-spacing: 0.1em;
+            background: linear-gradient(135deg, var(--neon-cyan), var(--neon-magenta), var(--neon-gold), var(--neon-cyan));
+            background-size: 300% 100%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-transform: uppercase;
+            animation: titleFlow 9s linear infinite;
+        }
+
+        @keyframes titleFlow {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 300% 50%; }
+        }
+
+        .brand p { font-size: 0.75rem; color: var(--text-muted); letter-spacing: 0.05em; }
+
+        .telemetry { display: flex; gap: 20px; font-family: monospace; font-size: 0.85rem; }
+        .telemetry-item span { color: var(--neon-cyan); text-shadow: 0 0 8px rgba(56,189,248,0.6); }
+
+        /* Control Dock */
+        .control-dock {
+            align-self: center;
+            display: flex; gap: 12px;
+            background: var(--surface);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--surface-border);
+            padding: 12px 24px;
+            border-radius: 9999px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            margin-bottom: 12px;
+        }
+
+        .btn {
+            background: rgba(56, 189, 248, 0.1);
+            border: 1px solid var(--neon-cyan);
+            color: var(--text-main);
+            padding: 8px 18px;
+            border-radius: 9999px;
+            font-size: 0.85rem; font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            letter-spacing: 0.05em;
+        }
+
+        .btn:hover {
+            background: var(--neon-cyan);
+            color: var(--bg-deep);
+            box-shadow: 0 0 20px rgba(56, 189, 248, 0.7);
+        }
+
+        .btn.active {
+            background: var(--neon-magenta);
+            border-color: var(--neon-magenta);
+            color: var(--bg-deep);
+            box-shadow: 0 0 20px rgba(232, 121, 249, 0.7);
+        }
+
+        .bottom-stack {
+            display: flex; flex-direction: column; align-items: center;
+        }
+
+        .hint {
+            align-self: center;
+            font-family: monospace; font-size: 0.7rem;
+            color: var(--text-muted);
+            background: rgba(3,7,18,0.6);
+            border: 1px solid rgba(148,163,184,0.15);
+            padding: 6px 14px; border-radius: 9999px;
+            margin-bottom: 10px;
+            letter-spacing: 0.08em;
+        }
+
+        /* Hover tooltip for nodes */
+        .node-tooltip {
+            position: fixed; z-index: 50;
+            pointer-events: none;
+            background: rgba(3, 7, 18, 0.92);
+            border: 1px solid var(--neon-cyan);
+            color: var(--text-main);
+            font-family: monospace; font-size: 0.8rem;
+            padding: 6px 12px; border-radius: 8px;
+            box-shadow: 0 0 18px rgba(56,189,248,0.35);
+            opacity: 0; transform: translate(-50%, -140%);
+            transition: opacity 0.15s ease;
+            white-space: nowrap;
+        }
+        .node-tooltip.visible { opacity: 1; }
+
+        /* Interactive Modal for App Launch */
+        .card-modal {
+            position: absolute; top: 50%; left: 50%;
+            transform: translate(-50%, -50%) scale(0.9);
+            background: rgba(3, 7, 18, 0.95);
+            border: 1px solid var(--neon-cyan);
+            padding: 36px;
+            border-radius: 24px;
+            width: 90%; max-width: 500px;
+            z-index: 100;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.75), 0 0 40px rgba(56,189,248,0.15);
+            opacity: 0; pointer-events: none;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .card-modal.visible {
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 1; pointer-events: auto;
+        }
+
+        .card-modal h2 { font-size: 1.5rem; margin-bottom: 10px; color: var(--neon-cyan); }
+        .card-modal p { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 24px; line-height: 1.5; }
+        .modal-actions { display: flex; gap: 12px; justify-content: flex-end; }
+
+        /* Kombucha Easter Egg Banner */
+        .easter-egg-banner {
+            position: absolute; bottom: 24px; right: 24px;
+            background: rgba(250, 204, 21, 0.1);
+            border: 1px solid var(--neon-gold);
+            color: var(--neon-gold);
+            padding: 8px 16px; border-radius: 12px;
+            font-size: 0.75rem; font-family: monospace;
+            cursor: pointer; z-index: 20;
+            backdrop-filter: blur(8px);
+            transition: all 0.3s ease;
+        }
+        .easter-egg-banner:hover {
+            background: var(--neon-gold); color: var(--bg-deep);
+            box-shadow: 0 0 24px rgba(250,204,21,0.6);
+        }
+
+        /* Kombucha toast + bubbles */
+        .kombucha-toast {
+            position: fixed; top: 50%; left: 50%;
+            transform: translate(-50%, -50%) scale(0.8);
+            background: rgba(3, 7, 18, 0.95);
+            border: 2px solid var(--neon-gold);
+            color: var(--neon-gold);
+            font-size: 1.1rem; font-weight: 700;
+            padding: 28px 40px; border-radius: 20px;
+            z-index: 200; text-align: center;
+            box-shadow: 0 0 60px rgba(250,204,21,0.45);
+            opacity: 0; pointer-events: none;
+            transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .kombucha-toast.visible { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+
+        .bubble {
+            position: fixed; bottom: -30px; z-index: 150;
+            border-radius: 50%;
+            border: 1px solid rgba(250,204,21,0.8);
+            background: radial-gradient(circle at 35% 35%, rgba(250,204,21,0.5), rgba(250,204,21,0.05));
+            pointer-events: none;
+            animation: rise linear forwards;
+        }
+        @keyframes rise {
+            to { transform: translateY(-115vh) translateX(3vw); opacity: 0; }
+        }
+
+        @media (max-width: 768px) {
+            header { flex-direction: column; gap: 10px; text-align: center; padding: 12px; }
+            .telemetry { display: none; }
+            .control-dock { flex-wrap: wrap; justify-content: center; padding: 10px 14px; }
+            .hud-overlay { padding: 12px; }
+            .easter-egg-banner { bottom: 90px; right: 12px; }
+            .hint { display: none; }
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
-<body data-page="home">
+<body>
 
-  <div class="poster-bg" aria-hidden="true"></div>
-  <div id="wave-canvas" data-mode="teal" aria-hidden="true"></div>
+    <div id="webgl-container"></div>
 
-  <header class="hud-nav">
-    <a class="brand" href="index.html"><span class="glyph" aria-hidden="true">FM</span> FluidMotion TV</a>
-    <nav aria-label="Primary">
-      <ul class="nav-links">
-        <li><a href="index.html" aria-current="page">Home</a></li>
-        <li><a href="demos.html">Demos</a></li>
-        <li><a href="shop.html">Shop</a></li>
-        <li><a href="https://fluidmotiontv-oss.github.io/DrWelland-Strong/" target="_blank" rel="noopener">Wellness</a></li>
-        <li><a href="hub.html">3D Hub</a></li>
-        <li><a href="about.html">About</a></li>
-      </ul>
-    </nav>
-    <div class="nav-actions">
-      <button class="audio-toggle" type="button" aria-pressed="false">
-        <span class="audio-label-full">AUDIO: MUTED</span><span class="audio-label-short">MUTED</span>
-      </button>
-      <a class="network-switch" href="https://dragon9.online" target="_blank" rel="noopener">
-        Dragon 9 <span class="switch-label">// Network</span> ↗
-      </a>
-      <button class="menu-btn" type="button" aria-expanded="false" aria-controls="mobileMenu" aria-label="Open menu">☰</button>
+    <div class="hud-overlay">
+        <header>
+            <div class="brand">
+                <h1>Figure-8 Dual-Phase Flow</h1>
+                <p>Hub Menu // Dragon 9 Framework // Fluid Motion of the Future</p>
+            </div>
+            <div class="telemetry">
+                <div class="telemetry-item">TUNING: <span id="freq-display">432 Hz</span></div>
+                <div class="telemetry-item">PHASE: <span id="phase-display">DUAL-SYNC</span></div>
+                <div class="telemetry-item">NODES: <span>9 ACTIVE</span></div>
+            </div>
+        </header>
+
+        <div class="bottom-stack">
+            <div class="hint">DRAG TO ORBIT &nbsp;·&nbsp; TAP A NODE TO OPEN</div>
+
+            <div class="control-dock">
+                <button class="btn active" id="btn-flow" onclick="toggleFlowMode()">Dual-Phase Flow</button>
+                <button class="btn" id="btn-harmonic" onclick="toggleHarmonicAudio()">432Hz Synth</button>
+                <button class="btn" id="btn-reset" onclick="resetCameraView()">Recenter View</button>
+            </div>
+        </div>
     </div>
-  </header>
 
-  <div class="mobile-menu" id="mobileMenu" role="dialog" aria-modal="true" aria-label="Site menu">
-    <button class="close-menu" type="button" aria-label="Close menu">✕</button>
-    <a href="index.html" aria-current="page">Home</a>
-    <a href="demos.html">Demos</a>
-    <a href="shop.html">Shop</a>
-    <a href="hub.html">3D Hub</a>
-    <a href="https://fluidmotiontv-oss.github.io/DrWelland-Strong/" target="_blank" rel="noopener">Wellness &#8599;</a>
-    <a href="about.html">About</a>
-    <a href="https://dragon9.online" target="_blank" rel="noopener">Dragon 9 ↗</a>
-  </div>
+    <div class="node-tooltip" id="nodeTooltip"></div>
 
-  <div class="page">
-    <main>
-      <!-- HERO -->
-      <section class="hero" aria-label="Welcome">
-        <div class="hud-card">
-          <div class="card-kicker">FlowTouch Sovereign Hub</div>
-          <h1>FluidMotion TV</h1>
-          <p>Harmonic liquid dynamics &amp; 432 Hz frequency. This is the hub: interactive tech demos, the FlowTouch e-Book Archive, and every 3D shop in the network — one current, one flow.</p>
-          <div class="btn-row">
-            <a class="btn" href="shop.html">Enter the Archive</a>
-            <a class="btn btn-ghost" href="demos.html">Watch the Demos</a>
-          </div>
+    <!-- Interactive App Launcher Modal -->
+    <div class="card-modal" id="appModal">
+        <h2 id="modalTitle">App Title</h2>
+        <p id="modalDesc">App Description goes here.</p>
+        <div class="modal-actions">
+            <button class="btn" onclick="closeModal()">Close</button>
+            <button class="btn active" id="launchBtn">Launch Module</button>
         </div>
-      </section>
+    </div>
 
-      <!-- PILLARS -->
-      <section class="section" aria-label="What lives here">
-        <div class="wrap">
-          <p class="section-title">The Current</p>
-          <h2 class="section-heading">What Lives Here</h2>
-          <div class="grid-3">
-            <article class="panel">
-              <span class="tag live">Live</span>
-              <h3>Tech Demos</h3>
-              <p>Real-time WebGL experiments — ripple grids, particle fields, frequency-reactive form. Proof of craft, running in your browser right now.</p>
-              <a class="panel-link" href="demos.html">Open Demos →</a>
-            </article>
-            <article class="panel">
-              <span class="tag live">Selling</span>
-              <h3>FlowTouch e-Book Archive</h3>
-              <p>Sovereign-tier digital texts and software, delivered through PayPal. Four tiers, from entry current to the full Master archive.</p>
-              <a class="panel-link" href="shop.html">Browse Tiers →</a>
-            </article>
-            <article class="panel">
-              <span class="tag live">Hub</span>
-              <h3>3D Shop Hub</h3>
-              <p>One directory for every shop and portal in the network — the .tech sovereign portal, the archive, and what's coming next.</p>
-              <a class="panel-link" href="hub.html">See the Network →</a>
-            </article>
-          </div>
-        </div>
-      </section>
+    <div class="easter-egg-banner" onclick="triggerKombuchaEasterEgg()">
+        🍵 FlowTouch Kombucha Vault [Active]
+    </div>
 
-      <!-- NETWORK BANNER -->
-      <section class="section" aria-label="Dragon 9 network">
-        <div class="wrap">
-          <div class="network-banner">
-            <h2>Dragon 9 // Entertainment Arm</h2>
-            <p>FluidMotion builds the instruments; Dragon 9 plays them loud. The network media hub — streams, drops, and signal — runs parallel to this site. One network, two frequencies.</p>
-            <a class="btn btn-magenta" href="https://dragon9.online" target="_blank" rel="noopener">Tune In: dragon9.online ↗</a>
-          </div>
-        </div>
-      </section>
-    </main>
+    <div class="kombucha-toast" id="kombuchaToast">
+        🍵 Kombucha Vault Initialized<br>
+        <span style="font-size:0.85rem; font-weight:400;">Welcome to the fluid motion of the future.</span>
+    </div>
 
-    <footer class="hud-footer">
-      <div class="foot-inner">
-        <span class="protocol">Dragon 9 Protocol // Synchronise Time</span>
-        <nav aria-label="Footer">
-          <a href="https://fluidmotiontv.tech" target="_blank" rel="noopener">.tech Portal ↗</a>
-          <a href="shop.html">Shop</a>
-          <a href="about.html">Contact</a>
-        </nav>
-        <span class="est">EST. 2026</span>
-      </div>
-    </footer>
-  </div>
+    <script>
+        // ============================================================
+        // Figure-8 Dual-Phase Flow — Pimped Hub Menu (Dragon 9)
+        // ============================================================
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-  <script src="assets/js/waves.js"></script>
-  <script src="assets/js/audio.js"></script>
-  <script src="assets/js/main.js"></script>
+        // --- Seeded PRNG (mulberry32) — deterministic scene, re-shootable ---
+        function mulberry32(seed) {
+            let a = seed >>> 0;
+            return function() {
+                a |= 0; a = (a + 0x6D2B79F5) | 0;
+                let t = Math.imul(a ^ (a >>> 15), 1 | a);
+                t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+                return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+            };
+        }
+        const rand = mulberry32(432);
+
+        // --- Core 3D Application Setup ---
+        const container = document.getElementById('webgl-container');
+        const scene = new THREE.Scene();
+        scene.fog = new THREE.FogExp2(0x030712, 0.012);
+
+        const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+
+        // Spherical orbit state
+        const orbit = {
+            radius: 21, theta: 0, phi: 1.18,
+            velTheta: 0, velPhi: 0,
+            homeTheta: 0, homePhi: 1.18, homeRadius: 21,
+            returning: false
+        };
+
+        function applyOrbit() {
+            const sp = Math.sin(orbit.phi), cp = Math.cos(orbit.phi);
+            camera.position.set(
+                orbit.radius * sp * Math.sin(orbit.theta),
+                orbit.radius * cp,
+                orbit.radius * sp * Math.cos(orbit.theta)
+            );
+            camera.lookAt(0, 0, 0);
+        }
+        applyOrbit();
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        renderer.toneMapping = THREE.ACESFilmicToneMapping;
+        container.appendChild(renderer.domElement);
+
+        // --- Lighting ---
+        scene.add(new THREE.AmbientLight(0xffffff, 0.85));
+
+        const pointLight1 = new THREE.PointLight(0x38bdf8, 1.8, 60);
+        pointLight1.position.set(10, 10, 10);
+        scene.add(pointLight1);
+
+        const pointLight2 = new THREE.PointLight(0xe879f9, 1.8, 60);
+        pointLight2.position.set(-10, -10, 10);
+        scene.add(pointLight2);
+
+        // --- Lemniscate of Bernoulli (the Figure-8) ---
+        const SCALE = 9;
+        function lemniscate(t, phaseSign) {
+            const s = Math.sin(t), c = Math.cos(t);
+            const denom = 1 + s * s;
+            return new THREE.Vector3(
+                (SCALE * c) / denom,
+                (SCALE * s * c) / denom,
+                phaseSign * Math.sin(t * 2) * 3
+            );
+        }
+
+        function buildLemniscateCurve(phaseSign) {
+            const pts = [];
+            const N = 256;
+            for (let i = 0; i < N; i++) {
+                pts.push(lemniscate((i / N) * Math.PI * 2, phaseSign));
+            }
+            return new THREE.CatmullRomCurve3(pts, true, 'catmullrom', 0.5);
+        }
+
+        const curveA = buildLemniscateCurve(1);   // cyan phase
+        const curveB = buildLemniscateCurve(-1);  // magenta phase (dual)
+
+        // --- Glowing ribbons (the pimped ∞ path) ---
+        function addRibbon(curve, color, coreOpacity, haloOpacity) {
+            const core = new THREE.Mesh(
+                new THREE.TubeGeometry(curve, 320, 0.045, 8, true),
+                new THREE.MeshBasicMaterial({
+                    color: color, transparent: true, opacity: coreOpacity,
+                    blending: THREE.AdditiveBlending, depthWrite: false
+                })
+            );
+            const halo = new THREE.Mesh(
+                new THREE.TubeGeometry(curve, 320, 0.22, 8, true),
+                new THREE.MeshBasicMaterial({
+                    color: color, transparent: true, opacity: haloOpacity,
+                    blending: THREE.AdditiveBlending, depthWrite: false
+                })
+            );
+            scene.add(halo);
+            scene.add(core);
+            return core;
+        }
+        addRibbon(curveA, 0x38bdf8, 0.85, 0.07);
+        addRibbon(curveB, 0xe879f9, 0.6, 0.05);
+
+        // --- Energy pulses flowing along the ribbons ---
+        function makeGlowSprite(hex) {
+            const c = document.createElement('canvas');
+            c.width = c.height = 64;
+            const g = c.getContext('2d');
+            const col = new THREE.Color(hex);
+            const rgb = `${Math.round(col.r*255)},${Math.round(col.g*255)},${Math.round(col.b*255)}`;
+            const grad = g.createRadialGradient(32, 32, 0, 32, 32, 32);
+            grad.addColorStop(0, `rgba(${rgb},1)`);
+            grad.addColorStop(0.35, `rgba(${rgb},0.55)`);
+            grad.addColorStop(1, `rgba(${rgb},0)`);
+            g.fillStyle = grad;
+            g.fillRect(0, 0, 64, 64);
+            return new THREE.CanvasTexture(c);
+        }
+
+        const pulseTexCyan = makeGlowSprite(0x7dd3fc);
+        const pulseTexMagenta = makeGlowSprite(0xf0abfc);
+        const pulseTexGold = makeGlowSprite(0xfde68a);
+        const pulses = [];
+        const PULSE_COUNT = 42;
+
+        for (let i = 0; i < PULSE_COUNT; i++) {
+            const onA = i % 2 === 0;
+            const tex = i % 9 === 8 ? pulseTexGold : (onA ? pulseTexCyan : pulseTexMagenta);
+            const mat = new THREE.SpriteMaterial({
+                map: tex, transparent: true,
+                blending: THREE.AdditiveBlending, depthWrite: false
+            });
+            const spr = new THREE.Sprite(mat);
+            const size = 0.35 + rand() * 0.4;
+            spr.scale.set(size, size, 1);
+            scene.add(spr);
+            pulses.push({
+                sprite: spr,
+                curve: onA ? curveA : curveB,
+                t: rand(),
+                speed: (0.03 + rand() * 0.05) * (onA ? 1 : -1)
+            });
+        }
+
+        // --- Starfield backdrop ---
+        (function addStars() {
+            const STAR_COUNT = 1400;
+            const pos = new Float32Array(STAR_COUNT * 3);
+            const col = new Float32Array(STAR_COUNT * 3);
+            const tint = new THREE.Color();
+            for (let i = 0; i < STAR_COUNT; i++) {
+                const r = 60 + rand() * 140;
+                const th = rand() * Math.PI * 2;
+                const ph = Math.acos(2 * rand() - 1);
+                pos[i*3]   = r * Math.sin(ph) * Math.cos(th);
+                pos[i*3+1] = r * Math.cos(ph);
+                pos[i*3+2] = r * Math.sin(ph) * Math.sin(th);
+                const pick = rand();
+                if (pick < 0.7) tint.setHex(0x94a3b8);
+                else if (pick < 0.87) tint.setHex(0x38bdf8);
+                else tint.setHex(0xe879f9);
+                const dim = 0.4 + rand() * 0.6;
+                col[i*3] = tint.r * dim; col[i*3+1] = tint.g * dim; col[i*3+2] = tint.b * dim;
+            }
+            const geo = new THREE.BufferGeometry();
+            geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+            geo.setAttribute('color', new THREE.BufferAttribute(col, 3));
+            const stars = new THREE.Points(geo, new THREE.PointsMaterial({
+                size: 0.35, vertexColors: true, transparent: true, opacity: 0.85,
+                blending: THREE.AdditiveBlending, depthWrite: false, sizeAttenuation: true
+            }));
+            stars.name = 'starfield';
+            scene.add(stars);
+        })();
+
+        // --- 9 Core Application Nodes (the Hub Menu) ---
+        const ACCENTS = [
+            '#38bdf8', '#e879f9', '#facc15', '#34d399', '#a78bfa',
+            '#fb923c', '#2dd4bf', '#fb7185', '#60a5fa'
+        ];
+
+        const appNodes = [
+            { title: "D9Enigma", subtitle: "Creative Suite & Cryptographic Engine", url: "https://fluidmotiontv-oss.github.io/D9Enigma" },
+            { title: "FlowTouch", subtitle: "Spatial 3D Touch & Product Viewer", url: "#flowtouch" },
+            { title: "Sovereign ISP", subtitle: "Decentralized Mesh Network Hub", url: "https://fluidmotiontv-oss.github.io/sovereign-isp" },
+            { title: "Fluidmotiontv-clock", subtitle: "Dragon 9 Temporal Synchronization", url: "https://fluidmotiontv-oss.github.io/Fluidmotiontv-clock" },
+            { title: "WiDio", subtitle: "Web Audio Synthesizer & 432Hz Deck", url: "#widio" },
+            { title: "WwDWS", subtitle: "Digital Video & Cinematic Pipeline", url: "#wwdws" },
+            { title: "MasterStudioServer", subtitle: "Local Node Daemon & Daemon Proxy", url: "#studio" },
+            { title: "Magic-Time", subtitle: "Harmonic Horizon & WebGL Shaders", url: "#magictime" },
+            { title: "Dragon 9 Core", subtitle: "Primary Protocol Controller", url: "#dragon9" }
+        ];
+
+        function roundedRect(ctx, x, y, w, h, r) {
+            ctx.beginPath();
+            ctx.moveTo(x + r, y);
+            ctx.arcTo(x + w, y, x + w, y + h, r);
+            ctx.arcTo(x + w, y + h, x, y + h, r);
+            ctx.arcTo(x, y + h, x, y, r);
+            ctx.arcTo(x, y, x + w, y, r);
+            ctx.closePath();
+        }
+
+        // Pimped Canvas Card Texture
+        function createCardTexture(title, subtitle, accent, index) {
+            const canvas = document.createElement('canvas');
+            canvas.width = 512; canvas.height = 320;
+            const ctx = canvas.getContext('2d');
+
+            // Glass body
+            const grad = ctx.createLinearGradient(0, 0, 512, 320);
+            grad.addColorStop(0, 'rgba(15, 23, 42, 0.95)');
+            grad.addColorStop(1, 'rgba(30, 41, 59, 0.85)');
+            roundedRect(ctx, 6, 6, 500, 308, 28);
+            ctx.fillStyle = grad;
+            ctx.fill();
+
+            // Accent frame
+            ctx.lineWidth = 5;
+            ctx.strokeStyle = accent;
+            ctx.shadowColor = accent;
+            ctx.shadowBlur = 18;
+            roundedRect(ctx, 6, 6, 500, 308, 28);
+            ctx.stroke();
+            ctx.shadowBlur = 0;
+
+            // Ghost index number
+            ctx.fillStyle = 'rgba(248, 250, 252, 0.07)';
+            ctx.font = 'bold 150px system-ui, sans-serif';
+            ctx.textAlign = 'right';
+            ctx.fillText(String(index + 1).padStart(2, '0'), 492, 168);
+            ctx.textAlign = 'left';
+
+            // Accent top bar
+            ctx.fillStyle = accent;
+            roundedRect(ctx, 40, 44, 64, 8, 4);
+            ctx.fill();
+
+            // Title
+            ctx.fillStyle = '#f8fafc';
+            ctx.font = 'bold 38px system-ui, sans-serif';
+            ctx.fillText(title, 40, 118);
+
+            // Subtitle
+            ctx.fillStyle = '#94a3b8';
+            ctx.font = '20px system-ui, sans-serif';
+            ctx.fillText(subtitle, 40, 158);
+
+            // Harmonic badge
+            ctx.fillStyle = 'rgba(3, 7, 18, 0.6)';
+            roundedRect(ctx, 40, 218, 196, 48, 12);
+            ctx.fill();
+            ctx.lineWidth = 2;
+            ctx.strokeStyle = accent;
+            roundedRect(ctx, 40, 218, 196, 48, 12);
+            ctx.stroke();
+            ctx.fillStyle = accent;
+            ctx.font = 'bold 18px monospace';
+            ctx.fillText('⚡ DRAGON 9 NODE', 56, 249);
+
+            const tex = new THREE.CanvasTexture(canvas);
+            tex.anisotropy = 4;
+            return tex;
+        }
+
+        const cardsGroup = new THREE.Group();
+        scene.add(cardsGroup);
+
+        const cardMeshes = [];
+        const cardCount = 9;
+        const cardGeometry = new THREE.PlaneGeometry(3.6, 2.25);
+
+        for (let i = 0; i < cardCount; i++) {
+            const app = appNodes[i];
+            const accent = ACCENTS[i % ACCENTS.length];
+            const texture = createCardTexture(app.title, app.subtitle, accent, i);
+            const material = new THREE.MeshStandardMaterial({
+                map: texture, side: THREE.DoubleSide,
+                roughness: 0.45, metalness: 0.3, transparent: true,
+                emissive: new THREE.Color(accent), emissiveIntensity: 0.08
+            });
+
+            const card = new THREE.Mesh(cardGeometry, material);
+            card.userData = app;
+            card.userData.accent = accent;
+            card.userData.baseScale = 1;
+            card.userData.targetScale = 1;
+
+            // Halo glow behind the card
+            const halo = new THREE.Sprite(new THREE.SpriteMaterial({
+                map: makeGlowSprite(accent), transparent: true, opacity: 0.22,
+                blending: THREE.AdditiveBlending, depthWrite: false
+            }));
+            halo.scale.set(6.4, 4.6, 1);
+            halo.position.z = -0.25;
+            card.add(halo);
+            card.userData.halo = halo;
+
+            cardsGroup.add(card);
+            cardMeshes.push(card);
+        }
+
+        // --- Figure-8 Motion Layout ---
+        let timeOffset = 0;
+        let isFlowActive = true;
+
+        function updateFigure8Layout(dt) {
+            if (isFlowActive) timeOffset += dt * 0.35;
+
+            for (let i = 0; i < cardCount; i++) {
+                const card = cardMeshes[i];
+                const t = timeOffset + (i / cardCount) * Math.PI * 2;
+                const p = lemniscate(t, 1);
+                card.position.copy(p);
+
+                // Bank naturally along the trajectory
+                card.rotation.y = Math.cos(t) * 0.5;
+                card.rotation.x = -Math.sin(t) * 0.3;
+                card.rotation.z = Math.sin(t) * 0.18;
+
+                // Smooth hover scaling
+                const s = card.scale.x + (card.userData.targetScale - card.scale.x) * Math.min(1, dt * 10);
+                card.scale.set(s, s, 1);
+
+                // Halo breathing
+                const breathe = 0.18 + Math.sin(t * 3 + i) * 0.06;
+                card.userData.halo.material.opacity = card.userData.targetScale > 1 ? 0.45 : breathe;
+            }
+
+            // Pulses ride the ribbons
+            for (const pulse of pulses) {
+                pulse.t = (pulse.t + pulse.speed * dt + 1) % 1;
+                const pos = pulse.curve.getPointAt(pulse.t);
+                pulse.sprite.position.copy(pos);
+            }
+        }
+
+        // --- Raycasting, Hover, Drag-Orbit & Tap ---
+        const raycaster = new THREE.Raycaster();
+        const pointerNDC = new THREE.Vector2();
+        const tooltip = document.getElementById('nodeTooltip');
+        let selectedApp = null;
+        let hoveredCard = null;
+        let dragState = null;
+
+        function setPointerFromEvent(e) {
+            pointerNDC.x = (e.clientX / window.innerWidth) * 2 - 1;
+            pointerNDC.y = -(e.clientY / window.innerHeight) * 2 + 1;
+        }
+
+        function pickCard(e) {
+            setPointerFromEvent(e);
+            raycaster.setFromCamera(pointerNDC, camera);
+            const hits = raycaster.intersectObjects(cardMeshes, false);
+            return hits.length > 0 ? hits[0].object : null;
+        }
+
+        renderer.domElement.addEventListener('pointerdown', (e) => {
+            dragState = { x: e.clientX, y: e.clientY, moved: 0 };
+            orbit.returning = false;
+            renderer.domElement.classList.add('dragging');
+            renderer.domElement.setPointerCapture(e.pointerId);
+        });
+
+        renderer.domElement.addEventListener('pointermove', (e) => {
+            if (dragState) {
+                const dx = e.clientX - dragState.x;
+                const dy = e.clientY - dragState.y;
+                dragState.moved += Math.abs(dx) + Math.abs(dy);
+                dragState.x = e.clientX;
+                dragState.y = e.clientY;
+
+                orbit.velTheta = -dx * 0.0035;
+                orbit.velPhi = -dy * 0.0028;
+                orbit.theta += orbit.velTheta;
+                orbit.phi = Math.max(0.35, Math.min(Math.PI - 0.35, orbit.phi + orbit.velPhi));
+                tooltip.classList.remove('visible');
+            } else {
+                // Hover highlight + tooltip
+                const hit = pickCard(e);
+                if (hit !== hoveredCard) {
+                    if (hoveredCard) hoveredCard.userData.targetScale = 1;
+                    hoveredCard = hit;
+                    if (hoveredCard) hoveredCard.userData.targetScale = 1.2;
+                    renderer.domElement.classList.toggle('hovering', !!hoveredCard);
+                }
+                if (hoveredCard) {
+                    tooltip.textContent = '⚡ ' + hoveredCard.userData.title;
+                    tooltip.style.left = e.clientX + 'px';
+                    tooltip.style.top = e.clientY + 'px';
+                    tooltip.classList.add('visible');
+                } else {
+                    tooltip.classList.remove('visible');
+                }
+            }
+        });
+
+        function endDrag(e) {
+            if (!dragState) return;
+            const wasTap = dragState.moved < 8;
+            dragState = null;
+            renderer.domElement.classList.remove('dragging');
+            if (wasTap) {
+                const hit = pickCard(e);
+                if (hit) {
+                    selectedApp = hit.userData;
+                    showModal(selectedApp);
+                }
+            }
+        }
+        renderer.domElement.addEventListener('pointerup', endDrag);
+        renderer.domElement.addEventListener('pointercancel', () => { dragState = null; });
+
+        // --- Modal ---
+        function showModal(app) {
+            document.getElementById('modalTitle').innerText = app.title;
+            document.getElementById('modalDesc').innerText = app.subtitle;
+            document.getElementById('modalTitle').style.color = app.accent || '#38bdf8';
+            document.getElementById('launchBtn').onclick = () => launchAppUrl(app.url);
+            document.getElementById('appModal').classList.add('visible');
+            isFlowActive = false;
+            document.getElementById('phase-display').innerText = 'INSPECT';
+        }
+
+        function closeModal() {
+            document.getElementById('appModal').classList.remove('visible');
+            isFlowActive = true;
+            document.getElementById('phase-display').innerText = 'DUAL-SYNC';
+        }
+
+        function launchAppUrl(url) {
+            if (url.startsWith('http')) {
+                window.open(url, '_blank');
+            } else {
+                alert('Launching local module: ' + url);
+            }
+            closeModal();
+        }
+
+        // --- 432Hz Harmonic Synth (pimped: sub-octave + shimmer + slow tremolo) ---
+        let audioCtx = null;
+        let isAudioPlaying = false;
+        let audioNodes = null;
+
+        function toggleHarmonicAudio() {
+            const btn = document.getElementById('btn-harmonic');
+            if (!isAudioPlaying) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const master = audioCtx.createGain();
+                master.gain.setValueAtTime(0.01, audioCtx.currentTime);
+                master.gain.exponentialRampToValueAtTime(0.12, audioCtx.currentTime + 2.5);
+                master.connect(audioCtx.destination);
+
+                // Slow tremolo (0.1 Hz breathing)
+                const lfo = audioCtx.createOscillator();
+                const lfoGain = audioCtx.createGain();
+                lfo.frequency.setValueAtTime(0.1, audioCtx.currentTime);
+                lfoGain.gain.setValueAtTime(0.04, audioCtx.currentTime);
+                lfo.connect(lfoGain);
+                lfoGain.connect(master.gain);
+                lfo.start();
+
+                const voices = [];
+                const stack = [
+                    { freq: 216, gain: 0.35, type: 'sine' },   // sub-octave root
+                    { freq: 432, gain: 0.6,  type: 'sine' },   // Pythagorean baseline
+                    { freq: 864, gain: 0.12, type: 'sine' }    // shimmer octave
+                ];
+                for (const v of stack) {
+                    const osc = audioCtx.createOscillator();
+                    const g = audioCtx.createGain();
+                    osc.type = v.type;
+                    osc.frequency.setValueAtTime(v.freq, audioCtx.currentTime);
+                    g.gain.setValueAtTime(v.gain, audioCtx.currentTime);
+                    osc.connect(g); g.connect(master);
+                    osc.start();
+                    voices.push(osc);
+                }
+
+                audioNodes = { master, lfo, voices };
+                isAudioPlaying = true;
+                btn.classList.add('active');
+                document.getElementById('freq-display').innerText = '432 Hz (Active)';
+            } else {
+                if (audioNodes) {
+                    const t = audioCtx.currentTime;
+                    audioNodes.master.gain.cancelScheduledValues(t);
+                    audioNodes.master.gain.setValueAtTime(audioNodes.master.gain.value, t);
+                    audioNodes.master.gain.exponentialRampToValueAtTime(0.001, t + 0.8);
+                    const nodes = audioNodes;
+                    setTimeout(() => {
+                        nodes.voices.forEach(o => { try { o.stop(); } catch (err) {} });
+                        try { nodes.lfo.stop(); } catch (err) {}
+                    }, 900);
+                    audioNodes = null;
+                }
+                isAudioPlaying = false;
+                btn.classList.remove('active');
+                document.getElementById('freq-display').innerText = '432 Hz';
+            }
+        }
+
+        function toggleFlowMode() {
+            isFlowActive = !isFlowActive;
+            const btn = document.getElementById('btn-flow');
+            btn.classList.toggle('active', isFlowActive);
+            document.getElementById('phase-display').innerText = isFlowActive ? 'DUAL-SYNC' : 'PAUSED';
+        }
+
+        function resetCameraView() {
+            orbit.returning = true;
+        }
+
+        // --- Kombucha Easter Egg (kept + pimped) ---
+        function triggerKombuchaEasterEgg() {
+            // Golden bubble eruption
+            for (let i = 0; i < 36; i++) {
+                const b = document.createElement('div');
+                b.className = 'bubble';
+                const size = 8 + rand() * 26;
+                b.style.width = size + 'px';
+                b.style.height = size + 'px';
+                b.style.left = (rand() * 100) + 'vw';
+                b.style.animationDuration = (2.2 + rand() * 2.8) + 's';
+                b.style.animationDelay = (rand() * 0.9) + 's';
+                document.body.appendChild(b);
+                setTimeout(() => b.remove(), 6500);
+            }
+            const toast = document.getElementById('kombuchaToast');
+            toast.classList.add('visible');
+            setTimeout(() => toast.classList.remove('visible'), 3200);
+        }
+
+        // --- Render Loop (single clock) ---
+        const clock = new THREE.Clock();
+        let ready = false;
+
+        function animate() {
+            requestAnimationFrame(animate);
+            const dt = Math.min(clock.getDelta(), 0.05);
+            const elapsed = clock.getElapsedTime();
+
+            updateFigure8Layout(dt);
+
+            // Orbit: inertia, idle auto-drift, smooth return home
+            if (!dragState) {
+                orbit.theta += orbit.velTheta;
+                orbit.phi = Math.max(0.35, Math.min(Math.PI - 0.35, orbit.phi + orbit.velPhi));
+                orbit.velTheta *= 0.94;
+                orbit.velPhi *= 0.94;
+
+                if (orbit.returning) {
+                    const k = Math.min(1, dt * 2.5);
+                    orbit.theta += (orbit.homeTheta - orbit.theta) * k;
+                    orbit.phi += (orbit.homePhi - orbit.phi) * k;
+                    orbit.radius += (orbit.homeRadius - orbit.radius) * k;
+                    if (Math.abs(orbit.theta - orbit.homeTheta) < 0.002 &&
+                        Math.abs(orbit.phi - orbit.homePhi) < 0.002) {
+                        orbit.returning = false;
+                    }
+                } else if (Math.abs(orbit.velTheta) < 0.0004) {
+                    orbit.theta += dt * 0.045; // gentle idle drift
+                }
+            }
+            // Subtle breathing of the camera height
+            const breatheY = Math.sin(elapsed * 0.25) * 0.02;
+            applyOrbit();
+            camera.position.y += breatheY;
+            camera.lookAt(0, 0, 0);
+
+            // Starfield slow spin
+            const stars = scene.getObjectByName('starfield');
+            if (stars) stars.rotation.y += dt * 0.004;
+
+            renderer.render(scene, camera);
+
+            if (!ready) {
+                ready = true;
+                window.__SCENE_READY__ = true;
+            }
+        }
+
+        animate();
+
+        // --- Window Resize ---
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+    </script>
 </body>
 </html>
