@@ -3,788 +3,413 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fluid Motion TV | Master Repository Hub & FlowTouch 3D</title>
+    <title>Fluid Motion TV &bull; Masterclass Cyber-Tiki & Shop Experience</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --neon-cyan: #00f3ff;
+            --neon-magenta: #ff007f;
+            --neon-purple: #9d00ff;
+            --tiki-gold: #ffb700;
+            --dark-bg: #030308;
+            --glass-bg: rgba(10, 10, 25, 0.85);
+        }
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body {
-            background-color: #050508;
-            color: #00ffcc;
-            font-family: 'Courier New', Courier, monospace;
+        body, html {
+            width: 100%; height: 100%;
+            overflow-x: hidden;
+            background-color: var(--dark-bg);
+            font-family: 'Rajdhani', sans-serif;
+            color: #fff;
+        }
+        #canvas-bg {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 1;
+        }
+        .ui-overlay {
+            position: relative;
+            z-index: 10;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            overflow-x: hidden;
+            padding: 24px;
+            pointer-events: none;
+        }
+        header, .interactive-zone, footer {
+            pointer-events: auto;
         }
         header {
-            padding: 25px 40px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid rgba(0, 255, 204, 0.2);
-            background: rgba(5, 5, 8, 0.85);
-            backdrop-filter: blur(10px);
-            z-index: 10;
+            background: var(--glass-bg);
+            border: 1px solid rgba(0, 243, 255, 0.3);
+            padding: 16px 24px;
+            border-radius: 12px;
+            backdrop-filter: blur(12px);
         }
-        .logo { font-weight: bold; letter-spacing: 2px; font-size: 1.3rem; color: #fff; text-shadow: 0 0 10px rgba(0,255,204,0.5); }
-        .node-tag { font-size: 0.85rem; color: #888; border: 1px solid rgba(255,255,255,0.1); padding: 5px 12px; border-radius: 4px; }
-        
-        #canvas-container {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 1;
-            pointer-events: none;
-            opacity: 0.35;
-        }
-
-        .main-container {
-            max-width: 1200px;
-            margin: 40px auto;
-            padding: 0 20px;
-            z-index: 5;
-            width: 100%;
-        }
-        .hero-title {
-            font-size: 2.2rem;
-            color: #ffffff;
-            margin-bottom: 10px;
+        .brand {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 900;
+            font-size: 1.5rem;
             letter-spacing: 2px;
-            text-shadow: 0 0 15px rgba(0,255,204,0.4);
+            background: linear-gradient(45deg, var(--neon-cyan), var(--neon-magenta), var(--tiki-gold));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 20px rgba(0,243,255,0.4);
         }
-        .hero-subtitle {
-            font-size: 1rem;
-            color: #00ffcc;
-            margin-bottom: 40px;
-            opacity: 0.8;
+        .nav-links {
+            display: flex;
+            gap: 12px;
         }
-        
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 20px;
-        }
-        .card {
-            background: rgba(10, 10, 18, 0.8);
-            border: 1px solid rgba(0, 255, 204, 0.25);
-            border-radius: 6px;
-            padding: 24px;
-            transition: all 0.3s ease;
+        .nav-links a {
+            color: var(--neon-cyan);
             text-decoration: none;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.85rem;
+            padding: 8px 14px;
+            border: 1px solid var(--neon-cyan);
+            border-radius: 6px;
+            background: rgba(0,243,255,0.1);
+            transition: all 0.3s ease;
+        }
+        .nav-links a:hover {
+            background: var(--neon-cyan);
+            color: var(--dark-bg);
+            box-shadow: 0 0 15px var(--neon-cyan);
+        }
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 380px;
+            gap: 24px;
+            margin: 20px 0;
+            align-items: start;
+        }
+        @media(max-width: 900px) {
+            .main-grid { grid-template-columns: 1fr; }
+        }
+        .center-hub {
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
-            backdrop-filter: blur(5px);
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            text-align: center;
         }
-        .card:hover {
-            border-color: #00ffcc;
-            box-shadow: 0 0 20px rgba(0, 255, 204, 0.2);
-            transform: translateY(-3px);
-        }
-        .card h3 {
-            color: #ffffff;
-            font-size: 1.1rem;
+        .center-hub h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.2rem;
             margin-bottom: 10px;
+            color: var(--tiki-gold);
+            text-shadow: 0 0 15px rgba(255,183,0,0.5);
+        }
+        .center-hub p {
+            font-size: 1.1rem;
+            color: rgba(255,255,255,0.8);
+            margin-bottom: 20px;
+            max-width: 600px;
+        }
+        .controls-panel, .shop-panel {
+            background: var(--glass-bg);
+            border: 1px solid rgba(0, 243, 255, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            backdrop-filter: blur(12px);
+            box-shadow: 0 0 30px rgba(157,0,255,0.2);
+        }
+        .controls-panel h2, .shop-panel h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.1rem;
+            margin-bottom: 12px;
+            color: var(--neon-cyan);
+            border-bottom: 1px solid rgba(0,243,255,0.2);
+            padding-bottom: 6px;
+        }
+        .audio-player {
+            width: 100%;
+            margin-bottom: 15px;
+            accent-color: var(--neon-magenta);
+        }
+        .btn-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        button {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--neon-purple), var(--neon-magenta));
+            border: none;
+            color: #fff;
+            padding: 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 15px var(--neon-magenta);
+        }
+        .shop-items {
             display: flex;
-            align-items: center;
-            justify-content: space-between;
+            flex-direction: column;
+            gap: 12px;
+            max-height: 350px;
+            overflow-y: auto;
+            padding-right: 4px;
         }
-        .card h3 span { color: #00ffcc; font-size: 0.8rem; }
-        .card p {
-            color: #999;
-            font-size: 0.85rem;
-            line-height: 1.5;
-        }
-        .card-footer {
-            margin-top: 20px;
-            font-size: 0.75rem;
-            color: #00ffcc;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-        }
-
-        footer {
-            padding: 20px 40px;
+        .shop-item {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            padding: 12px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-top: 1px solid rgba(0, 255, 204, 0.2);
-            background: rgba(5, 5, 8, 0.95);
-            z-index: 10;
+        }
+        .shop-item-info h3 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.95rem;
+            color: #fff;
+        }
+        .shop-item-info p {
             font-size: 0.8rem;
-            color: #666;
+            color: rgba(255,255,255,0.6);
         }
-        .metrics { display: flex; gap: 20px; }
-        .metrics div span { color: #00ffcc; }
+        .price-tag {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--tiki-gold);
+            font-weight: 700;
+            margin-bottom: 6px;
+            text-align: right;
+        }
+        .buy-btn {
+            background: linear-gradient(135deg, #00f3ff, #0066ff);
+            font-size: 0.75rem;
+            padding: 6px 12px;
+        }
+        footer {
+            text-align: center;
+            font-size: 0.85rem;
+            color: rgba(255,255,255,0.6);
+            background: var(--glass-bg);
+            padding: 14px;
+            border-radius: 8px;
+            border: 1px solid rgba(0,243,255,0.2);
+        }
+        footer a { color: var(--neon-cyan); text-decoration: none; }
     </style>
-    <!-- Include Three.js for WebGL 3D Holographic Background -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
 <body>
-
-    <header>
-        <div class="logo">FLUID MOTION TV // MASTER HUB</div>
-        <div class="node-tag">PORT WAIKATO NODE</div>
-    </header>
-
-    <div id="canvas-container"></div>
-
-    <div class="main-container">
-        <h1 class="hero-title">MASTER REPOSITORY DIRECTORY</h1>
-        <p class="hero-subtitle">Unified routing across sovereign apps, 3D spatial engines, and 432Hz harmonic soundscapes.</p>
-
-        <div class="grid">
-            <!-- 1. Sovereign Apps -->
-            <a href="https://github.com/fluidmotiontv-oss/sovereign-apps" target="_blank" class="card">
-                <div>
-                    <h3>sovereign-apps <span>[01]</span></h3>
-                    <p>Sovereign mesh protocols, Cloudflare tunnels, local node fabrics, accounting ledgers, and Dragon 9 universal bridge.</p>
-                </div>
-                <div class="card-footer">Access Repository &rarr;</div>
-            </a>
-
-            <!-- 2. Music Instruments -->
-            <a href="https://github.com/fluidmotiontv-oss/music-instruments" target="_blank" class="card">
-                <div>
-  Timothy Dwen <fluidmotiontv@gmail.com>
-	
-1:13 AM (1 minute ago)
-	
-	
-to me
-```html
-<!DOCTYPE html>
-<html lang="en" class="dark">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fluid Motion TV | Raw Proof & Raw Power Masterclass Visualizer</title>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        cyber: {
-                            dark: '#050508',
-                            card: '#0f0f17',
-                            border: '#1f1f3a',
-                            neonPink: '#ff007f',
-                            neonCyan: '#00f3ff',
-                            neonPurple: '#9d00ff',
-                            neonGold: '#ffcc00'
-                        }
-                    },
-                    animation: {
-                        'pulse-fast': 'pulse 0.8s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-                        'glow': 'glow 2s ease-in-out infinite alternate',
-                    },
-                    keyframes: {
-                        glow: {
-                            '0%': { textShadow: '0 0 10px #00f3ff, 0 0 20px #00f3ff' },
-                            '100%': { textShadow: '0 0 20px #ff007f, 0 0 30px #ff007f, 0 0 40px #ff007f' }
-                        }
-                    }
-                }
-            }
-        }
-    </script>
-    <!-- Google Fonts: Inter & Orbitron -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
-    <!-- FontAwesome for Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #050508;
-            color: #f3f4f6;
-            overflow-x: hidden;
-        }
-        .font-cyber {
-            font-family: 'Orbitron', sans-serif;
-        }
-        canvas {
-            display: block;
-            width: 100%;
-            height: 100%;
-            position: absolute;
-            top: 0;
-            left: 0;
-            z-index: 1;
-        }
-        .glass-panel {
-            background: rgba(15, 15, 23, 0.75);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(0, 243, 255, 0.15);
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-        }
-        .glass-panel-pink {
-            background: rgba(15, 15, 23, 0.75);
-            backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 0, 127, 0.2);
-        }
-        .neon-glow-cyan {
-            box-shadow: 0 0 20px rgba(0, 243, 255, 0.4);
-        }
-        .neon-glow-pink {
-            box-shadow: 0 0 20px rgba(255, 0, 127, 0.4);
-        }
-        /* Custom scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #050508;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #1f1f3a;
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #00f3ff;
-        }
-    </style>
-</head>
-<body class="min-h-screen flex flex-col justify-between selection:bg-cyber-neonPink selection:text-white">
-
-    <!-- Canvas Visualizer Background -->
-    <canvas id="visualizerCanvas"></canvas>
-
-    <!-- Header / Navbar -->
-    <header class="relative z-20 w-full px-6 py-4 flex flex-col sm:flex-row items-center justify-between glass-panel border-b border-cyber-border">
-        <div class="flex items-center space-x-3 mb-3 sm:mb-0">
-            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyber-neonPink to-cyber-neonCyan flex items-center justify-center neon-glow-cyan animate-pulse-fast">
-                <i class="fa-solid fa-wave-square text-white text-lg"></i>
+    <canvas id="canvas-bg"></canvas>
+    
+    <div class="ui-overlay">
+        <header>
+            <div class="brand">FLUID MOTION TV</div>
+            <div class="nav-links">
+                <a href="https://dragonnineonline.com" target="_blank">Dragon Nine Online</a>
+                <a href="#shop" onclick="alert('Scrolling to Integrated Shop!');">Shop Hub</a>
             </div>
-            <div>
-                <h1 class="font-cyber font-black text-xl tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-cyber-neonCyan via-white to-cyber-neonPink">
-                    FLUID MOTION TV
-                </h1>
-                <p class="text-xs text-cyber-neonCyan font-mono tracking-widest">RAW PROOF &bull; RAW POWER</p>
+        </header>
+
+        <div class="main-grid">
+            <div class="center-hub">
+                <h1>CYBER-TIKI AUDIO & WAVE LAB</h1>
+                <p>Immersive WebGL audio reactivity combined with Fern Path Foyer nature waves and sacred geometry visualizers.</p>
             </div>
-        </div>
 
-        <div class="flex items-center space-x-4">
-            <a href="https://fluidmotiontv.com" target="_blank" rel="noopener noreferrer" 
-               class="px-4 py-2 rounded-lg bg-cyber-card border border-cyber-neonCyan/40 text-cyber-neonCyan hover:bg-cyber-neonCyan hover:text-black font-cyber text-xs tracking-wider transition duration-300 flex items-center space-x-2">
-                <i class="fa-solid fa-tv"></i>
-                <span>Fluid Motion TV</span>
-            </a>
-            <a href="https://dragonnineonline.com" target="_blank" rel="noopener noreferrer" 
-               class="px-4 py-2 rounded-lg bg-cyber-card border border-cyber-neonPink/40 text-cyber-neonPink hover:bg-cyber-neonPink hover:text-white font-cyber text-xs tracking-wider transition duration-300 flex items-center space-x-2">
-                <i class="fa-solid fa-dragon"></i>
-                <span>Dragon Nine Online</span>
-            </a>
-            <button id="fullscreenBtn" class="p-2 rounded-lg bg-cyber-card border border-cyber-border hover:border-cyber-neonCyan text-gray-300 hover:text-cyber-neonCyan transition">
-                <i class="fa-solid fa-expand"></i>
-            </button>
-        </div>
-    </header>
-
-    <!-- Main Immersive Content Area -->
-    <main class="relative z-20 flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 grid grid-cols-1 lg:grid-cols-4 gap-6 items-start">
-
-        <!-- Left Column: Controls & Audio Studio -->
-        <div class="lg:col-span-1 space-y-6">
-            <!-- Audio Deck Panel -->
-            <div class="glass-panel rounded-2xl p-5 border border-cyber-border">
-                <div class="flex items-center justify-between mb-4">
-                    <h2 class="font-cyber font-bold text-sm text-cyber-neonCyan tracking-wider flex items-center space-x-2">
-                        <i class="fa-solid fa-compact-disc animate-spin text-cyber-neonPink"></i>
-                        <span>AUDIO SYNTH DECK</span>
-                    </h2>
-                    <span id="audioStatusBadge" class="px-2 py-0.5 rounded text-[10px] font-mono bg-red-950/80 text-red-400 border border-red-800">PAUSED</span>
-                </div>
-
-                <div class="space-y-4">
-                    <div class="p-3 rounded-xl bg-cyber-card/80 border border-cyber-border">
-                        <p class="text-xs font-semibold text-gray-200">Track: Raw Proof & Power</p>
-                        <p class="text-[10px] text-gray-400">Cyber-Tiki Harmonic Beat Loop</p>
+            <div class="interactive-zone">
+                <div class="controls-panel" style="margin-bottom: 16px;">
+                    <h2>SOUNDTRACK & VISUALS</h2>
+                    <audio id="audio" class="audio-player" controls loop crossorigin="anonymous">
+                        <source src="20260724 - Gypsy Children of smoke Vol. 2 (Cypress Hill Inspired) Stoner hip hop mix [bI8T0YQSqgY].m4a" type="audio/mp4">
+                        Your browser does not support the audio element.
+                    </audio>
+                    <div class="btn-group">
+                        <button id="btn-mode">Toggle Mode</button>
+                        <button id="btn-fullscreen">Fullscreen</button>
                     </div>
+                </div>
 
-                    <!-- Play / Pause Button -->
-                    <button id="playToggleBtn" class="w-full py-3 rounded-xl bg-gradient-to-r from-cyber-neonPink to-cyber-neonCyan text-black font-cyber font-bold text-sm tracking-widest hover:opacity-90 active:scale-95 transition shadow-lg neon-glow-pink flex items-center justify-center space-x-2">
-                        <i id="playIcon" class="fa-solid fa-play"></i>
-                        <span id="playBtnText">ENGAGE BEAT</span>
-                    </button>
-
-                    <!-- Volume & Intensity Sliders -->
-                    <div class="space-y-3 pt-2 border-t border-cyber-border/60">
-                        <div>
-                            <div class="flex justify-between text-xs font-mono text-gray-400 mb-1">
-                                <span>MASTER GAIN</span>
-                                <span id="volumeVal">80%</span>
+                <div class="shop-panel" id="shop">
+                    <h2>FLUID MOTION MERCH SHOP</h2>
+                    <div class="shop-items">
+                        <div class="shop-item">
+                            <div class="shop-item-info">
+                                <h3>Cyber-Tiki Hoodie</h3>
+                                <p>Heavyweight neon embroidered fleece</p>
                             </div>
-                            <input type="range" id="volumeSlider" min="0" max="1" step="0.05" value="0.8" 
-                                   class="w-full accent-cyber-neonCyan bg-cyber-border rounded-lg h-2 cursor-pointer">
-                        </div>
-
-                        <div>
-                            <div class="flex justify-between text-xs font-mono text-gray-400 mb-1">
-                                <span>REACTIVE INTENSITY</span>
-                                <span id="intensityVal">1.5x</span>
+                            <div>
+                                <div class="price-tag">$65.00</div>
+                                <button class="buy-btn" onclick="alert('Added Cyber-Tiki Hoodie to Cart!');">Buy Now</button>
                             </div>
-                            <input type="range" id="intensitySlider" min="0.5" max="3.0" step="0.1" value="1.5" 
-                                   class="w-full accent-cyber-neonPink bg-cyber-border rounded-lg h-2 cursor-pointer">
                         </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Visualizer Mode Selector -->
-            <div class="glass-panel rounded-2xl p-5 border border-cyber-border">
-                <h2 class="font-cyber font-bold text-sm text-cyber-neonPink tracking-wider mb-4 flex items-center space-x-2">
-                    <i class="fa-solid fa-sliders"></i>
-                    <span>VISUALIZER MODES</span>
-                </h2>
-                <div class="grid grid-cols-1 gap-2.5">
-                    <button data-mode="starfield" class="mode-btn w-full py-2.5 px-3 rounded-xl bg-cyber-neonCyan/10 border border-cyber-neonCyan text-cyber-neonCyan font-cyber text-xs tracking-wider text-left transition hover:bg-cyber-neonCyan hover:text-black flex items-center justify-between">
-                        <span>Starfield Warp</span>
-                        <i class="fa-solid fa-meteor"></i>
-                    </button>
-                    <button data-mode="wave" class="mode-btn w-full py-2.5 px-3 rounded-xl bg-cyber-card border border-cyber-border text-gray-300 font-cyber text-xs tracking-wider text-left transition hover:border-cyber-neonPink hover:text-cyber-neonPink flex items-center justify-between">
-                        <span>Neon Wave Spectrum</span>
-                        <i class="fa-solid fa-wave-square"></i>
-                    </button>
-                    <button data-mode="matrix" class="mode-btn w-full py-2.5 px-3 rounded-xl bg-cyber-card border border-cyber-border text-gray-300 font-cyber text-xs tracking-wider text-left transition hover:border-cyber-neonGold hover:text-cyber-neonGold flex items-center justify-between">
-                        <span>Tiki Particle Matrix</span>
-                        <i class="fa-solid fa-cubes"></i>
-                    </button>
-                    <button data-mode="core" class="mode-btn w-full py-2.5 px-3 rounded-xl bg-cyber-card border border-cyber-border text-gray-300 font-cyber text-xs tracking-wider text-left transition hover:border-cyber-neonCyan hover:text-cyber-neonCyan flex items-center justify-between">
-                        <span>Viva La Resolution Core</span>
-                        <i class="fa-solid fa-atom"></i>
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Center / Right: Interactive Dancing Tiki Art Cards & Showcase -->
-        <div class="lg:col-span-3 space-y-6">
-            <!-- Hero Banner & Visualizer Canvas HUD -->
-            <div class="glass-panel rounded-2xl p-6 sm:p-8 border border-cyber-border relative overflow-hidden flex flex-col justify-between min-h-[380px]">
-                <div class="absolute top-0 right-0 w-96 h-96 bg-cyber-neonCyan/5 rounded-full blur-3xl pointer-events-none"></div>
-                <div class="absolute bottom-0 left-0 w-96 h-96 bg-cyber-neonPink/5 rounded-full blur-3xl pointer-events-none"></div>
-
-                <div class="relative z-10 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                    <div>
-                        <span class="px-3 py-1 rounded-full bg-cyber-neonCyan/10 border border-cyber-neonCyan/30 text-cyber-neonCyan text-[11px] font-mono tracking-widest uppercase">
-                            IMERSIVE WEBGL MASTERCLASS
-                        </span>
-                        <h2 class="font-cyber font-black text-3xl sm:text-4xl mt-3 text-white tracking-wide">
-                            RAW PROOF <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyber-neonCyan to-cyber-neonPink">&bull; RAW POWER</span>
-                        </h2>
-                        <p class="text-sm text-gray-300 mt-2 max-w-xl">
-                            Experience the pinnacle of fluid motion aesthetics. Pulsing cyber-tiki matrices, real-time frequency distortion, and interactive neon artifacts built for Fluid Motion TV.
-                        </p>
-                    </div>
-
-                    <div class="flex items-center space-x-3 self-end sm:self-auto">
-                        <div class="text-right font-mono">
-                            <div class="text-xs text-cyber-neonCyan" id="fpsCounter">FPS: 60</div>
-                            <div class="text-[10px] text-gray-400">BEAT SYNC: ACTIVE</div>
+                        <div class="shop-item">
+                            <div class="shop-item-info">
+                                <h3>Raw Proof Vinyl LP</h3>
+                                <p>Limited Edition Stoner Hip Hop Mix</p>
+                            </div>
+                            <div>
+                                <div class="price-tag">$35.00</div>
+                                <button class="buy-btn" onclick="alert('Added Raw Proof Vinyl to Cart!');">Buy Now</button>
+                            </div>
                         </div>
-                    </div>
-                </div>
-
-                <!-- Interactive Floating Stats Bar inside Hero -->
-                <div class="relative z-10 grid grid-cols-2 sm:grid-cols-4 gap-4 mt-8 pt-6 border-t border-cyber-border">
-                    <div class="p-3 rounded-xl bg-cyber-card/60 border border-cyber-border">
-                        <div class="text-[10px] font-mono text-gray-400">RESOLUTION</div>
-                        <div class="font-cyber font-bold text-cyber-neonCyan text-sm mt-0.5">VIVA LA RESOLUTION</div>
-                    </div>
-                    <div class="p-3 rounded-xl bg-cyber-card/60 border border-cyber-border">
-                        <div class="text-[10px] font-mono text-gray-400">FREQUENCY</div>
-                        <div class="font-cyber font-bold text-cyber-neonPink text-sm mt-0.5" id="freqDisplay">432 Hz CYBER</div>
-                    </div>
-                    <div class="p-3 rounded-xl bg-cyber-card/60 border border-cyber-border">
-                        <div class="text-[10px] font-mono text-gray-400">TOTEM ENGINE</div>
-                        <div class="font-cyber font-bold text-cyber-neonGold text-sm mt-0.5">WEBGL + CANVAS</div>
-                    </div>
-                    <div class="p-3 rounded-xl bg-cyber-card/60 border border-cyber-border">
-                        <div class="text-[10px] font-mono text-gray-400">ECOSYSTEM</div>
-                        <div class="font-cyber font-bold text-white text-sm mt-0.5">FLUID MOTION TV</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Interactive Dancing Art Cards Grid -->
-            <div>
-                <div class="flex items-center justify-between mb-4">
-                    <h3 class="font-cyber font-bold text-sm text-white tracking-wider flex items-center space-x-2">
-                        <i class="fa-solid fa-masks-theater text-cyber-neonPink"></i>
-                        <span>INTERACTIVE CYBER-TIKI TOTEMS</span>
-                    </h3>
-                    <span class="text-xs text-gray-400 font-mono">Click cards to trigger frequency shockwaves</span>
-                </div>
-
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                    <!-- Art Card 1 -->
-                    <div class="art-card glass-panel rounded-2xl p-5 border border-cyber-border hover:border-cyber-neonCyan transition duration-300 cursor-pointer relative group overflow-hidden" data-totem="0">
-                        <div class="absolute inset-0 bg-gradient-to-br from-cyber-neonCyan/10 to-transparent opacity-0 group-hover:opacity-100 transition duration-300"></div>
-                        <div class="relative z-10 flex items-center justify-between mb-3">
-                            <span class="w-8 h-8 rounded-lg bg-cyber-neonCyan/20 text-cyber-neonCyan flex items-center justify-center font-cyber font-bold">01</span>
-                            <i class="fa-solid fa-fire text-cyber-neonCyan animate-bounce"></i>
-                        </div>
-                        <h4 class="font-cyber font-bold text-white text-base group-hover:text-cyber-neonCyan transition">Raw Proof Tiki</h4>
-                        <p class="text-xs text-gray-400 mt-1">Primal neon spirit channeling high-voltage audio waves across the matrix.</p>
-                        <div class="mt-4 flex items-center justify-between text-[11px] font-mono text-cyber-neonCyan">
-                            <span>REACTIVITY: HIGH</span>
-                            <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition"></i>
-                        </div>
-                    </div>
-
-                    <!-- Art Card 2 -->
-                    <div class="art-card glass-panel rounded-2xl p-5 border border-cyber-border hover:border-cyber-neonPink transition duration-300 cursor-pointer relative group overflow-hidden" data-totem="1">
-                        <div class="absolute inset-0 bg-gradient-to-br from-cyber-neonPink/10 to-transparent opacity-0 group-hover:opacity-100 transition duration-300"></div>
-                        <div class="relative z-10 flex items-center justify-between mb-3">
-                            <span class="w-8 h-8 rounded-lg bg-cyber-neonPink/20 text-cyber-neonPink flex items-center justify-center font-cyber font-bold">02</span>
-                            <i class="fa-solid fa-bolt text-cyber-neonPink animate-pulse"></i>
-                        </div>
-                        <h4 class="font-cyber font-bold text-white text-base group-hover:text-cyber-neonPink transition">Raw Power Totem</h4>
-                        <p class="text-xs text-gray-400 mt-1">Unstoppable harmonic energy engine built for Fluid Motion TV broadcasts.</p>
-                        <div class="mt-4 flex items-center justify-between text-[11px] font-mono text-cyber-neonPink">
-                            <span>REACTIVITY: PEAK</span>
-                            <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition"></i>
-                        </div>
-                    </div>
-
-                    <!-- Art Card 3 -->
-                    <div class="art-card glass-panel rounded-2xl p-5 border border-cyber-border hover:border-cyber-neonGold transition duration-300 cursor-pointer relative group overflow-hidden" data-totem="2">
-                        <div class="absolute inset-0 bg-gradient-to-br from-cyber-neonGold/10 to-transparent opacity-0 group-hover:opacity-100 transition duration-300"></div>
-                        <div class="relative z-10 flex items-center justify-between mb-3">
-                            <span class="w-8 h-8 rounded-lg bg-cyber-neonGold/20 text-cyber-neonGold flex items-center justify-center font-cyber font-bold">03</span>
-                            <i class="fa-solid fa-sun text-cyber-neonGold animate-spin" style="animation-duration: 8s;"></i>
-                        </div>
-                        <h4 class="font-cyber font-bold text-white text-base group-hover:text-cyber-neonGold transition">Viva La Resolution</h4>
-                        <p class="text-xs text-gray-400 mt-1">Crystal clear cybernetic fidelity connecting Dragon Nine Online domains.</p>
-                        <div class="mt-4 flex items-center justify-between text-[11px] font-mono text-cyber-neonGold">
-                            <span>REACTIVITY: ULTRA</span>
-                            <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition"></i>
+                        <div class="shop-item">
+                            <div class="shop-item-info">
+                                <h3>Fern Path Slipmat</h3>
+                                <p>Anti-static turntable slipmat</p>
+                            </div>
+                            <div>
+                                <div class="price-tag">$20.00</div>
+                                <button class="buy-btn" onclick="alert('Added Fern Path Slipmat to Cart!');">Buy Now</button>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </main>
 
-    <!-- Footer -->
-    <footer class="relative z-20 w-full px-6 py-4 glass-panel border-t border-cyber-border mt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-gray-400">
-        <div class="flex items-center space-x-2 mb-2 sm:mb-0">
-            <span>&copy; 2026 <strong class="text-white">Fluid Motion TV</strong>. All rights reserved.</span>
-        </div>
-        <div class="flex items-center space-x-6">
-            <a href="https://fluidmotiontv.com" target="_blank" rel="noopener noreferrer" class="hover:text-cyber-neonCyan transition">Fluid Motion TV</a>
-            <a href="https://dragonnineonline.com" target="_blank" rel="noopener noreferrer" class="hover:text-cyber-neonPink transition">Dragon Nine Online</a>
-            <span class="font-mono text-cyber-neonCyan">RAW PROOF MASTERCLASS</span>
-        </div>
-    </footer>
+        <footer>
+            Fluid Motion TV &bull; Powered by WebGL &bull; <a href="https://dragonnineonline.com" target="_blank">Dragon Nine Online</a>
+        </footer>
+    </div>
 
-    <!-- Audio Synthesis & Visualizer Engine Script -->
     <script>
-        // --- Web Audio API & Synth Engine ---
-        let audioCtx = null;
-        let oscillator1 = null, oscillator2 = null, gainNode = null, analyser = null;
-        let isPlaying = false;
-        let currentMode = 'starfield'; // starfield, wave, matrix, core
-        let masterVolume = 0.8;
-        let intensityMultiplier = 1.5;
+        const canvas = document.getElementById('canvas-bg');
+        const ctx = canvas.getContext('2d');
+        const audio = document.getElementById('audio');
+        
+        let width, height;
+        function resize() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resize);
+        resize();
 
-        const playToggleBtn = document.getElementById('playToggleBtn');
-        const playIcon = document.getElementById('playIcon');
-        const playBtnText = document.getElementById('playBtnText');
-        const audioStatusBadge = document.getElementById('audioStatusBadge');
-        const volumeSlider = document.getElementById('volumeSlider');
-        const intensitySlider = document.getElementById('intensitySlider');
-        const volumeVal = document.getElementById('volumeVal');
-        const intensityVal = document.getElementById('intensityVal');
-        const freqDisplay = document.getElementById('freqDisplay');
-        const fpsCounter = document.getElementById('fpsCounter');
+        // Audio Analyser Setup
+        let audioCtx, analyser, dataArray;
+        let isAudioInitialized = false;
 
         function initAudio() {
-            if (audioCtx) return;
-            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            analyser = audioCtx.createAnalyser();
-            analyser.fftSize = 256;
-
-            gainNode = audioCtx.createGain();
-            gainNode.gain.setValueAtTime(masterVolume, audioCtx.currentTime);
-
-            gainNode.connect(analyser);
-            analyser.connect(audioCtx.destination);
+            if (isAudioInitialized) return;
+            try {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                analyser = audioCtx.createAnalyser();
+                const source = audioCtx.createMediaElementSource(audio);
+                source.connect(analyser);
+                analyser.connect(audioCtx.destination);
+                analyser.fftSize = 256;
+                dataArray = new Uint8Array(analyser.frequencyBinCount);
+                isAudioInitialized = true;
+            } catch(e) {
+                console.log("Audio context waiting for interaction", e);
+            }
         }
 
-        function startBeatLoop() {
+        audio.addEventListener('play', () => {
             initAudio();
-            if (audioCtx.state === 'suspended') {
+            if (audioCtx && audioCtx.state === 'suspended') {
                 audioCtx.resume();
             }
+        });
 
-            // Create rhythmic pulsing synth beat (Raw Proof / Raw Power vibes)
-            oscillator1 = audioCtx.createOscillator();
-            oscillator2 = audioCtx.createOscillator();
+        let mode = 0;
+        document.getElementById('btn-mode').addEventListener('click', () => {
+            mode = (mode + 1) % 3;
+        });
 
-            oscillator1.type = 'sawtooth';
-            oscillator1.frequency.setValueAtTime(110, audioCtx.currentTime); // A2
-
-            oscillator2.type = 'square';
-            oscillator2.frequency.setValueAtTime(220, audioCtx.currentTime); // A3
-
-            // LFO filter / gain pulsation
-            const filter = audioCtx.createBiquadFilter();
-            filter.type = 'lowpass';
-            filter.frequency.setValueAtTime(800, audioCtx.currentTime);
-
-            oscillator1.connect(filter);
-            oscillator2.connect(filter);
-            filter.connect(gainNode);
-
-            oscillator1.start();
-            oscillator2.start();
-
-            isPlaying = true;
-            playIcon.className = "fa-solid fa-pause";
-            playBtnText.textContent = "PAUSE BEAT";
-            audioStatusBadge.className = "px-2 py-0.5 rounded text-[10px] font-mono bg-green-950/80 text-green-400 border border-green-800";
-            audioStatusBadge.textContent = "ACTIVE";
-        }
-
-        function stopBeatLoop() {
-            if (oscillator1) {
-                try { oscillator1.stop(); oscillator2.stop(); } catch(e){}
-                oscillator1 = null;
-                oscillator2 = null;
-            }
-            isPlaying = false;
-            playIcon.className = "fa-solid fa-play";
-            playBtnText.textContent = "ENGAGE BEAT";
-            audioStatusBadge.className = "px-2 py-0.5 rounded text-[10px] font-mono bg-red-950/80 text-red-400 border border-red-800";
-            audioStatusBadge.textContent = "PAUSED";
-        }
-
-        playToggleBtn.addEventListener('click', () => {
-            if (isPlaying) {
-                stopBeatLoop();
+        document.getElementById('btn-fullscreen').addEventListener('click', () => {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen();
             } else {
-                startBeatLoop();
+                document.exitFullscreen();
             }
         });
 
-        volumeSlider.addEventListener('input', (e) => {
-            masterVolume = parseFloat(e.target.value);
-            volumeVal.textContent = Math.round(masterVolume * 100) + '%';
-            if (gainNode && audioCtx) {
-                gainNode.gain.setValueAtTime(masterVolume, audioCtx.currentTime);
-            }
-        });
-
-        intensitySlider.addEventListener('input', (e) => {
-            intensityMultiplier = parseFloat(e.target.value);
-            intensityVal.textContent = intensityMultiplier.toFixed(1) + 'x';
-        });
-
-        // Mode switchers
-        document.querySelectorAll('.mode-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                document.querySelectorAll('.mode-btn').forEach(b => {
-                    b.className = "mode-btn w-full py-2.5 px-3 rounded-xl bg-cyber-card border border-cyber-border text-gray-300 font-cyber text-xs tracking-wider text-left transition hover:border-cyber-neonCyan hover:text-cyber-neonCyan flex items-center justify-between";
-                });
-                btn.className = "mode-btn w-full py-2.5 px-3 rounded-xl bg-cyber-neonCyan/10 border border-cyber-neonCyan text-cyber-neonCyan font-cyber text-xs tracking-wider text-left transition flex items-center justify-between";
-                currentMode = btn.getAttribute('data-mode');
-            });
-        });
-
-        // --- Canvas Visualizer Engine ---
-        const canvas = document.getElementById('visualizerCanvas');
-        const ctx = canvas.getContext('2d');
-
-        function resizeCanvas() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        }
-        window.addEventListener('resize', resizeCanvas);
-        resizeCanvas();
-
-        // Particles for Starfield & Matrix
-        let stars = [];
-        for (let i = 0; i < 150; i++) {
-            stars.push({
-                x: (Math.random() - 0.5) * canvas.width,
-                y: (Math.random() - 0.5) * canvas.height,
-                z: Math.random() * canvas.width,
-                size: Math.random() * 2 + 1,
+        // Fern Path Foyer Waves & Particles
+        let particles = [];
+        for(let i=0; i<120; i++) {
+            particles.push({
+                x: Math.random() * width,
+                y: Math.random() * height,
+                vx: (Math.random() - 0.5) * 1.5,
+                vy: (Math.random() - 0.5) * 1.5,
+                radius: Math.random() * 2.5 + 1,
                 color: Math.random() > 0.5 ? '#00f3ff' : '#ff007f'
             });
         }
 
-        let shockwaves = [];
-        document.querySelectorAll('.art-card').forEach(card => {
-            card.addEventListener('click', (e) => {
-                const rect = card.getBoundingClientRect();
-                shockwaves.push({
-                    x: rect.left + rect.width / 2,
-                    y: rect.top + rect.height / 2,
-                    radius: 10,
-                    maxRadius: 300,
-                    color: card.getAttribute('data-totem') === '0' ? '#00f3ff' : (card.getAttribute('data-totem') === '1' ? '#ff007f' : '#ffcc00')
-                });
+        let waveAngle = 0;
+
+        function animate() {
+            requestAnimationFrame(animate);
+
+            ctx.fillStyle = 'rgba(3, 3, 8, 0.25)';
+            ctx.fillRect(0, 0, width, height);
+
+            let bass = 50;
+            if (analyser && isAudioInitialized) {
+                analyser.getByteFrequencyData(dataArray);
+                bass = dataArray[2] || 50;
+            }
+
+            // Fern Path Foyer Ocean Waves
+            waveAngle += 0.025;
+            ctx.lineWidth = 2;
+            for (let i = 0; i < 3; i++) {
+                ctx.beginPath();
+                ctx.strokeStyle = i % 2 === 0 ? `rgba(0, 243, 255, ${0.12 + bass/400})` : `rgba(157, 0, 255, ${0.12 + bass/400})`;
+                for (let x = 0; x < width; x += 25) {
+                    let y = height * 0.75 + Math.sin(x * 0.004 + waveAngle + i) * (60 + bass * 0.6) + Math.cos(x * 0.006 - waveAngle) * 30;
+                    if (x === 0) ctx.moveTo(x, y);
+                    else ctx.lineTo(x, y);
+                }
+                ctx.stroke();
+            }
+
+            // Particles
+            particles.forEach((p, idx) => {
+                p.x += p.vx + (bass * 0.015 * (idx % 2 === 0 ? 1 : -1));
+                p.y += p.vy;
+
+                if (p.x < 0) p.x = width;
+                if (p.x > width) p.x = 0;
+                if (p.y < 0) p.y = height;
+                if (p.y > height) p.y = 0;
+
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.radius + bass * 0.04, 0, Math.PI * 2);
+                ctx.fillStyle = p.color;
+                ctx.shadowBlur = 12;
+                ctx.shadowColor = p.color;
+                ctx.fill();
+                ctx.shadowBlur = 0;
             });
-        });
 
-        let lastTime = performance.now();
-        let frameCount = 0;
-        let lastFpsUpdate = performance.now();
-
-        function animate(now) {
-            // FPS calculation
-            frameCount++;
-            if (now - lastFpsUpdate >= 1000) {
-                fpsCounter.textContent = `FPS: ${Math.round((frameCount * 1000) / (now - lastFpsUpdate))}`;
-                frameCount = 0;
-                lastFpsUpdate = now;
-            }
-
-            ctx.fillStyle = 'rgba(5, 5, 8, 0.3)';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            let freqData = new Uint8Array(128);
-            if (analyser && isPlaying) {
-                analyser.getByteFrequencyData(freqData);
-            } else {
-                // Simulated gentle wave when paused
-                for (let i = 0; i < freqData.length; i++) {
-                    freqData[i] = Math.sin(now * 0.003 + i * 0.1) * 30 + 40;
-                }
-            }
-
-            // Average frequency for reactivity
-            let avgFreq = 0;
-            for (let i = 0; i < freqData.length; i++) avgFreq += freqData[i];
-            avgFreq /= freqData.length;
-            freqDisplay.textContent = `${Math.round(432 + avgFreq * intensityMultiplier)} Hz`;
-
-            const cx = canvas.width / 2;
-            const cy = canvas.height / 2;
-
-            // Render Modes
-            if (currentMode === 'starfield') {
-                // Starfield Warp
-                const speed = (2 + (avgFreq / 10) * intensityMultiplier) * (isPlaying ? 1 : 0.4);
-                stars.forEach(star => {
-                    star.z -= speed;
-                    if (star.z <= 0) star.z = canvas.width;
-
-                    const k = 250 / star.z;
-                    const px = star.x * k + cx;
-                    const py = star.y * k + cy;
-
-                    if (px >= 0 && px <= canvas.width && py >= 0 && py <= canvas.height) {
-                        const pSize = Math.max(1, star.size * k * (1 + avgFreq / 100));
-                        ctx.fillStyle = star.color;
-                        ctx.beginPath();
-                        ctx.arc(px, py, pSize, 0, Math.PI * 2);
-                        ctx.fill();
-                    }
-                });
-            } else if (currentMode === 'wave') {
-                // Neon Wave Spectrum
-                ctx.lineWidth = 3;
-                ctx.beginPath();
-                const sliceWidth = canvas.width / freqData.length;
-                let x = 0;
-                for (let i = 0; i < freqData.length; i++) {
-                    const v = freqData[i] / 128.0 * intensityMultiplier;
-                    const y = (v * canvas.height / 2) + (canvas.height / 2);
-                    if (i === 0) ctx.moveTo(x, y);
-                    else ctx.lineTo(x, y);
-                    x += sliceWidth;
-                }
-                ctx.strokeStyle = '#00f3ff';
-                ctx.stroke();
-
-                // Second wave mirrored
-                ctx.beginPath();
-                x = 0;
-                for (let i = 0; i < freqData.length; i++) {
-                    const v = freqData[i] / 128.0 * intensityMultiplier;
-                    const y = canvas.height - ((v * canvas.height / 2) + (canvas.height / 2));
-                    if (i === 0) ctx.moveTo(x, y);
-                    else ctx.lineTo(x, y);
-                    x += sliceWidth;
-                }
-                ctx.strokeStyle = '#ff007f';
-                ctx.stroke();
-            } else if (currentMode === 'matrix') {
-                // Tiki Particle Matrix Grid
-                const cols = 20;
-                const rows = 12;
-                const cellW = canvas.width / cols;
-                const cellH = canvas.height / rows;
-
-                for (let r = 0; r < rows; r++) {
-                    for (let c = 0; c < cols; c++) {
-                        const index = (r * cols + c) % freqData.length;
-                        const val = freqData[index] / 255.0 * intensityMultiplier;
-                        const x = c * cellW + cellW / 2;
-                        const y = r * cellH + cellH / 2;
-                        const radius = val * 15;
-
-                        ctx.fillStyle = c % 2 === 0 ? 'rgba(0, 243, 255, 0.4)' : 'rgba(255, 0, 127, 0.4)';
-                        ctx.beginPath();
-                        ctx.arc(x, y, Math.max(2, radius), 0, Math.PI * 2);
-                        ctx.fill();
-                    }
-                }
-            } else if (currentMode === 'core') {
-                // Viva La Resolution Core (Rotating Cyber Mandala)
+            // Sacred Geometry Visualizer Ring
+            if (mode === 0) {
                 ctx.save();
-                ctx.translate(cx, cy);
-                const rotSpeed = now * 0.001;
-                ctx.rotate(rotSpeed);
-
-                const rings = 6;
-                for (let i = 1; i <= rings; i++) {
-                    ctx.beginPath();
-                    const radius = i * 45 + (avgFreq * intensityMultiplier * 0.5);
-                    ctx.arc(0, 0, radius, 0, Math.PI * 2);
-                    ctx.strokeStyle = i % 2 === 0 ? 'rgba(0, 243, 255, 0.5)' : 'rgba(255, 0, 127, 0.5)';
-                    ctx.lineWidth = 2 + (avgFreq / 30);
-                    ctx.stroke();
+                ctx.translate(width / 2, height / 2 - 40);
+                ctx.rotate(waveAngle * 0.4);
+                ctx.strokeStyle = '#ffb700';
+                ctx.lineWidth = 2.5;
+                ctx.beginPath();
+                let radius = 70 + bass * 0.5;
+                for (let a = 0; a < Math.PI * 2; a += Math.PI / 4) {
+                    let rx = Math.cos(a) * radius;
+                    let ry = Math.sin(a) * radius;
+                    ctx.lineTo(rx, ry);
                 }
+                ctx.closePath();
+                ctx.stroke();
                 ctx.restore();
             }
-
-            // Render Shockwaves
-            shockwaves.forEach((sw, idx) => {
-                sw.radius += 6;
-                ctx.strokeStyle = sw.color;
-                ctx.lineWidth = 3;
-                ctx.beginPath();
-                ctx.arc(sw.x, sw.y, sw.radius, 0, Math.PI * 2);
-                ctx.stroke();
-
-                if (sw.radius >= sw.maxRadius) {
-                    shockwaves.splice(idx, 1);
-                }
-            });
-
-            requestAnimationFrame(animate);
         }
-
-        requestAnimationFrame(animate);
-
-        // Fullscreen toggle
-        document.getElementById('fullscreenBtn').addEventListener('click', () => {
-            if (!document.fullscreenElement) {
-                document.documentElement.requestFullscreen();
-            } else {
-                if (document.exitFullscreen) {
-                    document.exitFullscreen();
-                }
-            }
-        });
+        animate();
     </script>
 </body>
 </html>
-```
