@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Figure-8 Dual-Phase Flow | Fluid Motion Unified Studio</title>
+    <style>
+        :root {
+            --bg-deep: #030712;
+            --surface: rgba(15, 23, 42, 0.75);
+            --surface-border: rgba(56, 189, 248, 0.2);
+            --neon-cyan: #38bdf8;
+            --neon-magenta: #e879f9;
+            --neon-gold: #facc15;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+        }
+
+        body {
+            background-color: var(--bg-deep);
+            color: var(--text-main);
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            overflow: hidden;
+            width: 100vw;
+            height: 100vh;
+        }
+
+        #webgl-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        /* HUD Overlay Layer */
+        .hud-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10;
+            pointer-events: none;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 24px;
+        }
+
+        header, .control-dock, .card-modal, .easter-egg {
+            pointer-events: auto;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--surface);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--surface-border);
+            padding: 16px 28px;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+        }
+
+        .brand h1 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            background: linear-gradient(135deg, var(--neon-cyan), var(--neon-magenta));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-transform: uppercase;
+        }
+
+        .brand p {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            letter-spacing: 0.05em;
+        }
+
+        .telemetry {
+            display: flex;
+            gap: 20px;
+            font-family: monospace;
+            font-size: 0.85rem;
+        }
+
+        .telemetry-item span {
+            color: var(--neon-cyan);
+        }
+
+        /* Control Dock */
+        .control-dock {
+            align-self: center;
+            display: flex;
+            gap: 12px;
+            background: var(--surface);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--surface-border);
+            padding: 12px 24px;
+            border-radius: 9999px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            margin-bottom: 12px;
+        }
+
+        .btn {
+            background: rgba(56, 189, 248, 0.1);
+            border: 1px solid var(--neon-cyan);
+            color: var(--text-main);
+            padding: 8px 18px;
+            border-radius: 9999px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            letter-spacing: 0.05em;
+        }
+
+        .btn:hover {
+            background: var(--neon-cyan);
+            color: var(--bg-deep);
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.5);
+        }
+
+        .btn.active {
+            background: var(--neon-magenta);
+            border-color: var(--neon-magenta);
+            color: var(--bg-deep);
+            box-shadow: 0 0 15px rgba(232, 121, 249, 0.5);
+        }
+
+        /* Interactive Modal for App Launch */
+        .card-modal {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.9);
+            background: rgba(3, 7, 18, 0.95);
+            border: 1px solid var(--neon-cyan);
+            padding: 36px;
+            border-radius: 24px;
+            width: 90%;
+            max-width: 500px;
+            z-index: 100;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.75);
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .card-modal.visible {
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .card-modal h2 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            color: var(--neon-cyan);
+        }
+
+        .card-modal p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin-bottom: 24px;
+            line-height: 1.5;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+        }
+
+        /* Kombucha Easter Egg Banner */
+        .easter-egg-banner {
+            position: absolute;
+            bottom: 24px;
+            right: 24px;
+            background: rgba(250, 204, 21, 0.1);
+            border: 1px solid var(--neon-gold);
+            color: var(--neon-gold);
+            padding: 8px 16px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-family: monospace;
+            cursor: pointer;
+            z-index: 20;
+            backdrop-filter: blur(8px);
+            transition: all 0.3s ease;
+        }
+        .easter-egg-banner:hover {
+            background: var(--neon-gold);
+            color: var(--bg-deep);
+        }
+
+        @media (max-width: 768px) {
+            header { flex-direction: column; gap: 10px; text-align: center; }
+            .telemetry { display: none; }
+            .control-dock { flex-wrap: wrap; justify-content: center; }
+        }
+    </style>
+    <!-- Three.js Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- GSAP for Smooth Spatial Transitions -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+</head>
+<body>
+
+    <div id="webgl-container"></div>
+
+    <div class="hud-overlay">
+        <header>
+            <div class="brand">
+                <h1>Figure-8 Dual-Phase Flow</h1>
+                <p>VR Spatial Interface // Dragon 9 Framework</p>
+            </div>
+            <div class="telemetry">
+                <div class="telemetry-item">TUNING: <span id="freq-display">432 Hz</span></div>
+                <div class="telemetry-item">PHASE: <span id="phase-display">DUAL-SYNC</span></div>
+                <div class="telemetry-item">NODES: <span>9 ACTIVE</span></div>
+            </div>
+        </header>
+
+        <div class="control-dock">
+            <button class="btn active" id="btn-flow" onclick="toggleFlowMode()">Dual-Phase Flow</button>
+            <button class="btn" id="btn-harmonic" onclick="toggleHarmonicAudio()">432Hz Synth</button>
+            <button class="btn" id="btn-reset" onclick="resetCameraView()">Recenter View</button>
+        </div>
+    </div>
+
+    <!-- Interactive App Launcher Modal -->
+    <div class="card-modal" id="appModal">
+        <h2 id="modalTitle">App Title</h2>
+        <p id="modalDesc">App Description goes here.</p>
+        <div class="modal-actions">
+            <button class="btn" onclick="closeModal()">Close</button>
+            <button class="btn active" id="launchBtn" onclick="launchApp()">Launch Module</button>
+        </div>
+    </div>
+
+    <div class="easter-egg-banner" onclick="triggerKombuchaEasterEgg()">
+        🍵 FlowTouch Kombucha Vault [Active]
+    </div>
+
+    <script>
+        // --- Core 3D Application Setup ---
+        const container = document.getElementById('webgl-container');
+        const scene = new THREE.Scene();
+        scene.fog = new THREE.FogExp2(0x030712, 0.015);
+
+        const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.set(0, 0, 22);
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        renderer.toneMapping = THREE.ACESFilmicToneMapping;
+        container.appendChild(renderer.domElement);
+
+        // --- Lighting ---
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
+        scene.add(ambientLight);
+
+        const pointLight1 = new THREE.PointLight(0x38bdf8, 3, 50);
+        pointLight1.position.set(10, 10, 10);
+        scene.add(pointLight1);
+
+        const pointLight2 = new THREE.PointLight(0xe879f9, 3, 50);
+        pointLight2.position.set(-10, -10, 10);
+        scene.add(pointLight2);
+
+        // --- 9 Core Application Nodes ---
+        const appNodes = [
+            { title: "D9Enigma", subtitle: "Creative Suite & Cryptographic Engine", url: "https://fluidmotiontv-oss.github.io/D9Enigma" },
+            { title: "FlowTouch", subtitle: "Spatial 3D Touch & Product Viewer", url: "#flowtouch" },
+            { title: "Sovereign ISP", subtitle: "Decentralized Mesh Network Hub", url: "https://fluidmotiontv-oss.github.io/sovereign-isp" },
+            { title: "Fluidmotiontv-clock", subtitle: "Dragon 9 Temporal Synchronization", url: "https://fluidmotiontv-oss.github.io/Fluidmotiontv-clock" },
+            { title: "WiDio", subtitle: "Web Audio Synthesizer & 432Hz Deck", url: "#widio" },
+            { title: "WwDWS", subtitle: "Digital Video & Cinematic Pipeline", url: "#wwdws" },
+            { title: "MasterStudioServer", subtitle: "Local Node Daemon & Daemon Proxy", url: "#studio" },
+            { title: "Magic-Time", subtitle: "Harmonic Horizon & WebGL Shaders", url: "#magictime" },
+            { title: "Dragon 9 Core", subtitle: "Primary Protocol Controller", url: "#dragon9" }
+        ];
+
+        const cardsGroup = new THREE.Group();
+        scene.add(cardsGroup);
+
+        const cardMeshes = [];
+        const cardCount = 9;
+
+        // Create Canvas Text Texture Helper
+        function createCardTexture(title, subtitle) {
+            const canvas = document.createElement('canvas');
+            canvas.width = 512;
+            canvas.height = 320;
+            const ctx = canvas.getContext('2d');
+
+            // Background glass gradient
+            const grad = ctx.createLinearGradient(0, 0, 512, 320);
+            grad.addColorStop(0, 'rgba(15, 23, 42, 0.9)');
+            grad.addColorStop(1, 'rgba(30, 41, 59, 0.8)');
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, 512, 320);
+
+            // Border glow
+            ctx.strokeStyle = '#38bdf8';
+            ctx.lineWidth = 6;
+            ctx.strokeRect(3, 3, 506, 314);
+
+            // Title
+            ctx.fillStyle = '#f8fafc';
+            ctx.font = 'bold 36px system-ui, sans-serif';
+            ctx.fillText(title, 40, 90);
+
+            // Subtitle
+            ctx.fillStyle = '#94a3b8';
+            ctx.font = '20px system-ui, sans-serif';
+            ctx.fillText(subtitle, 40, 140);
+
+            // Harmonic badge
+            ctx.fillStyle = 'rgba(56, 189, 248, 0.2)';
+            ctx.fillRect(40, 210, 160, 45);
+            ctx.fillStyle = '#38bdf8';
+            ctx.font = 'bold 18px monospace';
+            ctx.fillText('⚡ DRAGON 9 NODE', 55, 239);
+
+            return new THREE.CanvasTexture(canvas);
+        }
+
+        // Generate 3D Spatial Cards along Figure-8 (Lemniscate)
+        const cardGeometry = new THREE.PlaneGeometry(3.6, 2.25);
+
+        for (let i = 0; i < cardCount; i++) {
+            const app = appNodes[i];
+            const texture = createCardTexture(app.title, app.subtitle);
+            const material = new THREE.MeshStandardMaterial({
+                map: texture,
+                side: THREE.DoubleSide,
+                roughness: 0.2,
+                metalness: 0.8,
+                transparent: true
+            });
+
+            const card = new THREE.Mesh(cardGeometry, material);
+            card.userData = app;
+            cardsGroup.add(card);
+            cardMeshes.push(card);
+        }
+
+        // --- Figure-8 (Lemniscate of Bernoulli) Parametric Positioning ---
+        let timeOffset = 0;
+        let isFlowActive = true;
+
+        function updateFigure8Layout(dt) {
+            if (!isFlowActive) return;
+            timeOffset += dt * 0.4;
+
+            for (let i = 0; i < cardCount; i++) {
+                const card = cardMeshes[i];
+                // Distribute phase uniformly across the loop
+                const t = timeOffset + (i / cardCount) * Math.PI * 2;
+
+                // Lemniscate parametric equations
+                const scaleFactor = 9;
+                const sinT = Math.sin(t);
+                const cosT = Math.cos(t);
+                const denom = 1 + sinT * sinT;
+
+                const x = (scaleFactor * cosT) / denom;
+                const y = (scaleFactor * sinT * cosT) / denom;
+                const z = Math.sin(t * 2) * 3; // Dual-phase depth undulation
+
+                card.position.set(x, y, z);
+                
+                // Bank and rotate naturally along the trajectory
+                card.rotation.y = cosT * 0.5;
+                card.rotation.x = -sinT * 0.3;
+                card.rotation.z = Math.sin(t) * 0.2;
+            }
+        }
+
+        // --- Raycasting & Interaction ---
+        const raycaster = new THREE.Raycaster();
+        const mouse = new THREE.Vector2();
+        let selectedApp = null;
+
+        window.addEventListener('pointerdown', (event) => {
+            mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+            mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+            raycaster.setFromCamera(mouse, camera);
+            const intersects = raycaster.intersectObjects(cardMeshes);
+
+            if (intersects.length > 0) {
+                const hitCard = intersects[0].object;
+                selectedApp = hitCard.userData;
+                showModal(selectedApp);
+            }
+        });
+
+        function showModal(app) {
+            document.getElementById('modalTitle').innerText = app.title;
+            document.getElementById('modalDesc').innerText = app.subtitle;
+            document.getElementById('launchBtn').setAttribute('onclick', `launchAppUrl('${app.url}')`);
+            document.getElementById('appModal').classList.add('visible');
+            isFlowActive = false; // Pause motion on inspection
+        }
+
+        function closeModal() {
+            document.getElementById('appModal').classList.remove('visible');
+            isFlowActive = true;
+        }
+
+        function launchAppUrl(url) {
+            if (url.startsWith('http')) {
+                window.open(url, '_blank');
+            } else {
+                alert('Launching local module: ' + url);
+            }
+            closeModal();
+        }
+
+        // --- Audio Synthesizer (432Hz Pythagorean Tuning) ---
+        let audioCtx = null;
+        let isAudioPlaying = false;
+        let oscillator = null;
+        let gainNode = null;
+
+        function toggleHarmonicAudio() {
+            const btn = document.getElementById('btn-harmonic');
+            if (!isAudioPlaying) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                oscillator = audioCtx.createOscillator();
+                gainNode = audioCtx.createGain();
+
+                // 432 Hz Pythagorean baseline
+                oscillator.type = 'sine';
+                oscillator.frequency.setValueAtTime(432, audioCtx.currentTime);
+
+                // Subtle ambient envelope
+                gainNode.gain.setValueAtTime(0.01, audioCtx.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.15, audioCtx.currentTime + 2);
+
+                oscillator.connect(gainNode);
+                gainNode.connect(audioCtx.destination);
+                oscillator.start();
+
+                isAudioPlaying = true;
+                btn.classList.add('active');
+                document.getElementById('freq-display').innerText = '432 Hz (Active)';
+            } else {
+                if (oscillator) {
+                    oscillator.stop();
+                    oscillator.disconnect();
+                }
+                isAudioPlaying = false;
+                btn.classList.remove('active');
+                document.getElementById('freq-display').innerText = '432 Hz';
+            }
+        }
+
+        function toggleFlowMode() {
+            isFlowActive = !isFlowActive;
+            const btn = document.getElementById('btn-flow');
+            btn.classList.toggle('active', isFlowActive);
+            document.getElementById('phase-display').innerText = isFlowActive ? 'DUAL-SYNC' : 'PAUSED';
+        }
+
+        function resetCameraView() {
+            gsap.to(camera.position, { x: 0, y: 0, z: 22, duration: 1.5, ease: 'power2.out' });
+            gsap.to(camera.rotation, { x: 0, y: 0, z: 0, duration: 1.5, ease: 'power2.out' });
+        }
+
+        function triggerKombuchaEasterEgg() {
+            alert('🍵 Kombucha Vault Initialized: Welcome to the fluid motion of the future.');
+        }
+
+        // --- Render Loop ---
+        const clock = new THREE.Clock();
+
+        function animate() {
+            requestAnimationFrame(animate);
+            const dt = clock.getDelta();
+
+            updateFigure8Layout(dt);
+
+            // Subtle idle camera floating
+            if (isFlowActive) {
+                camera.position.x = Math.sin(clock.getElapsedTime() * 0.2) * 1.5;
+                camera.position.y = Math.cos(clock.getElapsedTime() * 0.3) * 1.0;
+                camera.lookAt(scene.position);
+            }
+
+            renderer.render(scene, camera);
+        }
+
+        animate();
+
+        // --- Window Resize ---
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+    </script>
+</body>
+</html>

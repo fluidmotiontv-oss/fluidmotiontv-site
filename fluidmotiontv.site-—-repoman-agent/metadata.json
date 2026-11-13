@@ -1,0 +1,6 @@
+{
+  "name": "fluidmotiontv.site — Repoman Agent",
+  "description": "Sovereign repository integration package, Continuous AI workflow automation, and synchronized 432 Hz Dragon 9 Nonary portal for fluidmotiontv.site.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
