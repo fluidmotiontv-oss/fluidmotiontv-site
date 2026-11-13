@@ -1,0 +1,48 @@
+{
+  "repository": "fluidmotiontv-oss/fluidmotiontv-site",
+  "branch": "main",
+  "updated_at": "2026-11-14",
+  "tracks": [
+    {
+      "id": "track_01",
+      "title": "20260722 - REAL EYES REALIZE REAL LIES - Cypress Hill - Wu Tang - Eminem Vibe",
+      "filename": "20260722 - REAL EYES REALIZE REAL LIES - Cypress Hill - Wu Tang - Eminem Vibe [pvLzES_jF5M].mp3",
+      "category": "hip-hop",
+      "autoplay": false,
+      "interactive_button": true,
+      "content_warning": "language"
+    },
+    {
+      "id": "track_02",
+      "title": "Raw Power",
+      "filename": "raw_power.mp3",
+      "category": "rock",
+      "autoplay": false,
+      "interactive_button": true
+    },
+    {
+      "id": "track_03",
+      "title": "Dawn",
+      "filename": "dawn.mp3",
+      "category": "ambient",
+      "autoplay": true,
+      "interactive_button": true
+    }
+  ],
+  "visuals": {
+    "scene": "holiday_party_3d",
+    "audio_reactive": true,
+    "elements": [
+      {
+        "type": "pot_plant",
+        "theme": "christmas",
+        "behavior": "sway_to_beat"
+      },
+      {
+        "type": "dancing_dragon",
+        "theme": "holiday",
+        "behavior": "bounce_to_bass"
+      }
+    ]
+  }
+}
