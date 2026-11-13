@@ -457,4 +457,28 @@
                 fish.position.x = Math.cos(fish.userData.angle + idx) * fish.userData.radius;
                 fish.position.y = Math.sin(fish.userData.angle * 0.8 + idx) * 3;
                 fish.position.z += 0.18 + (bass * 0.0025);
+                if (fish.position.z > 10) {
+                    fish.position.z = -35;
+                }
+                fish.rotation.y = Math.sin(fish.userData.angle);
+            });
+
+            // Animate Bright Ocean Waves with Bass Reaction
+            const pos = waveGeo.attributes.position;
+            for (let i = 0; i < pos.count; i++) {
+                const u = pos.getX(i);
+                const v = pos.getZ(i);
+                const waveHeightVal = Math.sin(u * 0.4 + elapsedTime * 2.5) * Math.cos(v * 0.4 + elapsedTime * 2.5) * (0.9 + bass * 0.03);
+                pos.setY(i, waveHeightVal);
+            }
+            pos.needsUpdate = true;
+
+            renderer.render(scene, camera);
+        }
+        animate();
+    </script>
+</body>
+</html>
+                fish.position.y = Math.sin(fish.userData.angle * 0.8 + idx) * 3;
+                fish.position.z += 0.18 + (bass * 0.0025);
                 if (fish
