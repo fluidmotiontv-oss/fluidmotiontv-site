@@ -27,6 +27,14 @@
       "category": "ambient",
       "autoplay": true,
       "interactive_button": true
+    },
+    {
+      "id": "track_04",
+      "title": "Holiday Groove",
+      "filename": "holiday_groove.mp3",
+      "category": "festive",
+      "autoplay": false,
+      "interactive_button": true
     }
   ],
   "visuals": {
@@ -36,12 +44,20 @@
       {
         "type": "pot_plant",
         "theme": "christmas",
-        "behavior": "sway_to_beat"
+        "behavior": "sway_to_beat",
+        "reactivity_scale": 1.2
       },
       {
         "type": "dancing_dragon",
         "theme": "holiday",
-        "behavior": "bounce_to_bass"
+        "behavior": "bounce_to_bass",
+        "reactivity_scale": 1.5
+      },
+      {
+        "type": "snowfall_particles",
+        "theme": "winter",
+        "behavior": "tempo_sync",
+        "density": "high"
       }
     ]
   }
