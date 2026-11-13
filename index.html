@@ -1,19 +1,19 @@
 <!DOCTYPE html>
-<html lang="en"><!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fluid Motion TV &bull; 3D Cyber-Tiki Tunnel & Waves Masterclass</title>
+    <title>Fluid Motion TV &bull; Fern Garden & Aquarium Tunnel Masterclass</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --neon-cyan: #00f3ff;
             --neon-magenta: #ff007f;
             --neon-purple: #9d00ff;
+            --fern-green: #10B981;
             --tiki-gold: #ffb700;
-            --dark-bg: #010104;
-            --glass-bg: rgba(10, 10, 25, 0.85);
+            --dark-bg: #020604;
+            --glass-bg: rgba(6, 20, 14, 0.82);
         }
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body, html {
@@ -47,21 +47,21 @@
             justify-content: space-between;
             align-items: center;
             background: var(--glass-bg);
-            border: 1px solid rgba(0, 243, 255, 0.4);
+            border: 1px solid rgba(16, 185, 129, 0.4);
             padding: 14px 24px;
             border-radius: 12px;
             backdrop-filter: blur(12px);
-            box-shadow: 0 0 25px rgba(0, 243, 255, 0.15);
+            box-shadow: 0 0 25px rgba(16, 185, 129, 0.15);
         }
         .brand-box h1 {
             font-family: 'Orbitron', sans-serif;
             font-weight: 900;
             font-size: 1.4rem;
             letter-spacing: 2px;
-            background: linear-gradient(45deg, var(--neon-cyan), var(--neon-magenta), var(--tiki-gold));
+            background: linear-gradient(45deg, var(--fern-green), var(--neon-cyan), var(--tiki-gold));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            text-shadow: 0 0 20px rgba(0,243,255,0.4);
+            text-shadow: 0 0 20px rgba(16,185,129,0.4);
         }
         .node-tag {
             font-size: 0.75rem;
@@ -74,20 +74,20 @@
             gap: 12px;
         }
         .nav-links a {
-            color: var(--neon-cyan);
+            color: var(--fern-green);
             text-decoration: none;
             font-family: 'Orbitron', sans-serif;
             font-size: 0.8rem;
             padding: 8px 14px;
-            border: 1px solid var(--neon-cyan);
+            border: 1px solid var(--fern-green);
             border-radius: 6px;
-            background: rgba(0,243,255,0.1);
+            background: rgba(16,185,129,0.1);
             transition: all 0.3s ease;
         }
         .nav-links a:hover {
-            background: var(--neon-cyan);
+            background: var(--fern-green);
             color: var(--dark-bg);
-            box-shadow: 0 0 15px var(--neon-cyan);
+            box-shadow: 0 0 15px var(--fern-green);
         }
         .main-controls {
             display: flex;
@@ -97,11 +97,11 @@
         }
         .controls-panel, .shop-panel {
             background: var(--glass-bg);
-            border: 1px solid rgba(0, 243, 255, 0.3);
+            border: 1px solid rgba(16, 185, 129, 0.3);
             border-radius: 12px;
             padding: 18px;
             backdrop-filter: blur(12px);
-            box-shadow: 0 0 30px rgba(157,0,255,0.25);
+            box-shadow: 0 0 30px rgba(0,243,255,0.2);
             max-width: 360px;
             width: 100%;
         }
@@ -109,14 +109,14 @@
             font-family: 'Orbitron', sans-serif;
             font-size: 1rem;
             margin-bottom: 10px;
-            color: var(--neon-cyan);
-            border-bottom: 1px solid rgba(0,243,255,0.2);
+            color: var(--fern-green);
+            border-bottom: 1px solid rgba(16,185,129,0.2);
             padding-bottom: 6px;
         }
         .audio-player {
             width: 100%;
             margin-bottom: 12px;
-            accent-color: var(--neon-magenta);
+            accent-color: var(--fern-green);
         }
         .playlist-info {
             font-size: 0.8rem;
@@ -132,7 +132,7 @@
         button {
             font-family: 'Orbitron', sans-serif;
             font-weight: 700;
-            background: linear-gradient(135deg, var(--neon-purple), var(--neon-magenta));
+            background: linear-gradient(135deg, #059669, #0284c7);
             border: none;
             color: #fff;
             padding: 10px;
@@ -143,7 +143,7 @@
         }
         button:hover {
             transform: translateY(-2px);
-            box-shadow: 0 0 15px var(--neon-magenta);
+            box-shadow: 0 0 15px var(--fern-green);
         }
         .shop-items {
             display: flex;
@@ -164,7 +164,7 @@
         .shop-item h3 { font-size: 0.85rem; font-family: 'Orbitron', sans-serif; color: #fff; }
         .shop-item p { font-size: 0.75rem; color: rgba(255,255,255,0.6); }
         .price-tag { font-family: 'Orbitron', sans-serif; color: var(--tiki-gold); font-size: 0.8rem; font-weight: 700; }
-        .buy-btn { background: linear-gradient(135deg, #00f3ff, #0066ff); font-size: 0.7rem; padding: 5px 10px; }
+        .buy-btn { background: linear-gradient(135deg, #10B981, #06B6D4); font-size: 0.7rem; padding: 5px 10px; }
         footer {
             text-align: center;
             font-size: 0.8rem;
@@ -172,9 +172,9 @@
             background: var(--glass-bg);
             padding: 10px;
             border-radius: 8px;
-            border: 1px solid rgba(0,243,255,0.2);
+            border: 1px solid rgba(16,185,129,0.2);
         }
-        footer a { color: var(--neon-cyan); text-decoration: none; }
+        footer a { color: var(--fern-green); text-decoration: none; }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
@@ -185,17 +185,17 @@
         <header>
             <div class="brand-box">
                 <h1>FLUID MOTION TV</h1>
-                <div class="node-tag">RAW POWER &bull; RAW PROOF</div>
+                <div class="node-tag">FERN GARDEN &bull; AQUARIUM TUNNEL</div>
             </div>
             <div class="nav-links">
                 <a href="https://dragon9.online" target="_blank">Dragon Nine Online</a>
-                <a href="#shop" onclick="alert('Exploring 3D Cyber-Tiki Merch Hub!');">Shop Hub</a>
+                <a href="#shop" onclick="alert('Exploring Merch Hub!');">Shop Hub</a>
             </div>
         </header>
 
         <div class="main-controls">
             <div class="controls-panel">
-                <h2>3D TUNNEL & WAVE LAB</h2>
+                <h2>FERN & AQUARIUM LAB</h2>
                 <div class="playlist-info" id="now-playing">Now Playing: Raw Power</div>
                 <audio id="audio" class="audio-player" controls crossorigin="anonymous">
                     <source src="raw_power.mp3" type="audio/mp3">
@@ -208,16 +208,16 @@
             </div>
 
             <div class="shop-panel">
-                <h2>3D MERCH SHOP HUB</h2>
+                <h2>MERCH SHOP HUB</h2>
                 <div class="shop-items">
                     <div class="shop-item">
                         <div>
-                            <h3>Cyber-Tiki 3D Hoodie</h3>
-                            <p>Neon embroidered fleece</p>
+                            <h3>Fern Path Hoodie</h3>
+                            <p>Organic forest fleece</p>
                         </div>
                         <div>
                             <div class="price-tag">$65.00</div>
-                            <button class="buy-btn" onclick="alert('Purchased Cyber-Tiki Hoodie!');">Buy</button>
+                            <button class="buy-btn" onclick="alert('Purchased Fern Path Hoodie!');">Buy</button>
                         </div>
                     </div>
                     <div class="shop-item">
@@ -235,7 +235,7 @@
         </div>
 
         <footer>
-            Fluid Motion TV &bull; Master Hub &bull; <a href="https://dragon9.online" target="_blank">Dragon Nine Online</a>
+            Fluid Motion TV &bull; Fern Garden & Aquarium Master Hub &bull; <a href="https://dragon9.online" target="_blank">Dragon Nine Online</a>
         </footer>
     </div>
 
@@ -264,10 +264,10 @@
             loadTrack(currentTrackIndex + 1);
         });
 
-        // --- TRUE 3D THREE.JS WEBGL SETUP WITH TUNNEL & OCEAN WAVES ---
+        // --- 3D WEBGL SETUP WITH FERN GARDEN & AQUARIUM TUNNEL ---
         const container = document.getElementById('webgl-container');
         const scene = new THREE.Scene();
-        scene.fog = new THREE.FogExp2(0x010104, 0.025);
+        scene.fog = new THREE.FogExp2(0x020604, 0.022);
 
         const camera = new THREE.PerspectiveCamera(65, window.innerWidth / window.innerHeight, 0.1, 1000);
         camera.position.set(0, 3, 10);
@@ -277,29 +277,29 @@
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
         container.appendChild(renderer.domElement);
 
-        const ambientLight = new THREE.AmbientLight(0xffffff, 0.9);
+        const ambientLight = new THREE.AmbientLight(0x10B981, 0.8);
         scene.add(ambientLight);
 
         const pointLight1 = new THREE.PointLight(0x00f3ff, 4, 60);
         pointLight1.position.set(0, 5, 5);
         scene.add(pointLight1);
 
-        const pointLight2 = new THREE.PointLight(0xff007f, 4, 60);
+        const pointLight2 = new THREE.PointLight(0x10B981, 4, 60);
         pointLight2.position.set(0, -5, -5);
         scene.add(pointLight2);
 
-        // 1. 3D Cyber Tunnel (Nested Glowing Rings)
+        // 1. Aquarium Tunnel Effect (Bioluminescent Ring Flow)
         const tunnelGroup = new THREE.Group();
         scene.add(tunnelGroup);
-        const ringCount = 20;
+        const ringCount = 22;
         const rings = [];
         for (let i = 0; i < ringCount; i++) {
-            const ringGeo = new THREE.TorusGeometry(6, 0.15, 16, 100);
+            const ringGeo = new THREE.TorusGeometry(7, 0.2, 16, 100);
             const ringMat = new THREE.MeshStandardMaterial({
-                color: i % 2 === 0 ? 0x00f3ff : 0xff007f,
-                emissive: i % 2 === 0 ? 0x00f3ff : 0xff007f,
-                emissiveIntensity: 0.6,
-                roughness: 0.1
+                color: i % 2 === 0 ? 0x00f3ff : 0x10B981,
+                emissive: i % 2 === 0 ? 0x00f3ff : 0x10B981,
+                emissiveIntensity: 0.5,
+                roughness: 0.2
             });
             const ring = new THREE.Mesh(ringGeo, ringMat);
             ring.position.z = -i * 3;
@@ -307,7 +307,7 @@
             rings.push(ring);
         }
 
-        // 2. Center 3D Audio-Reactive Torus Knot Core
+        // 2. Center 3D Audio-Reactive Torus Knot Core (Cyber-Tiki)
         const coreGroup = new THREE.Group();
         scene.add(coreGroup);
 
@@ -321,14 +321,14 @@
         const coreMesh = new THREE.Mesh(geometry, material);
         coreGroup.add(coreMesh);
 
-        // 3. Audio-Reactive Ocean Waves (Grid Plane at the bottom)
-        const waveWidth = 40;
-        const waveHeight = 40;
-        const waveSegments = 40;
+        // 3. Audio-Reactive Fern Garden & Ocean Waves (Grid Plane)
+        const waveWidth = 45;
+        const waveHeight = 45;
+        const waveSegments = 45;
         const waveGeo = new THREE.PlaneGeometry(waveWidth, waveHeight, waveSegments, waveSegments);
         waveGeo.rotateX(-Math.PI / 2);
         const waveMat = new THREE.MeshStandardMaterial({
-            color: 0x9d00ff,
+            color: 0x059669,
             wireframe: true,
             roughness: 0.3,
             metalness: 0.8
@@ -372,10 +372,10 @@
                 material.color.setHex(0xffb700);
             } else if (mode === 1) {
                 material.wireframe = true;
-                material.color.setHex(0x00f3ff);
+                material.color.setHex(0x10B981);
             } else {
                 material.wireframe = false;
-                material.color.setHex(0xff007f);
+                material.color.setHex(0x00f3ff);
             }
         });
 
@@ -404,7 +404,7 @@
             coreMesh.rotation.x = elapsedTime * 0.4;
             coreMesh.rotation.y = elapsedTime * 0.6;
 
-            // Animate Tunnel forward effect
+            // Animate Aquarium Tunnel Forward Flow
             rings.forEach((ring, idx) => {
                 ring.position.z += 0.08 + (bass * 0.001);
                 if (ring.position.z > 5) {
@@ -413,12 +413,12 @@
                 ring.rotation.z = elapsedTime * 0.2 + idx;
             });
 
-            // Animate Ocean Waves with Bass Reaction
+            // Animate Fern Garden Ocean Waves with Bass Reaction
             const pos = waveGeo.attributes.position;
             for (let i = 0; i < pos.count; i++) {
                 const u = pos.getX(i);
                 const v = pos.getZ(i);
-                const waveHeightVal = Math.sin(u * 0.4 + elapsedTime * 2) * Math.cos(v * 0.4 + elapsedTime * 2) * (0.8 + bass * 0.02);
+                const waveHeightVal = Math.sin(u * 0.4 + elapsedTime * 2) * Math.cos(v * 0.4 + elapsedTime * 2) * (0.8 + bass * 0.025);
                 pos.setY(i, waveHeightVal);
             }
             pos.needsUpdate = true;
@@ -427,37 +427,5 @@
         }
         animate();
     </script>
-</body>
-</html>
-
-            let bassScale = 1 + (bass / 120);
-            coreMesh.scale.set(bassScale, bassScale, bassScale);
-
-            coreMesh.rotation.x = elapsedTime * 0.4;
-            coreMesh.rotation.y = elapsedTime * 0.6;
-
-            wireMesh.rotation.y = -elapsedTime * 0.3;
-            wireMesh.rotation.z = elapsedTime * 0.2;
-
-            group.rotation.y = Math.sin(elapsedTime * 0.5) * 0.3;
-
-            const positions = particleGeo.attributes.position.array;
-            for(let i = 1; i < particleCount * 3; i += 1) {
-                positions[i] -= 0.05;
-                if (positions[i] < -10) positions[i] = 10;
-            }
-            particleGeo.attributes.position.needsUpdate = true;
-
-            renderer.render(scene, camera);
-        }
-        animate();
-    </script>
-</body>
-</html>
-
-        renderer.render(scene, camera);
-    }
-    animate();
-</script>
 </body>
 </html>
