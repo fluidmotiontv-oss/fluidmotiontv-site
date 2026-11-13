@@ -1,0 +1,6 @@
+{
+  "name": "AetherGL Studio",
+  "description": "An advanced WebGL creator tool with real-time shader compilation, scene builder, custom interactive uniforms, and AI shader engineering.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

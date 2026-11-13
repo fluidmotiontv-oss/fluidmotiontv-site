@@ -1,0 +1,6 @@
+{
+  "name": "Apex Orchestrator",
+  "description": "Sovereign orchestration suite for FluidmotionTV & Dragon 9 framework. Includes 26.66h D9 chronometer, 432Hz harmonic synth, FFmpeg action-cam transcoding, WireGuard/P2P mesh scripts, Giger x Native Botany prompt generator, and JSON manifest pipelines.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
