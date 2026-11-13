@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<<<<<<< HEAD
     <title>Fluid Motion TV | Master Repository Hub & FlowTouch 3D</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -10,10 +11,41 @@
             background-color: #050508;
             color: #00ffcc;
             font-family: 'Courier New', Courier, monospace;
+=======
+    <title>Fluid Motion TV &bull; Masterclass Cyber-Tiki & Shop Experience</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --neon-cyan: #00f3ff;
+            --neon-magenta: #ff007f;
+            --neon-purple: #9d00ff;
+            --tiki-gold: #ffb700;
+            --dark-bg: #030308;
+            --glass-bg: rgba(10, 10, 25, 0.85);
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body, html {
+            width: 100%; height: 100%;
+            overflow-x: hidden;
+            background-color: var(--dark-bg);
+            font-family: 'Rajdhani', sans-serif;
+            color: #fff;
+        }
+        #canvas-bg {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 1;
+        }
+        .ui-overlay {
+            position: relative;
+            z-index: 10;
+>>>>>>> 16f136dc62c6c79e9dd8f7c6c95d64f15c08966f
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
+<<<<<<< HEAD
             overflow-x: hidden;
         }
         header {
@@ -462,11 +494,245 @@ to me
                         <div class="mt-4 flex items-center justify-between text-[11px] font-mono text-cyber-neonGold">
                             <span>REACTIVITY: ULTRA</span>
                             <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition"></i>
+=======
+            padding: 24px;
+            pointer-events: none;
+        }
+        header, .interactive-zone, footer {
+            pointer-events: auto;
+        }
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--glass-bg);
+            border: 1px solid rgba(0, 243, 255, 0.3);
+            padding: 16px 24px;
+            border-radius: 12px;
+            backdrop-filter: blur(12px);
+        }
+        .brand {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 900;
+            font-size: 1.5rem;
+            letter-spacing: 2px;
+            background: linear-gradient(45deg, var(--neon-cyan), var(--neon-magenta), var(--tiki-gold));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 20px rgba(0,243,255,0.4);
+        }
+        .nav-links {
+            display: flex;
+            gap: 12px;
+        }
+        .nav-links a {
+            color: var(--neon-cyan);
+            text-decoration: none;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.85rem;
+            padding: 8px 14px;
+            border: 1px solid var(--neon-cyan);
+            border-radius: 6px;
+            background: rgba(0,243,255,0.1);
+            transition: all 0.3s ease;
+        }
+        .nav-links a:hover {
+            background: var(--neon-cyan);
+            color: var(--dark-bg);
+            box-shadow: 0 0 15px var(--neon-cyan);
+        }
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 380px;
+            gap: 24px;
+            margin: 20px 0;
+            align-items: start;
+        }
+        @media(max-width: 900px) {
+            .main-grid { grid-template-columns: 1fr; }
+        }
+        .center-hub {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            text-align: center;
+        }
+        .center-hub h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+            color: var(--tiki-gold);
+            text-shadow: 0 0 15px rgba(255,183,0,0.5);
+        }
+        .center-hub p {
+            font-size: 1.1rem;
+            color: rgba(255,255,255,0.8);
+            margin-bottom: 20px;
+            max-width: 600px;
+        }
+        .controls-panel, .shop-panel {
+            background: var(--glass-bg);
+            border: 1px solid rgba(0, 243, 255, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            backdrop-filter: blur(12px);
+            box-shadow: 0 0 30px rgba(157,0,255,0.2);
+        }
+        .controls-panel h2, .shop-panel h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.1rem;
+            margin-bottom: 12px;
+            color: var(--neon-cyan);
+            border-bottom: 1px solid rgba(0,243,255,0.2);
+            padding-bottom: 6px;
+        }
+        .audio-player {
+            width: 100%;
+            margin-bottom: 15px;
+            accent-color: var(--neon-magenta);
+        }
+        .btn-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        button {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--neon-purple), var(--neon-magenta));
+            border: none;
+            color: #fff;
+            padding: 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 15px var(--neon-magenta);
+        }
+        .shop-items {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            max-height: 350px;
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+        .shop-item {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            padding: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .shop-item-info h3 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.95rem;
+            color: #fff;
+        }
+        .shop-item-info p {
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.6);
+        }
+        .price-tag {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--tiki-gold);
+            font-weight: 700;
+            margin-bottom: 6px;
+            text-align: right;
+        }
+        .buy-btn {
+            background: linear-gradient(135deg, #00f3ff, #0066ff);
+            font-size: 0.75rem;
+            padding: 6px 12px;
+        }
+        footer {
+            text-align: center;
+            font-size: 0.85rem;
+            color: rgba(255,255,255,0.6);
+            background: var(--glass-bg);
+            padding: 14px;
+            border-radius: 8px;
+            border: 1px solid rgba(0,243,255,0.2);
+        }
+        footer a { color: var(--neon-cyan); text-decoration: none; }
+    </style>
+</head>
+<body>
+    <canvas id="canvas-bg"></canvas>
+    
+    <div class="ui-overlay">
+        <header>
+            <div class="brand">FLUID MOTION TV</div>
+            <div class="nav-links">
+                <a href="https://dragonnineonline.com" target="_blank">Dragon Nine Online</a>
+                <a href="#shop" onclick="alert('Scrolling to Integrated Shop!');">Shop Hub</a>
+            </div>
+        </header>
+
+        <div class="main-grid">
+            <div class="center-hub">
+                <h1>CYBER-TIKI AUDIO & WAVE LAB</h1>
+                <p>Immersive WebGL audio reactivity combined with Fern Path Foyer nature waves and sacred geometry visualizers.</p>
+            </div>
+
+            <div class="interactive-zone">
+                <div class="controls-panel" style="margin-bottom: 16px;">
+                    <h2>SOUNDTRACK & VISUALS</h2>
+                    <audio id="audio" class="audio-player" controls loop crossorigin="anonymous">
+                        <source src="20260724 - Gypsy Children of smoke Vol. 2 (Cypress Hill Inspired) Stoner hip hop mix [bI8T0YQSqgY].m4a" type="audio/mp4">
+                        Your browser does not support the audio element.
+                    </audio>
+                    <div class="btn-group">
+                        <button id="btn-mode">Toggle Mode</button>
+                        <button id="btn-fullscreen">Fullscreen</button>
+                    </div>
+                </div>
+
+                <div class="shop-panel" id="shop">
+                    <h2>FLUID MOTION MERCH SHOP</h2>
+                    <div class="shop-items">
+                        <div class="shop-item">
+                            <div class="shop-item-info">
+                                <h3>Cyber-Tiki Hoodie</h3>
+                                <p>Heavyweight neon embroidered fleece</p>
+                            </div>
+                            <div>
+                                <div class="price-tag">$65.00</div>
+                                <button class="buy-btn" onclick="alert('Added Cyber-Tiki Hoodie to Cart!');">Buy Now</button>
+                            </div>
+                        </div>
+                        <div class="shop-item">
+                            <div class="shop-item-info">
+                                <h3>Raw Proof Vinyl LP</h3>
+                                <p>Limited Edition Stoner Hip Hop Mix</p>
+                            </div>
+                            <div>
+                                <div class="price-tag">$35.00</div>
+                                <button class="buy-btn" onclick="alert('Added Raw Proof Vinyl to Cart!');">Buy Now</button>
+                            </div>
+                        </div>
+                        <div class="shop-item">
+                            <div class="shop-item-info">
+                                <h3>Fern Path Slipmat</h3>
+                                <p>Anti-static turntable slipmat</p>
+                            </div>
+                            <div>
+                                <div class="price-tag">$20.00</div>
+                                <button class="buy-btn" onclick="alert('Added Fern Path Slipmat to Cart!');">Buy Now</button>
+                            </div>
+>>>>>>> 16f136dc62c6c79e9dd8f7c6c95d64f15c08966f
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+<<<<<<< HEAD
     </main>
 
     <!-- Footer -->
@@ -614,10 +880,81 @@ to me
                 y: (Math.random() - 0.5) * canvas.height,
                 z: Math.random() * canvas.width,
                 size: Math.random() * 2 + 1,
+=======
+
+        <footer>
+            Fluid Motion TV &bull; Powered by WebGL &bull; <a href="https://dragonnineonline.com" target="_blank">Dragon Nine Online</a>
+        </footer>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('canvas-bg');
+        const ctx = canvas.getContext('2d');
+        const audio = document.getElementById('audio');
+        
+        let width, height;
+        function resize() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        // Audio Analyser Setup
+        let audioCtx, analyser, dataArray;
+        let isAudioInitialized = false;
+
+        function initAudio() {
+            if (isAudioInitialized) return;
+            try {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                analyser = audioCtx.createAnalyser();
+                const source = audioCtx.createMediaElementSource(audio);
+                source.connect(analyser);
+                analyser.connect(audioCtx.destination);
+                analyser.fftSize = 256;
+                dataArray = new Uint8Array(analyser.frequencyBinCount);
+                isAudioInitialized = true;
+            } catch(e) {
+                console.log("Audio context waiting for interaction", e);
+            }
+        }
+
+        audio.addEventListener('play', () => {
+            initAudio();
+            if (audioCtx && audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        });
+
+        let mode = 0;
+        document.getElementById('btn-mode').addEventListener('click', () => {
+            mode = (mode + 1) % 3;
+        });
+
+        document.getElementById('btn-fullscreen').addEventListener('click', () => {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen();
+            } else {
+                document.exitFullscreen();
+            }
+        });
+
+        // Fern Path Foyer Waves & Particles
+        let particles = [];
+        for(let i=0; i<120; i++) {
+            particles.push({
+                x: Math.random() * width,
+                y: Math.random() * height,
+                vx: (Math.random() - 0.5) * 1.5,
+                vy: (Math.random() - 0.5) * 1.5,
+                radius: Math.random() * 2.5 + 1,
+>>>>>>> 16f136dc62c6c79e9dd8f7c6c95d64f15c08966f
                 color: Math.random() > 0.5 ? '#00f3ff' : '#ff007f'
             });
         }
 
+<<<<<<< HEAD
         let shockwaves = [];
         document.querySelectorAll('.art-card').forEach(card => {
             card.addEventListener('click', (e) => {
@@ -788,3 +1125,75 @@ to me
 </body>
 </html>
 ```
+=======
+        let waveAngle = 0;
+
+        function animate() {
+            requestAnimationFrame(animate);
+
+            ctx.fillStyle = 'rgba(3, 3, 8, 0.25)';
+            ctx.fillRect(0, 0, width, height);
+
+            let bass = 50;
+            if (analyser && isAudioInitialized) {
+                analyser.getByteFrequencyData(dataArray);
+                bass = dataArray[2] || 50;
+            }
+
+            // Fern Path Foyer Ocean Waves
+            waveAngle += 0.025;
+            ctx.lineWidth = 2;
+            for (let i = 0; i < 3; i++) {
+                ctx.beginPath();
+                ctx.strokeStyle = i % 2 === 0 ? `rgba(0, 243, 255, ${0.12 + bass/400})` : `rgba(157, 0, 255, ${0.12 + bass/400})`;
+                for (let x = 0; x < width; x += 25) {
+                    let y = height * 0.75 + Math.sin(x * 0.004 + waveAngle + i) * (60 + bass * 0.6) + Math.cos(x * 0.006 - waveAngle) * 30;
+                    if (x === 0) ctx.moveTo(x, y);
+                    else ctx.lineTo(x, y);
+                }
+                ctx.stroke();
+            }
+
+            // Particles
+            particles.forEach((p, idx) => {
+                p.x += p.vx + (bass * 0.015 * (idx % 2 === 0 ? 1 : -1));
+                p.y += p.vy;
+
+                if (p.x < 0) p.x = width;
+                if (p.x > width) p.x = 0;
+                if (p.y < 0) p.y = height;
+                if (p.y > height) p.y = 0;
+
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.radius + bass * 0.04, 0, Math.PI * 2);
+                ctx.fillStyle = p.color;
+                ctx.shadowBlur = 12;
+                ctx.shadowColor = p.color;
+                ctx.fill();
+                ctx.shadowBlur = 0;
+            });
+
+            // Sacred Geometry Visualizer Ring
+            if (mode === 0) {
+                ctx.save();
+                ctx.translate(width / 2, height / 2 - 40);
+                ctx.rotate(waveAngle * 0.4);
+                ctx.strokeStyle = '#ffb700';
+                ctx.lineWidth = 2.5;
+                ctx.beginPath();
+                let radius = 70 + bass * 0.5;
+                for (let a = 0; a < Math.PI * 2; a += Math.PI / 4) {
+                    let rx = Math.cos(a) * radius;
+                    let ry = Math.sin(a) * radius;
+                    ctx.lineTo(rx, ry);
+                }
+                ctx.closePath();
+                ctx.stroke();
+                ctx.restore();
+            }
+        }
+        animate();
+    </script>
+</body>
+</html>
+>>>>>>> 16f136dc62c6c79e9dd8f7c6c95d64f15c08966f

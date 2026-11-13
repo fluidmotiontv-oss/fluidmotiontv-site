@@ -1,0 +1,18 @@
+{
+  "version": "1.0.0",
+  "node_id": "DRG9-NODE-AUTO",
+  "role": "mobile_hotspot",
+  "capabilities": [
+    "p2p_voice",
+    "harmony_notes",
+    "starlink_relay",
+    "zero_conf_mesh",
+    "chacha20_vault"
+  ],
+  "chacha_key_hex": "e4c2e666b6914edb9fc3abaa281d111fc076de595cee8631d9e828ec57614756",
+  "public_identity": "drg9-pub-6d277de8dbe401ad73b6d59bf437a0f1",
+  "private_identity": "a4c9245da7d326b8bfd1c4ccfac274c6938f4bf5e3df655231dbbf3613308f07",
+  "created_at": "1788784964",
+  "data_fee_plan": "$0 Sovereign ISP Free Tier",
+  "mesh_ip_assigned": "10.64.10.99"
+}
