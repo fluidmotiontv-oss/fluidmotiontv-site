@@ -4,6 +4,14 @@
   "updated_at": "2026-11-14",
   "tracks": [
     {
+      "id": "track_03",
+      "title": "Dawn",
+      "filename": "dawn.mp3",
+      "category": "ambient",
+      "autoplay": true,
+      "interactive_button": true
+    },
+    {
       "id": "track_01",
       "title": "20260722 - REAL EYES REALIZE REAL LIES - Cypress Hill - Wu Tang - Eminem Vibe",
       "filename": "20260722 - REAL EYES REALIZE REAL LIES - Cypress Hill - Wu Tang - Eminem Vibe [pvLzES_jF5M].mp3",
@@ -18,14 +26,6 @@
       "filename": "raw_power.mp3",
       "category": "rock",
       "autoplay": false,
-      "interactive_button": true
-    },
-    {
-      "id": "track_03",
-      "title": "Dawn",
-      "filename": "dawn.mp3",
-      "category": "ambient",
-      "autoplay": true,
       "interactive_button": true
     },
     {
