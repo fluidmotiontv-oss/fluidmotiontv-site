@@ -1,388 +1,416 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Fluid Motion TV &bull; Port Waikato Master Hub</title>
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
-<style>
-    :root {
-        --neon-cyan: #00f3ff;
-        --neon-magenta: #ff007f;
-        --neon-purple: #9d00ff;
-        --tiki-gold: #ffb700;
-        --dark-bg: #010104;
-        --glass-bg: rgba(10, 10, 25, 0.85);
-    }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body, html {
-        width: 100%; height: 100%;
-        overflow: hidden;
-        background-color: var(--dark-bg);
-        font-family: 'Rajdhani', sans-serif;
-        color: #fff;
-    }
-    #webgl-container {
-        position: fixed;
-        top: 0; left: 0;
-        width: 100%; height: 100%;
-        z-index: 1;
-    }
-    .ui-overlay {
-        position: relative;
-        z-index: 10;
-        height: 100vh;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        padding: 20px;
-        pointer-events: none;
-    }
-    header, .interactive-zone, footer {
-        pointer-events: auto;
-    }
-    header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        background: var(--glass-bg);
-        border: 1px solid rgba(0, 243, 255, 0.4);
-        padding: 14px 24px;
-        border-radius: 12px;
-        backdrop-filter: blur(12px);
-        box-shadow: 0 0 25px rgba(0, 243, 255, 0.15);
-    }
-    .brand-box h1 {
-        font-family: 'Orbitron', sans-serif;
-        font-weight: 900;
-        font-size: 1.4rem;
-        letter-spacing: 2px;
-        background: linear-gradient(45deg, var(--neon-cyan), var(--neon-magenta), var(--tiki-gold));
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        text-shadow: 0 0 20px rgba(0,243,255,0.4);
-    }
-    .node-tag {
-        font-size: 0.75rem;
-        color: var(--tiki-gold);
-        letter-spacing: 1px;
-        font-family: 'Orbitron', sans-serif;
-    }
-    .nav-links {
-        display: flex;
-        gap: 12px;
-    }
-    .nav-links a {
-        color: var(--neon-cyan);
-        text-decoration: none;
-        font-family: 'Orbitron', sans-serif;
-        font-size: 0.8rem;
-        padding: 8px 14px;
-        border: 1px solid var(--neon-cyan);
-        border-radius: 6px;
-        background: rgba(0,243,255,0.1);
-        transition: all 0.3s ease;
-    }
-    .nav-links a:hover {
-        background: var(--neon-cyan);
-        color: var(--dark-bg);
-        box-shadow: 0 0 15px var(--neon-cyan);
-    }
-    .main-controls {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-end;
-        width: 100%;
-    }
-    .controls-panel, .shop-panel {
-        background: var(--glass-bg);
-        border: 1px solid rgba(0, 243, 255, 0.3);
-        border-radius: 12px;
-        padding: 18px;
-        backdrop-filter: blur(12px);
-        box-shadow: 0 0 30px rgba(157,0,255,0.25);
-        max-width: 360px;
-        width: 100%;
-    }
-    .controls-panel h2, .shop-panel h2 {
-        font-family: 'Orbitron', sans-serif;
-        font-size: 1rem;
-        margin-bottom: 10px;
-        color: var(--neon-cyan);
-        border-bottom: 1px solid rgba(0,243,255,0.2);
-        padding-bottom: 6px;
-    }
-    .audio-player {
-        width: 100%;
-        margin-bottom: 12px;
-        accent-color: var(--neon-magenta);
-    }
-    .btn-group {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 8px;
-    }
-    button {
-        font-family: 'Orbitron', sans-serif;
-        font-weight: 700;
-        background: linear-gradient(135deg, var(--neon-purple), var(--neon-magenta));
-        border: none;
-        color: #fff;
-        padding: 10px;
-        border-radius: 6px;
-        cursor: pointer;
-        transition: transform 0.2s, box-shadow 0.2s;
-        font-size: 0.8rem;
-    }
-    button:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 0 15px var(--neon-magenta);
-    }
-    .shop-items {
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-        max-height: 200px;
-        overflow-y: auto;
-    }
-    .shop-item {
-        background: rgba(255,255,255,0.03);
-        border: 1px solid rgba(255,255,255,0.1);
-        border-radius: 6px;
-        padding: 8px 10px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-    .shop-item h3 { font-size: 0.85rem; font-family: 'Orbitron', sans-serif; color: #fff; }
-    .shop-item p { font-size: 0.75rem; color: rgba(255,255,255,0.6); }
-    .price-tag { font-family: 'Orbitron', sans-serif; color: var(--tiki-gold); font-size: 0.8rem; font-weight: 700; }
-    .buy-btn { background: linear-gradient(135deg, #00f3ff, #0066ff); font-size: 0.7rem; padding: 5px 10px; }
-    footer {
-        text-align: center;
-        font-size: 0.8rem;
-        color: rgba(255,255,255,0.6);
-        background: var(--glass-bg);
-        padding: 10px;
-        border-radius: 8px;
-        border: 1px solid rgba(0,243,255,0.2);
-    }
-    footer a { color: var(--neon-cyan); text-decoration: none; }
-</style>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fluid Motion TV &bull; 3D Cyber-Tiki WebGL Masterclass</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --neon-cyan: #00f3ff;
+            --neon-magenta: #ff007f;
+            --neon-purple: #9d00ff;
+            --tiki-gold: #ffb700;
+            --dark-bg: #010104;
+            --glass-bg: rgba(10, 10, 25, 0.85);
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body, html {
+            width: 100%; height: 100%;
+            overflow: hidden;
+            background-color: var(--dark-bg);
+            font-family: 'Rajdhani', sans-serif;
+            color: #fff;
+        }
+        #webgl-container {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 1;
+        }
+        .ui-overlay {
+            position: relative;
+            z-index: 10;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 20px;
+            pointer-events: none;
+        }
+        header, .interactive-zone, footer {
+            pointer-events: auto;
+        }
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--glass-bg);
+            border: 1px solid rgba(0, 243, 255, 0.4);
+            padding: 14px 24px;
+            border-radius: 12px;
+            backdrop-filter: blur(12px);
+            box-shadow: 0 0 25px rgba(0, 243, 255, 0.15);
+        }
+        .brand-box h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 900;
+            font-size: 1.4rem;
+            letter-spacing: 2px;
+            background: linear-gradient(45deg, var(--neon-cyan), var(--neon-magenta), var(--tiki-gold));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 20px rgba(0,243,255,0.4);
+        }
+        .node-tag {
+            font-size: 0.75rem;
+            color: var(--tiki-gold);
+            letter-spacing: 1px;
+            font-family: 'Orbitron', sans-serif;
+        }
+        .nav-links {
+            display: flex;
+            gap: 12px;
+        }
+        .nav-links a {
+            color: var(--neon-cyan);
+            text-decoration: none;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.8rem;
+            padding: 8px 14px;
+            border: 1px solid var(--neon-cyan);
+            border-radius: 6px;
+            background: rgba(0,243,255,0.1);
+            transition: all 0.3s ease;
+        }
+        .nav-links a:hover {
+            background: var(--neon-cyan);
+            color: var(--dark-bg);
+            box-shadow: 0 0 15px var(--neon-cyan);
+        }
+        .main-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            width: 100%;
+        }
+        .controls-panel, .shop-panel {
+            background: var(--glass-bg);
+            border: 1px solid rgba(0, 243, 255, 0.3);
+            border-radius: 12px;
+            padding: 18px;
+            backdrop-filter: blur(12px);
+            box-shadow: 0 0 30px rgba(157,0,255,0.25);
+            max-width: 360px;
+            width: 100%;
+        }
+        .controls-panel h2, .shop-panel h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1rem;
+            margin-bottom: 10px;
+            color: var(--neon-cyan);
+            border-bottom: 1px solid rgba(0,243,255,0.2);
+            padding-bottom: 6px;
+        }
+        .audio-player {
+            width: 100%;
+            margin-bottom: 12px;
+            accent-color: var(--neon-magenta);
+        }
+        .playlist-info {
+            font-size: 0.8rem;
+            color: var(--tiki-gold);
+            font-family: 'Orbitron', sans-serif;
+            margin-bottom: 8px;
+        }
+        .btn-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+        button {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--neon-purple), var(--neon-magenta));
+            border: none;
+            color: #fff;
+            padding: 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            font-size: 0.8rem;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 15px var(--neon-magenta);
+        }
+        .shop-items {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .shop-item {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 6px;
+            padding: 8px 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .shop-item h3 { font-size: 0.85rem; font-family: 'Orbitron', sans-serif; color: #fff; }
+        .shop-item p { font-size: 0.75rem; color: rgba(255,255,255,0.6); }
+        .price-tag { font-family: 'Orbitron', sans-serif; color: var(--tiki-gold); font-size: 0.8rem; font-weight: 700; }
+        .buy-btn { background: linear-gradient(135deg, #00f3ff, #0066ff); font-size: 0.7rem; padding: 5px 10px; }
+        footer {
+            text-align: center;
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.6);
+            background: var(--glass-bg);
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid rgba(0,243,255,0.2);
+        }
+        footer a { color: var(--neon-cyan); text-decoration: none; }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
 <body>
-<div id="webgl-container"></div>
+    <div id="webgl-container"></div>
+    
+    <div class="ui-overlay">
+        <header>
+            <div class="brand-box">
+                <h1>FLUID MOTION TV</h1>
+                <div class="node-tag">RAW POWER &bull; RAW PROOF</div>
+            </div>
+            <div class="nav-links">
+                <a href="https://dragon9.online" target="_blank">Dragon Nine Online</a>
+                <a href="#shop" onclick="alert('Exploring 3D Cyber-Tiki Merch Hub!');">Shop Hub</a>
+            </div>
+        </header>
 
-<div class="ui-overlay">
-    <header>
-        <div class="brand-box">
-            <h1>FLUID MOTION TV</h1>
-            <div class="node-tag">PORT WAIKATO NODE // RAW PROOF • RAW POWER</div>
-        </div>
-        <div class="nav-links">
-            <a href="https://dragonnineonline.com" target="_blank">Dragon Nine Online</a>
-            <a href="#shop" onclick="alert('Exploring 3D Cyber-Tiki Merch Hub!');">Shop Hub</a>
-        </div>
-    </header>
+        <div class="main-controls">
+            <div class="controls-panel">
+                <h2>3D AUDIO & VISUAL LAB</h2>
+                <div class="playlist-info" id="now-playing">Now Playing: Raw Power</div>
+                <audio id="audio" class="audio-player" controls crossorigin="anonymous">
+                    <source src="raw_power.mp3" type="audio/mp3">
+                    Your browser does not support the audio element.
+                </audio>
+                <div class="btn-group">
+                    <button id="btn-mode">Morph 3D</button>
+                    <button id="btn-next">Next Track</button>
+                </div>
+            </div>
 
-    <div class="main-controls">
-        <div class="controls-panel">
-            <h2>3D AUDIO & VISUAL LAB</h2>
-            <audio id="audio" class="audio-player" controls loop crossorigin="anonymous">
-                <source src="20260724 - Gypsy Children of smoke Vol. 2 (Cypress Hill Inspired) Stoner hip hop mix [bI8T0YQSqgY].m4a" type="audio/mp4">
-                Your browser does not support the audio element.
-            </audio>
-            <div class="btn-group">
-                <button id="btn-mode">Morph 3D</button>
-                <button id="btn-fullscreen">Fullscreen</button>
+            <div class="shop-panel">
+                <h2>3D MERCH SHOP HUB</h2>
+                <div class="shop-items">
+                    <div class="shop-item">
+                        <div>
+                            <h3>Cyber-Tiki 3D Hoodie</h3>
+                            <p>Neon embroidered fleece</p>
+                        </div>
+                        <div>
+                            <div class="price-tag">$65.00</div>
+                            <button class="buy-btn" onclick="alert('Purchased Cyber-Tiki Hoodie!');">Buy</button>
+                        </div>
+                    </div>
+                    <div class="shop-item">
+                        <div>
+                            <h3>Raw Proof Vinyl LP</h3>
+                            <p>Stoner Hip Hop Mix</p>
+                        </div>
+                        <div>
+                            <div class="price-tag">$35.00</div>
+                            <button class="buy-btn" onclick="alert('Purchased Raw Proof Vinyl!');">Buy</button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <div class="shop-panel">
-            <h2>3D MERCH SHOP HUB</h2>
-            <div class="shop-items">
-                <div class="shop-item">
-                    <div>
-                        <h3>Cyber-Tiki 3D Hoodie</h3>
-                        <p>Neon embroidered fleece</p>
-                    </div>
-                    <div>
-                        <div class="price-tag">$65.00</div>
-                        <button class="buy-btn" onclick="alert('Purchased Cyber-Tiki Hoodie!');">Buy</button>
-                    </div>
-                </div>
-                <div class="shop-item">
-                    <div>
-                        <h3>Raw Proof Vinyl LP</h3>
-                        <p>Stoner Hip Hop Mix</p>
-                    </div>
-                    <div>
-                        <div class="price-tag">$35.00</div>
-                        <button class="buy-btn" onclick="alert('Purchased Raw Proof Vinyl!');">Buy</button>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <footer>
+            Fluid Motion TV &bull; Master Hub &bull; <a href="https://dragon9.online" target="_blank">Dragon Nine Online</a>
+        </footer>
     </div>
 
-    <footer>
-        Fluid Motion TV &bull; Port Waikato Master Hub &bull; <a href="https://dragonnineonline.com" target="_blank">Dragon Nine Online</a>
-    </footer>
-</div>
+    <script>
+        const playlist = [
+            { src: "raw_power.mp3", title: "Raw Power" },
+            { src: "20260724 - Gypsy Children of smoke Vol. 2 (Cypress Hill Inspired) Stoner hip hop mix [bI8T0YQSqgY].m4a", title: "Gypsy Children of Smoke" }
+        ];
+        let currentTrackIndex = 0;
+        const audio = document.getElementById('audio');
+        const nowPlayingEl = document.getElementById('now-playing');
 
-<script>
-    const container = document.getElementById('webgl-container');
-    const scene = new THREE.Scene();
-    scene.fog = new THREE.FogExp2(0x010104, 0.035);
-
-    const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
-    camera.position.set(0, 2, 12);
-
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    container.appendChild(renderer.domElement);
-
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
-    scene.add(ambientLight);
-
-    const pointLight1 = new THREE.PointLight(0x00f3ff, 3, 50);
-    pointLight1.position.set(0, 5, 5);
-    scene.add(pointLight1);
-
-    const pointLight2 = new THREE.PointLight(0xff007f, 3, 50);
-    pointLight2.position.set(0, -5, -5);
-    scene.add(pointLight2);
-
-    const group = new THREE.Group();
-    scene.add(group);
-
-    const geometry = new THREE.TorusKnotGeometry(2.5, 0.7, 128, 32);
-    const material = new THREE.MeshStandardMaterial({
-        color: 0xffb700,
-        roughness: 0.2,
-        metalness: 0.8,
-        wireframe: false
-    });
-    const coreMesh = new THREE.Mesh(geometry, material);
-    group.add(coreMesh);
-
-    const wireGeometry = new THREE.IcosahedronGeometry(4.2, 2);
-    const wireMaterial = new THREE.MeshBasicMaterial({
-        color: 0x00f3ff,
-        wireframe: true,
-        transparent: true,
-        opacity: 0.35
-    });
-    const wireMesh = new THREE.Mesh(wireGeometry, wireMaterial);
-    group.add(wireMesh);
-
-    const particleCount = 300;
-    const particleGeo = new THREE.BufferGeometry();
-    const particlePos = new Float32Array(particleCount * 3);
-    
-    for(let i = 0; i < particleCount * 3; i += 3) {
-        particlePos[i] = (Math.random() - 0.5) * 30;
-        particlePos[i+1] = (Math.random() - 0.5) * 20;
-        particlePos[i+2] = (Math.random() - 0.5) * 30;
-    }
-    particleGeo.setAttribute('position', new THREE.BufferAttribute(particlePos, 3));
-    const particleMat = new THREE.PointsMaterial({
-        size: 0.15,
-        color: 0xff007f,
-        transparent: true,
-        opacity: 0.8
-    });
-    const particleSystem = new THREE.Points(particleGeo, particleMat);
-    scene.add(particleSystem);
-
-    const audio = document.getElementById('audio');
-    let audioCtx, analyser, dataArray;
-    let isAudioInitialized = false;
-
-    function initAudio() {
-        if (isAudioInitialized) return;
-        try {
-            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            analyser = audioCtx.createAnalyser();
-            const source = audioCtx.createMediaElementSource(audio);
-            source.connect(analyser);
-            analyser.connect(audioCtx.destination);
-            analyser.fftSize = 256;
-            dataArray = new Uint8Array(analyser.frequencyBinCount);
-            isAudioInitialized = true;
-        } catch(e) {
-            console.log("Audio waiting for user interaction", e);
+        function loadTrack(index) {
+            currentTrackIndex = index % playlist.length;
+            audio.src = playlist[currentTrackIndex].src;
+            nowPlayingEl.textContent = "Now Playing: " + playlist[currentTrackIndex].title;
+            audio.play().catch(e => console.log("Autoplay waiting for interaction"));
         }
-    }
 
-    audio.addEventListener('play', () => {
-        initAudio();
-        if (audioCtx && audioCtx.state === 'suspended') {
-            audioCtx.resume();
-        }
-    });
+        audio.addEventListener('ended', () => {
+            loadTrack(currentTrackIndex + 1);
+        });
 
-    let mode = 0;
-    document.getElementById('btn-mode').addEventListener('click', () => {
-        mode = (mode + 1) % 3;
-        if (mode === 0) {
-            material.wireframe = false;
-            material.color.setHex(0xffb700);
-        } else if (mode === 1) {
-            material.wireframe = true;
-            material.color.setHex(0x00f3ff);
-        } else {
-            material.wireframe = false;
-            material.color.setHex(0xff007f);
-        }
-    });
+        document.getElementById('btn-next').addEventListener('click', () => {
+            loadTrack(currentTrackIndex + 1);
+        });
 
-    document.getElementById('btn-fullscreen').addEventListener('click', () => {
-        if (!document.fullscreenElement) {
-            document.documentElement.requestFullscreen();
-        } else {
-            document.exitFullscreen();
-        }
-    });
+        const container = document.getElementById('webgl-container');
+        const scene = new THREE.Scene();
+        scene.fog = new THREE.FogExp2(0x010104, 0.035);
 
-    window.addEventListener('resize', () => {
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
+        const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.set(0, 2, 12);
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
         renderer.setSize(window.innerWidth, window.innerHeight);
-    });
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        container.appendChild(renderer.domElement);
 
-    let clock = new THREE.Clock();
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
+        scene.add(ambientLight);
 
-    function animate() {
-        requestAnimationFrame(animate);
+        const pointLight1 = new THREE.PointLight(0x00f3ff, 3, 50);
+        pointLight1.position.set(0, 5, 5);
+        scene.add(pointLight1);
 
-        let elapsedTime = clock.getElapsedTime();
-        let bass = 50;
+        const pointLight2 = new THREE.PointLight(0xff007f, 3, 50);
+        pointLight2.position.set(0, -5, -5);
+        scene.add(pointLight2);
 
-        if (analyser && isAudioInitialized) {
-            analyser.getByteFrequencyData(dataArray);
-            bass = dataArray[2] || 50;
+        const group = new THREE.Group();
+        scene.add(group);
+
+        const geometry = new THREE.TorusKnotGeometry(2.5, 0.7, 128, 32);
+        const material = new THREE.MeshStandardMaterial({
+            color: 0xffb700,
+            roughness: 0.2,
+            metalness: 0.8,
+            wireframe: false
+        });
+        const coreMesh = new THREE.Mesh(geometry, material);
+        group.add(coreMesh);
+
+        const wireGeometry = new THREE.IcosahedronGeometry(4.2, 2);
+        const wireMaterial = new THREE.MeshBasicMaterial({
+            color: 0x00f3ff,
+            wireframe: true,
+            transparent: true,
+            opacity: 0.35
+        });
+        const wireMesh = new THREE.Mesh(wireGeometry, wireMaterial);
+        group.add(wireMesh);
+
+        const particleCount = 300;
+        const particleGeo = new THREE.BufferGeometry();
+        const particlePos = new Float32Array(particleCount * 3);
+        
+        for(let i = 0; i < particleCount * 3; i += 3) {
+            particlePos[i] = (Math.random() - 0.5) * 30;
+            particlePos[i+1] = (Math.random() - 0.5) * 20;
+            particlePos[i+2] = (Math.random() - 0.5) * 30;
+        }
+        particleGeo.setAttribute('position', new THREE.BufferAttribute(particlePos, 3));
+        const particleMat = new THREE.PointsMaterial({
+            size: 0.15,
+            color: 0xff007f,
+            transparent: true,
+            opacity: 0.8
+        });
+        const particleSystem = new THREE.Points(particleGeo, particleMat);
+        scene.add(particleSystem);
+
+        let audioCtx, analyser, dataArray;
+        let isAudioInitialized = false;
+
+        function initAudio() {
+            if (isAudioInitialized) return;
+            try {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                analyser = audioCtx.createAnalyser();
+                const source = audioCtx.createMediaElementSource(audio);
+                source.connect(analyser);
+                analyser.connect(audioCtx.destination);
+                analyser.fftSize = 256;
+                dataArray = new Uint8Array(analyser.frequencyBinCount);
+                isAudioInitialized = true;
+            } catch(e) {
+                console.log("Audio waiting for user interaction", e);
+            }
         }
 
-        let bassScale = 1 + (bass / 120);
-        coreMesh.scale.set(bassScale, bassScale, bassScale);
+        audio.addEventListener('play', () => {
+            initAudio();
+            if (audioCtx && audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        });
 
-        coreMesh.rotation.x = elapsedTime * 0.4;
-        coreMesh.rotation.y = elapsedTime * 0.6;
+        let mode = 0;
+        document.getElementById('btn-mode').addEventListener('click', () => {
+            mode = (mode + 1) % 3;
+            if (mode === 0) {
+                material.wireframe = false;
+                material.color.setHex(0xffb700);
+            } else if (mode === 1) {
+                material.wireframe = true;
+                material.color.setHex(0x00f3ff);
+            } else {
+                material.wireframe = false;
+                material.color.setHex(0xff007f);
+            }
+        });
 
-        wireMesh.rotation.y = -elapsedTime * 0.3;
-        wireMesh.rotation.z = elapsedTime * 0.2;
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
 
-        group.rotation.y = Math.sin(elapsedTime * 0.5) * 0.3;
+        let clock = new THREE.Clock();
 
-        const positions = particleGeo.attributes.position.array;
-        for(let i = 1; i < particleCount * 3; i += 1) {
-            positions[i] -= 0.05;
-            if (positions[i] < -10) positions[i] = 10;
+        function animate() {
+            requestAnimationFrame(animate);
+
+            let elapsedTime = clock.getElapsedTime();
+            let bass = 50;
+
+            if (analyser && isAudioInitialized) {
+                analyser.getByteFrequencyData(dataArray);
+                bass = dataArray[2] || 50;
+            }
+
+            let bassScale = 1 + (bass / 120);
+            coreMesh.scale.set(bassScale, bassScale, bassScale);
+
+            coreMesh.rotation.x = elapsedTime * 0.4;
+            coreMesh.rotation.y = elapsedTime * 0.6;
+
+            wireMesh.rotation.y = -elapsedTime * 0.3;
+            wireMesh.rotation.z = elapsedTime * 0.2;
+
+            group.rotation.y = Math.sin(elapsedTime * 0.5) * 0.3;
+
+            const positions = particleGeo.attributes.position.array;
+            for(let i = 1; i < particleCount * 3; i += 1) {
+                positions[i] -= 0.05;
+                if (positions[i] < -10) positions[i] = 10;
+            }
+            particleGeo.attributes.position.needsUpdate = true;
+
+            renderer.render(scene, camera);
         }
-        particleGeo.attributes.position.needsUpdate = true;
+        animate();
+    </script>
+</body>
+</html>
 
         renderer.render(scene, camera);
     }
