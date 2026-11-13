@@ -1,0 +1,6 @@
+{
+  "name": "Studio AI & Fluid Motion",
+  "description": "Dragon 9 Sovereign Clock Engine, Fluid Motion Architecture, Vector Art Studio, Sovereign Beats, Digital Comics, and AR Beach Overlays for Port Waikato node.",
+  "requestFramePermissions": ["camera", "microphone"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

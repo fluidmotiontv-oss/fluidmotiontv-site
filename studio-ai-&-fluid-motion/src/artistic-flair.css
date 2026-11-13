@@ -1,0 +1,111 @@
+/* Fluid Motion Design System - Artistic Flair */
+:root {
+  /* High-Contrast Dark Palette */
+  --fluid-bg: #050505;
+  --fluid-container: #111111;
+  --fluid-container-hover: #1a1a1a;
+  --fluid-card: #161616;
+  --fluid-border: #333333;
+  --fluid-border-accent: #444444;
+
+  /* Typography & Text Neutrals */
+  --fluid-text-main: #e0e0e0;
+  --fluid-text-muted: #aaaaaa;
+  --fluid-text-dim: #666666;
+
+  /* Neon Accents */
+  --fluid-orange: #F27D26;
+  --fluid-orange-hover: #ff8a38;
+  --fluid-orange-glow: rgba(242, 125, 38, 0.35);
+  
+  --fluid-cyan: #00E5FF;
+  --fluid-cyan-glow: rgba(0, 229, 255, 0.35);
+
+  --fluid-green: #00FF88;
+  --fluid-green-glow: rgba(0, 255, 136, 0.35);
+
+  --fluid-gold: #FFD700;
+  --fluid-gold-glow: rgba(255, 215, 0, 0.35);
+
+  /* Organic Wave-Like Border Radiuses */
+  --fluid-radius-wave-1: 18px 6px 24px 8px;
+  --fluid-radius-wave-2: 8px 24px 6px 18px;
+  --fluid-radius-wave-3: 20px 10px 16px 26px;
+  --fluid-radius-smooth: 12px;
+  --fluid-radius-pill: 9999px;
+}
+
+/* Custom Utility Classes for Fluid Motion Design System */
+.fluid-bg {
+  background-color: var(--fluid-bg);
+}
+
+.fluid-container {
+  background-color: var(--fluid-container);
+  border: 1px solid var(--fluid-border);
+}
+
+.fluid-card-wave-1 {
+  background-color: var(--fluid-container);
+  border: 1px solid var(--fluid-border);
+  border-radius: var(--fluid-radius-wave-1);
+}
+
+.fluid-card-wave-2 {
+  background-color: var(--fluid-container);
+  border: 1px solid var(--fluid-border);
+  border-radius: var(--fluid-radius-wave-2);
+}
+
+.fluid-orange-glow {
+  box-shadow: 0 0 15px var(--fluid-orange-glow);
+}
+
+.fluid-cyan-glow {
+  box-shadow: 0 0 15px var(--fluid-cyan-glow);
+}
+
+.fluid-green-glow {
+  box-shadow: 0 0 15px var(--fluid-green-glow);
+}
+
+.fluid-btn-orange {
+  background-color: var(--fluid-orange);
+  color: #000000;
+  font-weight: 900;
+  font-style: italic;
+  text-transform: uppercase;
+  border-radius: var(--fluid-radius-wave-1);
+  transition: all 0.2s ease-in-out;
+}
+
+.fluid-btn-orange:hover {
+  background-color: var(--fluid-orange-hover);
+  box-shadow: 0 0 12px var(--fluid-orange-glow);
+}
+
+/* D9 Temporal Wave Flow Keyframe Animations */
+@keyframes wave-flow-1 {
+  0% {
+    transform: translateX(0) scaleY(1);
+  }
+  50% {
+    transform: translateX(-20%) scaleY(1.15);
+  }
+  100% {
+    transform: translateX(-40%) scaleY(0.95);
+  }
+}
+
+@keyframes wave-flow-2 {
+  0% {
+    transform: translateX(0) scaleY(1.05);
+  }
+  50% {
+    transform: translateX(20%) scaleY(0.85);
+  }
+  100% {
+    transform: translateX(35%) scaleY(1.2);
+  }
+}
+
