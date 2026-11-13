@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#071419" />
+    <meta name="description" content="An interactive conceptual 3D model of the Dragon9 Synchronize Time Anchor Point and its 27 km coastal survey area." />
+    <title>Dragon9 — Coastal Time Anchor</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='25' fill='%23071419' stroke='%2374f7cf' stroke-width='3'/%3E%3Cpath d='M32 12 44 32 32 52 20 32Z' fill='%23e8b86d'/%3E%3C/svg%3E" />
+  </head>
+  <body>
+    <main id="app" aria-label="Dragon9 interactive coastal model">
+      <div id="scene" aria-label="Interactive 3D coastal terrain. Drag to orbit and scroll to zoom."></div>
+      <div id="labels" aria-label="3D landmark labels"></div>
+
+      <header class="topbar">
+        <div class="brand-block">
+          <div class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></div>
+          <div>
+            <h1>DRAGON9</h1>
+            <p>Synchronize Time Anchor Point</p>
+          </div>
+        </div>
+        <div class="survey-status" aria-label="Survey area: 27 kilometer radius">
+          <span class="status-dot"></span>
+          <div><strong>27 KM</strong><small>RADIUS / COASTAL SURVEY</small></div>
+        </div>
+      </header>
+
+      <nav class="site-index glass-panel" aria-label="Landmark navigation">
+        <div class="panel-heading"><span>SITE INDEX</span><small>04 POINTS</small></div>
+        <button class="site-button active" data-site="anchor" aria-pressed="true">
+          <span class="site-number">09</span><span><strong>Time Anchor</strong><small>Headland installation</small></span><span class="site-arrow">↗</span>
+        </button>
+        <button class="site-button" data-site="surf" aria-pressed="false">
+          <span class="site-number">02</span><span><strong>Surf Break</strong><small>Outer reef / swell lines</small></span><span class="site-arrow">↗</span>
+        </button>
+        <button class="site-button" data-site="mouth" aria-pressed="false">
+          <span class="site-number">03</span><span><strong>River Mouth</strong><small>Estuary and sandbars</small></span><span class="site-arrow">↗</span>
+        </button>
+        <button class="site-button" data-site="town" aria-pressed="false">
+          <span class="site-number">04</span><span><strong>Coastal Town</strong><small>River road and clock hall</small></span><span class="site-arrow">↗</span>
+        </button>
+      </nav>
+
+      <button id="mobile-layers" aria-expanded="false" aria-controls="layer-panel">MAP LAYERS <span>＋</span></button>
+      <aside id="layer-panel" class="layer-panel glass-panel" aria-label="Model controls">
+        <div class="panel-heading"><span>MAP LAYERS</span><small>LIVE</small></div>
+        <button class="layer-button" data-layer="labels" aria-pressed="true"><span class="layer-swatch label-swatch"></span>Landmark labels<span class="toggle-track"></span></button>
+        <button class="layer-button" data-layer="survey" aria-pressed="true"><span class="layer-swatch ring-swatch"></span>Survey rings<span class="toggle-track"></span></button>
+        <button class="layer-button" data-layer="field" aria-pressed="true"><span class="layer-swatch field-swatch"></span>Time field<span class="toggle-track"></span></button>
+        <div class="control-divider"></div>
+        <button id="play-button" class="utility-button" aria-pressed="false"><span id="play-icon">Ⅱ</span><span id="play-label">Pause field</span></button>
+        <button id="narration-button" class="utility-button" aria-pressed="false"><span id="narration-icon">▷</span><span id="narration-label">Play narration</span></button>
+        <button id="beat-button" class="utility-button" aria-pressed="false"><span id="beat-icon">♪</span><span id="beat-label">Play power beat</span></button>
+        <button id="top-button" class="utility-button" aria-pressed="false"><span>⌖</span>Top-down map</button>
+        <button id="reset-button" class="utility-button"><span>↺</span>Reset overview</button>
+      </aside>
+
+      <section class="detail-card glass-panel" aria-live="polite" aria-label="Selected landmark details">
+        <div class="detail-topline"><span id="detail-code">SITE 09 / HEADLAND</span><span class="live-chip">ANCHORED</span></div>
+        <h2 id="detail-title">Synchronize Time Anchor</h2>
+        <p id="detail-copy">Nine radial pylons lock a suspended crystal above the headland. Orbiting rings trace the anchor’s synchronized field.</p>
+        <div class="detail-metric"><span>MODEL POSITION</span><strong id="detail-position">E 0.7 / S 7.0 KM</strong></div>
+      </section>
+
+
+      <section id="narration-caption" class="narration-caption glass-panel" aria-label="Kimitimi’s artist statement" aria-live="polite" hidden>
+        <button id="narration-close" aria-label="Stop narration and close statement">×</button>
+        <div class="statement-kicker">KIMITIMI / ARTIST’S STATEMENT</div>
+        <blockquote>
+          <span>I’m Kimitimi.</span>
+          <span>I’m Westside all hours.</span>
+          <span>I believe in the fifty-four.</span>
+          <span>And this is my picture.</span>
+        </blockquote>
+        <div class="statement-foot">DRAGON9 · 54 KM DIAMETER</div>
+      </section>
+      <audio id="power-audio" loop preload="none"><source src="/audio/raw-power-original.mp3" type="audio/mpeg" /><source src="/audio/raw-power-original.ogg" type="audio/ogg" /></audio>
+      <div id="beat-status" hidden><span></span>RAW POWER / ORIGINAL SCORE</div>
+      <div class="scale-bar" aria-label="Scale bar: 5 kilometers"><span>0</span><div></div><span>5 KM</span></div>
+      <div class="north-marker" aria-label="North points up and left in the overview"><span>N</span><div></div></div>
+      <div class="interaction-hint"><span>DRAG TO ORBIT</span><i></i><span>SCROLL TO ZOOM</span><i></i><span>SELECT A SITE TO EXPLORE</span></div>
+      <div id="render-stats" aria-label="Rendering performance"></div>
+      <div class="model-note">CONCEPTUAL TERRAIN · VERTICAL LANDMARKS EXAGGERATED</div>
+
+      <div id="loading" role="status" aria-live="polite">
+        <div class="loader-orbit"><span></span><span></span><span></span></div>
+        <strong>ASSEMBLING COASTAL FIELD</strong>
+        <small>54 KM DIAMETER / NINE ANCHOR NODES</small>
+      </div>
+    </main>
+    <script type="module" src="/src/scene.js"></script>
+  </body>
+</html>
