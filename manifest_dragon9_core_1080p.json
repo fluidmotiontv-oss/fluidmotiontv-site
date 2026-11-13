@@ -1,0 +1,32 @@
+{
+  "manifestId": "manifest_dragon9_core_1080p",
+  "stageTheme": "Dragon 9 Sovereign Mesh Node & 1080p Lunar Grid",
+  "frequencyHz": 432,
+  "visualAssets": [
+    {
+      "id": "asset_moon_grid",
+      "type": "3D_Hologram",
+      "resolution": "1080p",
+      "description": "A spinning 3D model of the Moon paired with a glowing 1080p harmonic resolution grid orbiting Cyber Dragon head.",
+      "renderEngine": "WebGL_ThreeJS",
+      "colorHex": "#6366f1"
+    },
+    {
+      "id": "asset_plasma_orb",
+      "type": "Plasma_Entity",
+      "frequency": "432Hz",
+      "description": "A vibrant, pulsing orb of river-plasma floating near Cyber Dragon claw, tuned to 432Hz wave dynamics.",
+      "renderEngine": "GLSL_PlasmaShader",
+      "colorHex": "#a855f7"
+    },
+    {
+      "id": "asset_binary_stream",
+      "type": "Background_Display",
+      "rate": "High_Frequency",
+      "description": "A cascading, zero-latency stream of I and O binary data representing balanced, error-free transactions.",
+      "renderEngine": "Matrix_Cascade_2D",
+      "colorHex": "#06b6d4"
+    }
+  ],
+  "kiwiCommentary": "Choice as, mate! Manifest synced for antiX Linux stage projection."
+}

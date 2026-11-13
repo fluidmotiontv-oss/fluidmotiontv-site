@@ -1,0 +1,6 @@
+{
+  "name": "HoloCraft 3D - Camera Hologram Studio",
+  "description": "Transform live camera feeds into interactive 3D holograms, volumetric point clouds, 4-view pyramid projections, and exportable 3D assets.",
+  "requestFramePermissions": ["camera", "microphone"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

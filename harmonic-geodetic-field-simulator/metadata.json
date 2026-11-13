@@ -1,0 +1,6 @@
+{
+  "name": "Harmonic Geodetic Field Simulator",
+  "description": "Theoretical physics workbench analyzing Captain Bruce Cathie's unified field equations, planetary geodetic grid, mass harmonics, and geometric electro-magnetism.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

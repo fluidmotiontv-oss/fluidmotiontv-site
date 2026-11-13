@@ -1,0 +1,6 @@
+{
+  "name": "Guide to Sovereign Media - 3D Storefront",
+  "description": "Sovereign 3D WebGL storefront and tunnel aquarium exhibition for the 'Guide to Sovereign Media' e-book tiers ($9, $27, $54) with live ambient radio and PayPal checkout.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
