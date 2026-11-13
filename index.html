@@ -1,9 +1,10 @@
 <!DOCTYPE html>
+<html lang="en"><!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fluid Motion TV &bull; 3D Cyber-Tiki WebGL Masterclass</title>
+    <title>Fluid Motion TV &bull; 3D Cyber-Tiki Tunnel & Waves Masterclass</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -194,7 +195,7 @@
 
         <div class="main-controls">
             <div class="controls-panel">
-                <h2>3D AUDIO & VISUAL LAB</h2>
+                <h2>3D TUNNEL & WAVE LAB</h2>
                 <div class="playlist-info" id="now-playing">Now Playing: Raw Power</div>
                 <audio id="audio" class="audio-player" controls crossorigin="anonymous">
                     <source src="raw_power.mp3" type="audio/mp3">
@@ -239,6 +240,7 @@
     </div>
 
     <script>
+        // Dual-Track Audio Playlist
         const playlist = [
             { src: "raw_power.mp3", title: "Raw Power" },
             { src: "20260724 - Gypsy Children of smoke Vol. 2 (Cypress Hill Inspired) Stoner hip hop mix [bI8T0YQSqgY].m4a", title: "Gypsy Children of Smoke" }
@@ -262,33 +264,54 @@
             loadTrack(currentTrackIndex + 1);
         });
 
+        // --- TRUE 3D THREE.JS WEBGL SETUP WITH TUNNEL & OCEAN WAVES ---
         const container = document.getElementById('webgl-container');
         const scene = new THREE.Scene();
-        scene.fog = new THREE.FogExp2(0x010104, 0.035);
+        scene.fog = new THREE.FogExp2(0x010104, 0.025);
 
-        const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
-        camera.position.set(0, 2, 12);
+        const camera = new THREE.PerspectiveCamera(65, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.set(0, 3, 10);
 
         const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
         renderer.setSize(window.innerWidth, window.innerHeight);
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
         container.appendChild(renderer.domElement);
 
-        const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.9);
         scene.add(ambientLight);
 
-        const pointLight1 = new THREE.PointLight(0x00f3ff, 3, 50);
+        const pointLight1 = new THREE.PointLight(0x00f3ff, 4, 60);
         pointLight1.position.set(0, 5, 5);
         scene.add(pointLight1);
 
-        const pointLight2 = new THREE.PointLight(0xff007f, 3, 50);
+        const pointLight2 = new THREE.PointLight(0xff007f, 4, 60);
         pointLight2.position.set(0, -5, -5);
         scene.add(pointLight2);
 
-        const group = new THREE.Group();
-        scene.add(group);
+        // 1. 3D Cyber Tunnel (Nested Glowing Rings)
+        const tunnelGroup = new THREE.Group();
+        scene.add(tunnelGroup);
+        const ringCount = 20;
+        const rings = [];
+        for (let i = 0; i < ringCount; i++) {
+            const ringGeo = new THREE.TorusGeometry(6, 0.15, 16, 100);
+            const ringMat = new THREE.MeshStandardMaterial({
+                color: i % 2 === 0 ? 0x00f3ff : 0xff007f,
+                emissive: i % 2 === 0 ? 0x00f3ff : 0xff007f,
+                emissiveIntensity: 0.6,
+                roughness: 0.1
+            });
+            const ring = new THREE.Mesh(ringGeo, ringMat);
+            ring.position.z = -i * 3;
+            tunnelGroup.add(ring);
+            rings.push(ring);
+        }
 
-        const geometry = new THREE.TorusKnotGeometry(2.5, 0.7, 128, 32);
+        // 2. Center 3D Audio-Reactive Torus Knot Core
+        const coreGroup = new THREE.Group();
+        scene.add(coreGroup);
+
+        const geometry = new THREE.TorusKnotGeometry(2.2, 0.6, 128, 32);
         const material = new THREE.MeshStandardMaterial({
             color: 0xffb700,
             roughness: 0.2,
@@ -296,37 +319,25 @@
             wireframe: false
         });
         const coreMesh = new THREE.Mesh(geometry, material);
-        group.add(coreMesh);
+        coreGroup.add(coreMesh);
 
-        const wireGeometry = new THREE.IcosahedronGeometry(4.2, 2);
-        const wireMaterial = new THREE.MeshBasicMaterial({
-            color: 0x00f3ff,
+        // 3. Audio-Reactive Ocean Waves (Grid Plane at the bottom)
+        const waveWidth = 40;
+        const waveHeight = 40;
+        const waveSegments = 40;
+        const waveGeo = new THREE.PlaneGeometry(waveWidth, waveHeight, waveSegments, waveSegments);
+        waveGeo.rotateX(-Math.PI / 2);
+        const waveMat = new THREE.MeshStandardMaterial({
+            color: 0x9d00ff,
             wireframe: true,
-            transparent: true,
-            opacity: 0.35
+            roughness: 0.3,
+            metalness: 0.8
         });
-        const wireMesh = new THREE.Mesh(wireGeometry, wireMaterial);
-        group.add(wireMesh);
+        const waveMesh = new THREE.Mesh(waveGeo, waveMat);
+        waveMesh.position.y = -4;
+        scene.add(waveMesh);
 
-        const particleCount = 300;
-        const particleGeo = new THREE.BufferGeometry();
-        const particlePos = new Float32Array(particleCount * 3);
-        
-        for(let i = 0; i < particleCount * 3; i += 3) {
-            particlePos[i] = (Math.random() - 0.5) * 30;
-            particlePos[i+1] = (Math.random() - 0.5) * 20;
-            particlePos[i+2] = (Math.random() - 0.5) * 30;
-        }
-        particleGeo.setAttribute('position', new THREE.BufferAttribute(particlePos, 3));
-        const particleMat = new THREE.PointsMaterial({
-            size: 0.15,
-            color: 0xff007f,
-            transparent: true,
-            opacity: 0.8
-        });
-        const particleSystem = new THREE.Points(particleGeo, particleMat);
-        scene.add(particleSystem);
-
+        // Audio Analyser
         let audioCtx, analyser, dataArray;
         let isAudioInitialized = false;
 
@@ -386,6 +397,38 @@
                 analyser.getByteFrequencyData(dataArray);
                 bass = dataArray[2] || 50;
             }
+
+            // Animate Core Torus Knot to Bass
+            let bassScale = 1 + (bass / 100);
+            coreMesh.scale.set(bassScale, bassScale, bassScale);
+            coreMesh.rotation.x = elapsedTime * 0.4;
+            coreMesh.rotation.y = elapsedTime * 0.6;
+
+            // Animate Tunnel forward effect
+            rings.forEach((ring, idx) => {
+                ring.position.z += 0.08 + (bass * 0.001);
+                if (ring.position.z > 5) {
+                    ring.position.z = -ringCount * 3 + 5;
+                }
+                ring.rotation.z = elapsedTime * 0.2 + idx;
+            });
+
+            // Animate Ocean Waves with Bass Reaction
+            const pos = waveGeo.attributes.position;
+            for (let i = 0; i < pos.count; i++) {
+                const u = pos.getX(i);
+                const v = pos.getZ(i);
+                const waveHeightVal = Math.sin(u * 0.4 + elapsedTime * 2) * Math.cos(v * 0.4 + elapsedTime * 2) * (0.8 + bass * 0.02);
+                pos.setY(i, waveHeightVal);
+            }
+            pos.needsUpdate = true;
+
+            renderer.render(scene, camera);
+        }
+        animate();
+    </script>
+</body>
+</html>
 
             let bassScale = 1 + (bass / 120);
             coreMesh.scale.set(bassScale, bassScale, bassScale);
