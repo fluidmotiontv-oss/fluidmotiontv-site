@@ -3,36 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fluid Motion TV | Dragon 9 Sovereign Ecosystem</title>
-    <!-- Three.js for 3D Wave Mesh & Post-Processing Bloom -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <title>Fluid Motion TV | The Fluid Motion of the Future</title>
     <style>
-        :root {
-            --bg-deep: #030308;
-            --neon-cyan: #00f3ff;
-            --neon-purple: #b026ff;
-            --neon-gold: #ffd700;
-            --glass-bg: rgba(10, 10, 20, 0.7);
-            --glass-border: rgba(0, 243, 255, 0.2);
-            --text-main: #f0f0f5;
-        }
-
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-family: system-ui, -apple-system, sans-serif;
         }
 
         body {
-            background-color: var(--bg-deep);
-            color: var(--text-main);
-            overflow-x: hidden;
+            background-color: #070913;
+            color: #f8fafc;
             min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
         }
 
-        /* 3D WebGL Background Canvas */
-        #webgl-container {
+        #horizon-canvas {
             position: fixed;
             top: 0;
             left: 0;
@@ -40,492 +28,308 @@
             height: 100vh;
             z-index: -1;
             pointer-events: none;
+            background: #070913;
         }
 
-        /* Header & Dragon 9 Nonary Clock */
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 40px;
-            background: var(--glass-bg);
-            backdrop-filter: blur(12px);
-            border-bottom: 1px solid var(--glass-border);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
-        .logo {
-            font-size: 1.5rem;
-            font-weight: 800;
-            letter-spacing: 2px;
-            background: linear-gradient(45deg, var(--neon-cyan), var(--neon-purple));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-transform: uppercase;
-        }
-
-        .dragon9-clock {
-            background: rgba(0, 0, 0, 0.6);
-            border: 1px solid var(--neon-gold);
-            padding: 8px 16px;
-            border-radius: 30px;
-            font-size: 0.9rem;
-            letter-spacing: 1.5px;
-            color: var(--neon-gold);
-            box-shadow: 0 0 15px rgba(255, 215, 0, 0.2);
-        }
-
-        /* Main Container */
-        .container {
+        .portal-wrapper {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 40px 20px;
+            padding: 2rem 1.5rem 4rem 1.5rem;
             position: relative;
-            z-index: 10;
+            z-index: 2;
         }
 
-        .hero-section {
+        header {
             text-align: center;
-            margin-bottom: 50px;
+            padding: 3rem 1rem 2rem 1rem;
+            background: rgba(7, 9, 19, 0.85);
+            border-bottom: 1px solid rgba(0, 198, 255, 0.25);
+            margin-bottom: 2.5rem;
+            border-radius: 0 0 20px 20px;
         }
 
-        .hero-section h1 {
-            font-size: 3rem;
-            margin-bottom: 15px;
-            letter-spacing: 1px;
-            text-shadow: 0 0 20px rgba(0, 243, 255, 0.4);
-        }
-
-        .hero-section p {
-            font-size: 1.2rem;
-            color: #a0a0b0;
-            max-width: 700px;
-            margin: 0 auto;
-        }
-
-        /* Audio Player Widget */
-        .audio-player-card {
-            background: var(--glass-bg);
-            border: 1px solid var(--glass-border);
-            border-radius: 16px;
-            padding: 30px;
-            backdrop-filter: blur(16px);
-            margin-bottom: 50px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-        }
-
-        .player-controls {
-            display: flex;
-            gap: 15px;
-            justify-content: center;
-            margin-top: 20px;
-        }
-
-        button {
-            background: linear-gradient(135deg, var(--neon-cyan), var(--neon-purple));
-            color: #fff;
-            border: none;
-            padding: 12px 28px;
-            border-radius: 8px;
+        header h1 {
+            font-size: clamp(2rem, 4.5vw, 4rem);
             font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 0.75rtem;
+        }
+
+        header p {
+            font-size: 1.1rem;
+            color: #94a3b8;
+            max-width: 580px;
+            margin: 0 auto 1.5rem auto;
+            line-height: 1.5;
+        }
+
+        .audio-player-bar {
+            display: inline-flex;
+            align-items: center;
+            gap: 1rem;
+            background: rgba(0, 198, 255, 0.1);
+            border: 1px solid rgba(0, 198, 255, 0.3);
+            padding: 0.75rem 1.25rem;
+            border-radius: 30px;
+        }
+
+        .audio-player-bar button {
+            background: #00c6ff;
+            color: #070913;
+            border: none;
+            padding: 0.5rem 1rem;
+            font-weight: 600;
+            border-radius: 20px;
             cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 0 15px rgba(0, 243, 255, 0.3);
+        }
+
+        .track-info {
+            font-size: 0.9rem;
+            color: #f8fafc;
+            font-weight: 500;
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            color: #00c6ff;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
         }
 
-        button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 0 25px rgba(176, 38, 255, 0.6);
+        .section-title::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: rgba(0, 198, 255, 0.25);
         }
 
-        /* 9-Tier PayPal Checkout Grid */
-        .tier-grid {
+        .tiers-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 25px;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.25rem;
+            margin-bottom: 3rem;
         }
 
         .tier-card {
-            background: var(--glass-bg);
-            border: 1px solid var(--glass-border);
-            border-radius: 12px;
-            padding: 25px;
+            background: rgba(12, 16, 28, 0.85);
+            border: 1px solid rgba(0, 198, 255, 0.25);
+            border-radius: 14px;
+            padding: 1.75rem;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            transition: transform 0.3s ease, border-color 0.3s ease;
-            backdrop-filter: blur(10px);
-        }
-
-        .tier-card:hover {
-            transform: translateY(-5px);
-            border-color: var(--neon-cyan);
         }
 
         .tier-header {
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
+            align-items: baseline;
+            margin-bottom: 0.75rem;
+        }
+
+        .tier-number {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: #ffb703;
+            text-transform: uppercase;
         }
 
         .tier-price {
-            font-size: 1.8rem;
-            font-weight: 800;
-            color: var(--neon-gold);
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: #fff;
         }
 
         .tier-title {
-            font-size: 1.1rem;
+            font-size: 1.15rem;
             font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #f8fafc;
         }
 
         .tier-desc {
-            font-size: 0.950rem;
-            color: #b0b0c0;
-            margin-bottom: 20px;
+            font-size: 0.9rem;
+            color: #94a3b8;
             line-height: 1.5;
+            margin-bottom: 1.5rem;
         }
 
         .checkout-btn {
-            display: block;
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: rgba(0, 198, 255, 0.15);
+            border: 1px solid #00c6ff;
+            color: #fff;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
             text-align: center;
-            background: transparent;
-            border: 2px solid var(--neon-cyan);
-            color: var(--neon-cyan);
-            padding: 10px 20px;
-            border-radius: 6px;
             text-decoration: none;
-            font-weight: bold;
-            transition: all 0.3s ease;
+            display: inline-block;
         }
 
         .checkout-btn:hover {
-            background: var(--neon-cyan);
-            color: var(--bg-deep);
-            box-shadow: 0 0 15px var(--neon-cyan);
+            background: #00c6ff;
+            color: #070913;
+        }
+
+        footer {
+            text-align: center;
+            padding: 2.5rem 1rem;
+            color: #94a3b8;
+            font-size: 0.85rem;
+            border-top: 1px solid rgba(0, 198, 255, 0.25);
+        }
+
+        footer span {
+            color: #00c6ff;
         }
     </style>
 </head>
 <body>
 
-    <!-- 3D WebGL Background Container -->
-    <div id="webgl-container"></div>
+    <canvas id="horizon-canvas"></canvas>
 
-    <!-- Header & Dragon 9 Clock -->
-    <header>
-        <div class="logo">Fluid Motion TV</div>
-        <div class="dragon9-clock" id="dragonClock">DRAGON 9: 00:00 (Cycle 1/9)</div>
-    </header>
-
-    <div class="container">
-        <!-- Hero Section -->
-        <section class="hero-section">
-            <h1>Sovereign Media & Audio Reactor</h1>
-            <p>Experience harmonic 3D spatial wave animations, real-time audio reactivity, and complete sovereign digital asset tiers.</p>
-        </section>
-
-        <!-- Audio Player Section -->
-        <section class="audio-player-card">
-            <h3 style="margin-bottom: 10px; text-align: center;">Harmonic Audio Stream</h3>
-            <p id="trackTitle" style="text-align: center; color: var(--neon-cyan); margin-bottom: 15px;">Now Playing: Raw Power & Dawns (Aquarium Fern Tunnel Mix)</p>
+    <div class="portal-wrapper">
+        <header>
+            <h1>Fluid Motion TV</h1>
+            <p>Real-time audio-reactive horizon, pure harmonic resonance, and the sovereign shop tiers.</p>
             
-            <audio id="audioElement" loop crossorigin="anonymous"></audio>
-
-            <div class="player-controls">
-                <button onclick="toggleAudio()">Play Stream</button>
-                <button onclick="switchTrack('raw_power')">Raw Power MP3</button>
-                <button onclick="switchTrack('dawns')">Dawns MP3</button>
+            <div class="audio-player-bar">
+                <button id="play-toggle-btn" onclick="togglePlaylist()">Play Audio</button>
+                <div class="track-info" id="track-label">Ready: Raw Power &rarr; Dawn's Mix</div>
             </div>
-        </section>
+        </header>
 
-        <!-- 9-Tier Sovereign PayPal Checkout Suite -->
-        <section class="tier-grid">
-            <!-- $9 Tier -->
-            <div class="tier-card">
-                <div>
-                    <div class="tier-header">
-                        <span class="tier-title">Starter Asset</span>
-                        <span class="tier-price">$9</span>
-                    </div>
-                    <p class="tier-desc">1 3D Ebook mockup template + 1 digital copy of The Guide to Sovereign Media[cite: 1].</p>
-                </div>
-                <a href="https://paypal.me/fluidmotiontv/9" target="_blank" class="checkout-btn">Secure Checkout ($9)</a>
-            </div>
+        <main>
+            <div class="section-title">Nine Sovereign Shop Tiers</div>
+            
+            <div class="tiers-grid">
+                <!-- Tiers 1 to 9 -->
+                <script>
+                    const tiers = [
+                        {num: "01", price: "$9 NZD", title: "Harmonic Seed", desc: "Initial digital asset bundle featuring base 432Hz ambient audio stems and wallpaper suite."},
+                        {num: "02", price: "$25 NZD", title: "Horizon Generator", desc: "Standalone WebGL canvas script and modular horizon animation engine for local server hosting."},
+                        {num: "03", price: "$50 NZD", title: "Plasma Frequency Suite", desc: "Full spectrum audio collection tuned with Solfeggio overtones and rhythmic dub loops."},
+                        {num: "04", price: "$99 NZD", title: "Sovereign Node Access", desc: "Early access pass to PWA factory portals, local node scripts, and decentralized streaming tools."},
+                        {num: "05", price: "$150 NZD", title: "Creative Suite Pro", desc: "Complete source code repositories for all motion graphics templates, UI kits, and visual assets."},
+                        {num: "06", price: "$250 NZD", title: "Atmospheric Grid Builder", desc: "Advanced harmonic grid calculator toolkit and local frequency harvesting documentation."},
+                        {num: "07", price: "$500 NZD", title: "Broadcast Partner Pass", desc: "Direct licensing rights for streaming background environments and collaborative media production."},
+                        {num: "08", price: "$1,000 NZD", title: "Core Infrastructure Tier", desc: "Full deployment package with dedicated Caddy reverse proxy configurations and multi-domain routing setups."},
+                        {num: "09", price: "$2,500 NZD", title: "Ultimate Sovereign License", desc: "Unlimited enterprise access to all current and future modular PWA engines, repositories, and creator collaboration."}
+                    ];
 
-            <!-- $18 Tier -->
-            <div class="tier-card">
-                <div>
-                    <div class="tier-header">
-                        <span class="tier-title">Quick-Win Template</span>
-                        <span class="tier-price">$18</span>
-                    </div>
-                    <p class="tier-desc">Dual-pack Dragon 9 3D ebook covers + Guide to Sovereign Media[cite: 1].</p>
-                </div>
-                <a href="https://paypal.me/fluidmotiontv/18" target="_blank" class="checkout-btn">Secure Checkout ($18)</a>
+                    document.write(tiers.map((t, i) => `
+                        <div class="tier-card">
+                            <div>
+                                <div class="tier-header"><span class="tier-number">Tier ${t.num}</span><span class="tier-price">${t.price}</span></div>
+                                <div class="tier-title">${t.title}</div>
+                                <div class="tier-desc">${t.desc}</div>
+                            </div>
+                            <a href="https://www.paypal.com/ncp/payment?hosted_button_id=YOUR_PAYPAL_ID_${i+1}" target="_blank" rel="noopener" class="checkout-btn">Secure Tier ${t.num}</a>
+                        </div>
+                    `).join(''));
+                </script>
             </div>
+        </main>
 
-            <!-- $54 Tier -->
-            <div class="tier-card">
-                <div>
-                    <div class="tier-header">
-                        <span class="tier-title">Complete Toolkit</span>
-                        <span class="tier-price">$54</span>
-                    </div>
-                    <p class="tier-desc">Full 3D ebook library, cover layouts, and complete manuscript[cite: 1].</p>
-                </div>
-                <a href="https://paypal.me/fluidmotiontv/54" target="_blank" class="checkout-btn">Secure Checkout ($54)</a>
-            </div>
-
-            <!-- $270 Tier -->
-            <div class="tier-card">
-                <div>
-                    <div class="tier-header">
-                        <span class="tier-title">Pro Creator Suite</span>
-                        <span class="tier-price">$270</span>
-                    </div>
-                    <p class="tier-desc">Advanced templates + 3 digital copies of the Guide + sovereign distribution checklists[cite: 1].</p>
-                </div>
-                <a href="https://paypal.me/fluidmotiontv/270" target="_blank" class="checkout-btn">Secure Checkout ($270)</a>
-            </div>
-
-            <!-- $540 Tier -->
-            <div class="tier-card">
-                <div>
-                    <div class="tier-header">
-                        <span class="tier-title">Masterclass Workshop</span>
-                        <span class="tier-price">$540</span>
-                    </div>
-                    <p class="tier-desc">5 digital copies + intensive video training on fluid digital presentations[cite: 1].</p>
-                </div>
-                <a href="https://paypal.me/fluidmotiontv/540" target="_blank" class="checkout-btn">Secure Checkout ($540)</a>
-            </div>
-
-            <!-- $810 Tier -->
-            <div class="tier-card">
-                <div>
-                    <div class="tier-header">
-                        <span class="tier-title">Style Accelerator</span>
-                        <span class="tier-price">$810</span>
-                    </div>
-                    <p class="tier-desc">10 digital copies + exclusive design vaults and community access pass[cite: 1].</p>
-                </div>
-                <a href="https://paypal.me/fluidmotiontv/810" target="_blank" class="checkout-btn">Secure Checkout ($810)</a>
-            </div>
-
-            <!-- $1,800 Tier -->
-            <div class="tier-card">
-                <div>
-                    <div class="tier-header">
-                        <span class="tier-title">Sovereign VIP Suite</span>
-                        <span class="tier-price">$1,800</span>
-                    </div>
-                    <p class="tier-desc">25 digital copies + turnkey architecture blueprints and server setup[cite: 1].</p>
-                </div>
-                <a href="https://paypal.me/fluidmotiontv/1800" target="_blank" class="checkout-btn">Secure Checkout ($1,800)</a>
-            </div>
-
-            <!-- $2,700 Tier -->
-            <div class="tier-card">
-                <div>
-                    <div class="tier-header">
-                        <span class="tier-title">Agency Licensing Pass</span>
-                        <span class="tier-price">$2,700</span>
-                    </div>
-                    <p class="tier-desc">Unlimited reseller licensing rights + agency 3D rendering engines[cite: 1].</p>
-                </div>
-                <a href="https://paypal.me/fluidmotiontv/2700" target="_blank" class="checkout-btn">Secure Checkout ($2,700)</a>
-            </div>
-
-            <!-- $5,400 Tier -->
-            <div class="tier-card">
-                <div>
-                    <div class="tier-header">
-                        <span class="tier-title">Done-For-You Flagship</span>
-                        <span class="tier-price">$5,400</span>
-                    </div>
-                    <p class="tier-desc">Fully bespoke custom 3D product range and sovereign media ecosystem built from scratch[cite: 1].</p>
-                </div>
-                <a href="https://paypal.me/fluidmotiontv/5400" target="_blank" class="checkout-btn">Secure Checkout ($5,400)</a>
-            </div>
-        </section>
+        <footer>
+            <p>&copy; 2026 Fluid Motion Limited. Powered by <span>the fluid motion of the future</span>.</p>
+        </footer>
     </div>
 
-    <!-- JavaScript for 3D Wave Mesh & Dragon 9 Clock -->
+    <audio id="track-1" src="raw-power.mp3" preload="auto"></audio>
+    <audio id="track-2" src="dawn1music.mp3" preload="auto"></audio>
+
     <script>
-        // --- Dragon 9 Nonary Clock ---
-        function updateDragonClock() {
-            const now = new Date();
-            const totalMinutes = now.getHours() * 60 + now.getMinutes();
-            const cycleLength = 54;
-            const currentCycle = Math.floor((totalMinutes % (cycleLength * 9)) / cycleLength) + 1;
-            
-            const hours = String(Math.floor(totalMinutes / 60)).padStart(2, '0');
-            const mins = String(totalMinutes % 60).padStart(2, '0');
-            
-            document.getElementById('dragonClock').innerText = `DRAGON 9: ${hours}:${mins} (Cycle ${currentCycle}/9)`;
+        const canvas = document.getElementById('horizon-canvas');
+        const ctx = canvas.getContext('2d');
+
+        function resize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
         }
-        setInterval(updateDragonClock, 1000);
-        updateDragonClock();
+        window.addEventListener('resize', resize);
+        resize();
 
-        // --- Three.js Dancing Wave Mesh & Audio Reactivity ---
-        let scene, camera, renderer, waveMesh, geometry;
-        let audioElement, audioCtx, analyser, dataArray, audioSource;
-        let isAudioPlaying = false;
+        let time = 0;
+        let isPlaying = false;
+        let audioLevel = 0.05;
 
-        function initThree() {
-            const container = document.getElementById('webgl-container');
-            
-            scene = new THREE.Scene();
-            camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
-            camera.position.set(0, 30, 50);
-            camera.lookAt(0, 0, 0);
+        const track1 = document.getElementById('track-1');
+        const track2 = document.getElementById('track-2');
 
-            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-            container.appendChild(renderer.domElement);
+        track1.onended = () => {
+            document.getElementById('track-label').innerText = "Now Playing: Dawn's Mix";
+            track2.play().catch(e => console.log("Track 2 error", e));
+        };
 
-            // Create Dancing Wave Mesh (Aquarium Fern Tunnel Aesthetic)
-            const width = 80;
-            const height = 80;
-            const segmentsX = 60;
-            const segmentsY = 60;
+        track2.onended = () => {
+            document.getElementById('track-label').innerText = "Playlist Complete (Looping)";
+            track1.currentTime = 0;
+            track1.play().catch(e => console.log("Loop error", e));
+        };
 
-            geometry = new THREE.PlaneGeometry(width, height, segmentsX, segmentsY);
-            geometry.rotateX(-Math.PI / 2);
-
-            const material = new THREE.MeshStandardMaterial({
-                color: 0x00f3ff,
-                wireframe: true,
-                roughness: 0.2,
-                metalness: 0.8,
-                emissive: 0x00aa88,
-                emissiveIntensity: 0.4
-            });
-
-            waveMesh = new THREE.Mesh(geometry, material);
-            scene.add(waveMesh);
-
-            // Lighting for vibrant color FX
-            const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
-            scene.add(ambientLight);
-
-            const pointLight1 = new THREE.PointLight(0x00f3ff, 2, 100);
-            pointLight1.position.set(0, 20, 20);
-            scene.add(pointLight1);
-
-            const pointLight2 = new THREE.PointLight(0x00aa88, 2, 100);
-            pointLight2.position.set(20, -10, -20);
-            scene.add(pointLight2);
-
-            window.addEventListener('resize', onWindowResize);
-        }
-
-        function onWindowResize() {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-        }
-
-        // --- Audio Setup & Repository MP3 Integration ---
-        audioElement = document.getElementById('audioElement');
-
-        function toggleAudio() {
-            if (!audioCtx) {
-                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                analyser = audioCtx.createAnalyser();
-                analyser.fftSize = 256;
-                dataArray = new Uint8Array(analyser.frequencyBinCount);
-
-                audioSource = audioCtx.createMediaElementSource(audioElement);
-                audioSource.connect(analyser);
-                analyser.connect(audioCtx.destination);
-            }
-
-            if (audioCtx.state === 'suspended') {
-                audioCtx.resume();
-            }
-
-            const btn = document.querySelector('.audio-player-card button');
-
-            if (isAudioPlaying) {
-                audioElement.pause();
-                isAudioPlaying = false;
-                btn.innerText = "Play Stream";
+        function togglePlaylist() {
+            const btn = document.getElementById('play-toggle-btn');
+            if (!isPlaying) {
+                track1.play().then(() => {
+                    isPlaying = true;
+                    audioLevel = 0.18;
+                    btn.innerText = "Pause Audio";
+                    document.getElementById('track-label').innerText = "Now Playing: Raw Power";
+                }).catch(e => console.log("Play blocked", e));
             } else {
-                if (!audioElement.src) {
-                    audioElement.src = "raw_power.mp3"; // Default repo mp3
-                }
-                audioElement.play().then(() => {
-                    isAudioPlaying = true;
-                    btn.innerText = "Pause Stream";
-                }).catch(e => console.log("Audio play blocked or missing file:", e));
+                track1.pause();
+                track2.pause();
+                isPlaying = false;
+                audioLevel = 0.05;
+                btn.innerText = "Play Audio";
+                document.getElementById('track-label').innerText = "Audio Paused";
             }
         }
 
-        function switchTrack(trackName) {
-            const titleEl = document.getElementById('trackTitle');
-            if (trackName === 'raw_power') {
-                audioElement.src = "raw_power.mp3";
-                titleEl.innerText = "Now Playing: Raw Power MP3 (Aquarium Fern Tunnel)";
-            } else if (trackName === 'dawns') {
-                audioElement.src = "dawns.mp3";
-                titleEl.innerText = "Now Playing: Dawns MP3 (Dragon 9 Atmosphere)";
-            }
-            audioElement.load();
-            if (isAudioPlaying) {
-                audioElement.play();
-            } else {
-                toggleAudio();
-            }
-        }
+        function drawHorizon() {
+            ctx.fillStyle = '#070913';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-        // --- Animation Loop ---
-        let clock = new THREE.Clock();
+            time += 0.01;
 
-        function animate() {
-            requestAnimationFrame(animate);
+            const horizonY = canvas.height * 0.42;
+            ctx.beginPath();
+            ctx.moveTo(0, horizonY);
+            ctx.lineTo(canvas.width, horizonY);
+            ctx.strokeStyle = `rgba(0, 198, 255, ${0.15 + audioLevel})`;
+            ctx.lineWidth = 1;
+            ctx.stroke();
 
-            const elapsedTime = clock.getElapsedTime();
+            for (let i = 0; i < 3; i++) {
+                ctx.beginPath();
+                const yBase = horizonY + 20 + (i * 45);
+                const amplitude = (15 + (i * 8)) * (1 + audioLevel * 2);
+                const frequency = 0.002 - (i * 0.0004);
 
-            if (geometry && geometry.attributes.position) {
-                const positionAttr = geometry.attributes.position;
-                let audioFactor = 0.5;
-
-                if (isAudioPlaying && analyser && dataArray) {
-                    analyser.getByteFrequencyData(dataArray);
-                    let sum = 0;
-                    for (let i = 0; i < dataArray.length; i++) {
-                        sum += dataArray[i];
-                    }
-                    audioFactor = 0.5 + (sum / dataArray.length) / 30;
+                for (let x = 0; x <= canvas.width; x += 20) {
+                    const wave = Math.sin(x * frequency + time * (1 + i * 0.2)) * Math.cos(time * 0.5 + x * 0.001);
+                    const y = yBase + (wave * amplitude);
+                    if (x === 0) ctx.moveTo(x, y);
+                    else ctx.lineTo(x, y);
                 }
 
-                // Wave vertex deformation simulating jumping wave mesh dancing to music
-                for (let i = 0; i < positionAttr.count; i++) {
-                    const x = positionAttr.getX(i);
-                    const z = positionAttr.getZ(i);
-                    
-                    const y = Math.sin(x * 0.15 + elapsedTime * 3) * Math.cos(z * 0.15 + elapsedTime * 2) * 4 * audioFactor;
-                    positionAttr.setY(i, y);
-                }
-                positionAttr.needsUpdate = true;
+                ctx.strokeStyle = i === 0 ? `rgba(0, 198, 255, ${0.25 + audioLevel})` : `rgba(0, 114, 255, ${0.15})`;
+                ctx.lineWidth = 1.5;
+                ctx.stroke();
             }
 
-            if (waveMesh) {
-                waveMesh.rotation.y = elapsedTime * 0.1;
-            }
-
-            renderer.render(scene, camera);
+            requestAnimationFrame(drawHorizon);
         }
 
-        initThree();
-        animate();
+        drawHorizon();
     </script>
 </body>
 </html>
+
