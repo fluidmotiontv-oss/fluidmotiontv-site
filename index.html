@@ -1,517 +1,174 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fluid Motion TV &bull; Water Park Walk-In Sanctuary</title>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --water-blue: #00d2ff;
-            --deep-lagoon: #004d40;
-            --fern-green: #00ff88;
-            --tiki-gold: #ffcc00;
-            --dragon-magenta: #ff0055;
-            --dark-bg: #010806;
-            --glass-bg: rgba(2, 20, 14, 0.7);
-        }
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body, html {
-            width: 100%; height: 100%;
-            overflow: hidden;
-            background-color: var(--dark-bg);
-            font-family: 'Rajdhani', sans-serif;
-            color: #fff;
-        }
-        #webgl-container {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            z-index: 1;
-        }
-        .ui-overlay {
-            position: relative;
-            z-index: 10;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            padding: 16px 24px;
-            pointer-events: none;
-        }
-        header, .bottom-dock, footer {
-            pointer-events: auto;
-        }
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: var(--glass-bg);
-            border: 1px solid rgba(0, 255, 136, 0.35);
-            padding: 10px 20px;
-            border-radius: 14px;
-            backdrop-filter: blur(16px);
-            box-shadow: 0 0 25px rgba(0,255,136,0.15);
-        }
-        .brand-box h1 {
-            font-family: 'Orbitron', sans-serif;
-            font-weight: 900;
-            font-size: 1.2rem;
-            letter-spacing: 2px;
-            background: linear-gradient(45deg, var(--fern-green), var(--water-blue), var(--tiki-gold));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-shadow: 0 0 15px rgba(0,255,136,0.5);
-        }
-        .node-tag {
-            font-size: 0.7rem;
-            color: var(--tiki-gold);
-            letter-spacing: 1px;
-            font-family: 'Orbitron', sans-serif;
-        }
-        .nav-links {
-            display: flex;
-            gap: 10px;
-        }
-        .nav-links a {
-            color: var(--fern-green);
-            text-decoration: none;
-            font-family: 'Orbitron', sans-serif;
-            font-size: 0.75rem;
-            padding: 6px 12px;
-            border: 1px solid rgba(0,255,136,0.4);
-            border-radius: 8px;
-            background: rgba(0,255,136,0.05);
-            transition: all 0.3s ease;
-        }
-        .nav-links a:hover {
-            background: var(--fern-green);
-            color: var(--dark-bg);
-            box-shadow: 0 0 15px var(--fern-green);
-        }
-        .bottom-dock {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-            width: 100%;
-            gap: 16px;
-        }
-        .dock-panel {
-            background: var(--glass-bg);
-            border: 1px solid rgba(0, 255, 136, 0.25);
-            border-radius: 14px;
-            padding: 12px 16px;
-            backdrop-filter: blur(16px);
-            box-shadow: 0 0 25px rgba(0,210,255,0.15);
-            max-width: 320px;
-            width: 100%;
-        }
-        .dock-panel h3 {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 0.85rem;
-            margin-bottom: 6px;
-            color: var(--water-blue);
-            border-bottom: 1px solid rgba(0,255,136,0.2);
-            padding-bottom: 4px;
-        }
-        .audio-player {
-            width: 100%;
-            height: 32px;
-            margin-bottom: 8px;
-            accent-color: var(--fern-green);
-        }
-        .playlist-info {
-            font-size: 0.75rem;
-            color: var(--tiki-gold);
-            font-family: 'Orbitron', sans-serif;
-            margin-bottom: 6px;
-        }
-        .btn-group {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 6px;
-        }
-        button {
-            font-family: 'Orbitron', sans-serif;
-            font-weight: 700;
-            background: linear-gradient(135deg, #008877, #005577);
-            border: none;
-            color: #fff;
-            padding: 8px;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-            font-size: 0.75rem;
-        }
-        button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 0 12px var(--water-blue);
-        }
-        .shop-items {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-            max-height: 120px;
-            overflow-y: auto;
-        }
-        .shop-item {
-            background: rgba(255,255,255,0.03);
-            border: 1px solid rgba(255,255,255,0.08);
-            border-radius: 6px;
-            padding: 6px 8px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .shop-item h4 { font-size: 0.75rem; font-family: 'Orbitron', sans-serif; color: #fff; }
-        .shop-item p { font-size: 0.65rem; color: rgba(255,255,255,0.6); }
-        .price-tag { font-family: 'Orbitron', sans-serif; color: var(--tiki-gold); font-size: 0.75rem; font-weight: 700; }
-        .buy-btn { background: linear-gradient(135deg, var(--fern-green), var(--water-blue)); font-size: 0.65rem; padding: 4px 8px; color: #010806; }
-        footer {
-            text-align: center;
-            font-size: 0.75rem;
-            color: rgba(255,255,255,0.5);
-            background: var(--glass-bg);
-            padding: 6px;
-            border-radius: 8px;
-            border: 1px solid rgba(0,255,136,0.15);
-        }
-        footer a { color: var(--fern-green); text-decoration: none; }
-    </style>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+ <meta charset="UTF-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <title>Fluid Motion TV — Broadcast Visual Engine</title>
+ <style>
+ * { box-sizing: border-box; margin: 0; padding: 0; }
+ body { background: #000; overflow: hidden; font-family: 'Segoe UI', Tahoma, sans-serif; color: #fff; }
+
+ #hud {
+ position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+ pointer-events: none; display: flex; flex-direction: column; justify-content: space-between;
+ padding: 30px; z-index: 10;
+ }
+ .top-row { display: flex; justify-content: space-between; align-items: flex-start; }
+
+ .header-badge {
+ display: inline-flex; align-items: center; gap: 8px;
+ background: rgba(255, 0, 85, 0.2); border: 1px solid #ff0055;
+ padding: 6px 14px; border-radius: 20px; font-weight: bold; font-size: 12px;
+ letter-spacing: 1.5px; text-transform: uppercase; color: #ff0055;
+ box-shadow: 0 0 15px rgba(255, 0, 85, 0.4); width: fit-content;
+ }
+ .live-dot { width: 8px; height: 8px; background: #ff0055; border-radius: 50%; animation: pulse 1s infinite; }
+ @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+ .brand-block { text-align: right; }
+ .brand-block .brand {
+ font-size: 15px; font-weight: 800; letter-spacing: 3px; text-transform: uppercase;
+ background: linear-gradient(90deg, #00f3ff, #ff0055);
+ -webkit-background-clip: text; background-clip: text; color: transparent;
+ }
+ .brand-block .tagline {
+ font-size: 10px; letter-spacing: 2.5px; text-transform: uppercase;
+ color: rgba(255,255,255,0.45); margin-top: 3px;
+ }
+ .brand-block .d9clock {
+ font-size: 12px; font-variant-numeric: tabular-nums; letter-spacing: 1px;
+ color: #00f3ff; margin-top: 6px; text-shadow: 0 0 10px rgba(0,243,255,0.6);
+ }
+ .brand-block .d9clock .apex { color: #ffaa00; text-shadow: 0 0 10px rgba(255,170,0,0.8); }
+
+ .bottom-row { display: flex; justify-content: space-between; align-items: flex-end; }
+
+ .track-card {
+ display: flex; align-items: center; gap: 20px;
+ background: rgba(10, 10, 20, 0.7); backdrop-filter: blur(12px);
+ border: 1px solid rgba(255, 255, 255, 0.1); padding: 16px; border-radius: 12px;
+ max-width: 480px; box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+ transition: all 0.5s ease;
+ }
+ .track-card.flash { animation: cardFlash 0.6s ease; }
+ @keyframes cardFlash {
+ 0% { border-color: #00f3ff; box-shadow: 0 0 40px rgba(0,243,255,0.5); }
+ 100% { border-color: rgba(255,255,255,0.1); box-shadow: 0 20px 40px rgba(0,0,0,0.5); }
+ }
+ .album-art { width: 70px; height: 70px; border-radius: 8px; object-fit: cover; background: #111; }
+ .track-info h2 { font-size: 20px; font-weight: 700; margin-bottom: 4px; color: #fff; }
+ .track-info p { font-size: 14px; color: rgba(255, 255, 255, 0.7); }
+ .track-info .genre-chip {
+ display: inline-block; margin-top: 6px; font-size: 10px; letter-spacing: 1.5px;
+ text-transform: uppercase; color: #00f3ff; border: 1px solid rgba(0,243,255,0.4);
+ padding: 2px 8px; border-radius: 10px;
+ }
+
+ .vu-strip {
+ display: flex; gap: 3px; align-items: flex-end; height: 34px; margin-bottom: 10px;
+ opacity: 0.9;
+ }
+ .vu-strip .bar {
+ width: 5px; border-radius: 2px;
+ background: linear-gradient(180deg, #ff0055, #00f3ff);
+ transition: height 0.08s linear;
+ }
+
+ #controls {
+ position: absolute; bottom: 30px; right: 30px; z-index: 20;
+ display: flex; gap: 10px; background: rgba(0,0,0,0.7); padding: 10px; border-radius: 10px;
+ border: 1px solid rgba(255,255,255,0.1);
+ }
+ select, button {
+ background: #111; color: #00f3ff; border: 1px solid #00f3ff;
+ padding: 8px 16px; border-radius: 6px; font-weight: bold; cursor: pointer;
+ outline: none; transition: 0.2s; font-size: 12px;
+ }
+ select:hover, button:hover { background: #00f3ff; color: #000; }
+
+ #hint {
+ position: absolute; bottom: 90px; right: 30px; z-index: 20;
+ font-size: 10px; color: rgba(255,255,255,0.35); letter-spacing: 1px; text-align: right;
+ }
+ </style>
+
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+ <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/EffectComposer.js"></script>
+ <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/RenderPass.js"></script>
+ <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/ShaderPass.js"></script>
+ <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/CopyShader.js"></script>
+ <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/LuminosityHighPassShader.js"></script>
+ <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/UnrealBloomPass.js"></script>
 </head>
 <body>
-    <div id="webgl-container"></div>
-    
-    <div class="ui-overlay">
-        <header>
-            <div class="brand-box">
-                <h1>FLUID MOTION TV</h1>
-                <div class="node-tag">WATER PARK SANCTUARY &bull; FERNS, FISH & DRAGONS</div>
-            </div>
-            <div class="nav-links">
-                <a href="https://dragon9.online" target="_blank">Dragon Nine Online</a>
-                <a href="#shop" onclick="alert('Exploring Merch Hub!');">Shop Hub</a>
-            </div>
-        </header>
 
-        <div class="bottom-dock">
-            <div class="dock-panel">
-                <h3>SANCTUARY AUDIO LAB</h3>
-                <div class="playlist-info" id="now-playing">Now Playing: Raw Power</div>
-                <audio id="audio" class="audio-player" controls crossorigin="anonymous">
-                    <source src="raw_power.mp3" type="audio/mp3">
-                    Your browser does not support the audio element.
-                </audio>
-                <div class="btn-group">
-                    <button id="btn-mode">Morph Vibe</button>
-                    <button id="btn-next">Next Track</button>
-                </div>
-            </div>
+ <div id="hud">
+ <div class="top-row">
+ <div class="header-badge"><div class="live-dot"></div> Studio 1 // On-Air</div>
+ <div class="brand-block">
+ <div class="brand">Fluid Motion TV</div>
+ <div class="tagline">Dragon Nine &mdash; Fluid Motion of the Future</div>
+ <div class="d9clock" id="d9clock">D9 --:--</div>
+ </div>
+ </div>
+ <div class="bottom-row">
+ <div>
+ <div class="vu-strip" id="vuStrip"></div>
+ <div class="track-card" id="trackCard">
+ <img id="albumArt" class="album-art" src="" alt="Album Cover">
+ <div class="track-info">
+ <h2 id="songTitle">Cybernetic Pulse</h2>
+ <p id="artistName">Aether Wave ft. Synthia</p>
+ <span class="genre-chip" id="genreChip">Electronic</span>
+ </div>
+ </div>
+ </div>
+ </div>
+ </div>
 
-            <div class="dock-panel">
-                <h3>MERCH SHOP HUB</h3>
-                <div class="shop-items">
-                    <div class="shop-item">
-                        <div>
-                            <h4>Water Park Hoodie</h4>
-                            <p>Lagoon green fleece</p>
-                        </div>
-                        <div>
-                            <div class="price-tag">$65.00</div>
-                            <button class="buy-btn" onclick="alert('Purchased Water Park Hoodie!');">Buy</button>
-                        </div>
-                    </div>
-                    <div class="shop-item">
-                        <div>
-                            <h4>Dragon 9 Vinyl LP</h4>
-                            <p>Stoner Hip Hop Mix</p>
-                        </div>
-                        <div>
-                            <div class="price-tag">$35.00</div>
-                            <button class="buy-btn" onclick="alert('Purchased Dragon 9 Vinyl!');">Buy</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+ <div id="hint">demo mode &mdash; connect /api/nowplaying for live automation feed</div>
 
-        <footer>
-            Fluid Motion TV &bull; Water Park Master Hub &bull; <a href="https://dragon9.online" target="_blank">Dragon Nine Online</a>
-        </footer>
-    </div>
+ <div id="controls">
+ <select id="genreSelect">
+ <option value="electronic">Genre: Electronic / EDM</option>
+ <option value="rock">Genre: Rock / Metal</option>
+ <option value="ambient">Genre: Ambient / Lofi</option>
+ <option value="talk">Genre: Talk Radio / Speech</option>
+ </select>
+ <button id="audioBtn">ACTIVATE LIVE AUDIO</button>
+ </div>
 
-    <script>
-        // Dual-Track Audio Playlist
-        const playlist = [
-            { src: "raw_power.mp3", title: "Raw Power" },
-            { src: "20260724 - Gypsy Children of smoke Vol. 2 (Cypress Hill Inspired) Stoner hip hop mix [bI8T0YQSqgY].m4a", title: "Gypsy Children of Smoke" }
-        ];
-        let currentTrackIndex = 0;
-        const audio = document.getElementById('audio');
-        const nowPlayingEl = document.getElementById('now-playing');
+<script>
+// --- PRESET CONFIGURATIONS ---
+const PRESETS = {
+ electronic: { bloomStrength: 2.2, bounceMultiplier: 5.0, smokeSpeed: 2.2, light1Color: 0x00f3ff, light2Color: 0xff0055, light1Anisotropy: 0.75, freqBin: 2, label: 'Electronic' },
+ rock: { bloomStrength: 1.5, bounceMultiplier: 3.5, smokeSpeed: 3.5, light1Color: 0xff3300, light2Color: 0xffaa00, light1Anisotropy: -0.2, freqBin: 6, label: 'Rock' },
+ ambient: { bloomStrength: 0.8, bounceMultiplier: 1.2, smokeSpeed: 0.5, light1Color: 0x7700ff, light2Color: 0x00ffaa, light1Anisotropy: 0.3, freqBin: 1, label: 'Ambient' },
+ talk: { bloomStrength: 0.5, bounceMultiplier: 2.0, smokeSpeed: 0.2, light1Color: 0xffffff, light2Color: 0x0088ff, light1Anisotropy: 0.0, freqBin: 12, label: 'Talk' }
+};
+let activePreset = PRESETS.electronic;
 
-        function loadTrack(index) {
-            currentTrackIndex = index % playlist.length;
-            audio.src = playlist[currentTrackIndex].src;
-            nowPlayingEl.textContent = "Now Playing: " + playlist[currentTrackIndex].title;
-            audio.play().catch(e => console.log("Autoplay waiting for interaction"));
-        }
+// --- DRAGON NINE CLOCK (54-minute hours, 1600 D9 minutes per day) ---
+const APEX_HOURS = [9, 23];
+function updateD9Clock() {
+ const now = new Date();
+ const secToday = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
+ const d9minTotal = Math.floor(secToday / 54);
+ const h = Math.floor(d9minTotal / 60);
+ const m = d9minTotal % 60;
+ const isApex = APEX_HOURS.some(a => Math.abs(h - a) <= 0 && m < 18);
+ const el = document.getElementById('d9clock');
+ el.innerHTML = `D9 ${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}` +
+ (isApex ? ' <span class="apex">&#9670; APEX</span>' : '');
+}
+setInterval(updateD9Clock, 1000);
+updateD9Clock();
 
-        audio.addEventListener('ended', () => {
-            loadTrack(currentTrackIndex + 1);
-        });
-
-        document.getElementById('btn-next').addEventListener('click', () => {
-            loadTrack(currentTrackIndex + 1);
-        });
-
-        // --- 3D WATER PARK SANCTUARY SETUP ---
-        const container = document.getElementById('webgl-container');
-        const scene = new THREE.Scene();
-        scene.fog = new THREE.FogExp2(0x010806, 0.018);
-
-        const camera = new THREE.PerspectiveCamera(65, window.innerWidth / window.innerHeight, 0.1, 1000);
-        camera.position.set(0, 3, 11);
-
-        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-        container.appendChild(renderer.domElement);
-
-        const ambientLight = new THREE.AmbientLight(0x00ff88, 0.9);
-        scene.add(ambientLight);
-
-        const pointLight1 = new THREE.PointLight(0x00d2ff, 3.5, 70);
-        pointLight1.position.set(0, 6, 5);
-        scene.add(pointLight1);
-
-        const pointLight2 = new THREE.PointLight(0xff0055, 3, 70);
-        pointLight2.position.set(0, -6, -5);
-        scene.add(pointLight2);
-
-        // 1. Walk-in Water Park Tunnel (Ambient Soft Rings)
-        const tunnelGroup = new THREE.Group();
-        scene.add(tunnelGroup);
-        const ringCount = 26;
-        const rings = [];
-        for (let i = 0; i < ringCount; i++) {
-            const ringGeo = new THREE.TorusGeometry(9, 0.18, 16, 100);
-            const ringMat = new THREE.MeshStandardMaterial({
-                color: i % 2 === 0 ? 0x00d2ff : 0x00ff88,
-                emissive: i % 2 === 0 ? 0x003355 : 0x004422,
-                emissiveIntensity: 0.3,
-                roughness: 0.3,
-                transparent: true,
-                opacity: 0.75
-            });
-            const ring = new THREE.Mesh(ringGeo, ringMat);
-            ring.position.z = -i * 3;
-            tunnelGroup.add(ring);
-            rings.push(ring);
-        }
-
-        // 2. Swimming Fish School
-        const fishGroup = new THREE.Group();
-        scene.add(fishGroup);
-        const fishCount = 40;
-        const fishList = [];
-        const fishGeo = new THREE.ConeGeometry(0.2, 0.6, 6);
-        fishGeo.rotateX(Math.PI / 2);
-
-        for (let i = 0; i < fishCount; i++) {
-            const fishMat = new THREE.MeshStandardMaterial({
-                color: i % 2 === 0 ? 0x00d2ff : 0xffcc00,
-                emissive: 0x004466,
-                emissiveIntensity: 0.4,
-                roughness: 0.3
-            });
-            const fish = new THREE.Mesh(fishGeo, fishMat);
-            fish.position.set(
-                (Math.random() - 0.5) * 14,
-                (Math.random() - 0.5) * 5,
-                (Math.random() - 0.5) * 45
-            );
-            fish.userData = {
-                speed: 0.03 + Math.random() * 0.04,
-                angle: Math.random() * Math.PI * 2,
-                radius: 5 + Math.random() * 4
-            };
-            fishGroup.add(fish);
-            fishList.push(fish);
-        }
-
-        // 3. Gliding 3D Dragons (Dragon 9 Sanctuary Guardians)
-        const dragonGroup = new THREE.Group();
-        scene.add(dragonGroup);
-        const dragonCount = 2;
-        const dragons = [];
-        
-        for(let i=0; i<dragonCount; i++) {
-            const dGroup = new THREE.Group();
-            const bodyGeo = new THREE.ConeGeometry(0.5, 2.5, 8);
-            bodyGeo.rotateX(Math.PI / 2);
-            const bodyMat = new THREE.MeshStandardMaterial({
-                color: 0xff0055,
-                emissive: 0x550022,
-                emissiveIntensity: 0.6,
-                metalness: 0.8,
-                roughness: 0.2
-            });
-            const body = new THREE.Mesh(bodyGeo, bodyMat);
-            dGroup.add(body);
-            
-            dragonGroup.add(dGroup);
-            dragons.push({
-                mesh: dGroup,
-                angle: i * Math.PI,
-                radius: 7,
-                speed: 0.015
-            });
-        }
-
-        // 4. Center 3D Audio-Reactive Torus Knot Sanctuary Core
-        const coreGroup = new THREE.Group();
-        scene.add(coreGroup);
-
-        const geometry = new THREE.TorusKnotGeometry(2.2, 0.6, 128, 32);
-        const material = new THREE.MeshStandardMaterial({
-            color: 0xffcc00,
-            roughness: 0.2,
-            metalness: 0.8,
-            wireframe: false
-        });
-        const coreMesh = new THREE.Mesh(geometry, material);
-        coreGroup.add(coreMesh);
-
-        // 5. Fern Garden & Lagoon Waves (Grid Plane)
-        const waveWidth = 50;
-        const waveHeight = 50;
-        const waveSegments = 50;
-        const waveGeo = new THREE.PlaneGeometry(waveWidth, waveHeight, waveSegments, waveSegments);
-        waveGeo.rotateX(-Math.PI / 2);
-        const waveMat = new THREE.MeshStandardMaterial({
-            color: 0x00ff88,
-            wireframe: true,
-            roughness: 0.2,
-            metalness: 0.9,
-            emissive: 0x00ff88,
-            emissiveIntensity: 0.45
-        });
-        const waveMesh = new THREE.Mesh(waveGeo, waveMat);
-        waveMesh.position.y = -4.5;
-        scene.add(waveMesh);
-
-        // Audio Analyser
-        let audioCtx, analyser, dataArray;
-        let isAudioInitialized = false;
-
-        function initAudio() {
-            if (isAudioInitialized) return;
-            try {
-                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                analyser = audioCtx.createAnalyser();
-                const source = audioCtx.createMediaElementSource(audio);
-                source.connect(analyser);
-                analyser.connect(audioCtx.destination);
-                analyser.fftSize = 256;
-                dataArray = new Uint8Array(analyser.frequencyBinCount);
-                isAudioInitialized = true;
-            } catch(e) {
-                console.log("Audio waiting for user interaction", e);
-            }
-        }
-
-        audio.addEventListener('play', () => {
-            initAudio();
-            if (audioCtx && audioCtx.state === 'suspended') {
-                audioCtx.resume();
-            }
-        });
-
-        let mode = 0;
-        document.getElementById('btn-mode').addEventListener('click', () => {
-            mode = (mode + 1) % 3;
-            if (mode === 0) {
-                material.wireframe = false;
-                material.color.setHex(0xffcc00);
-            } else if (mode === 1) {
-                material.wireframe = true;
-                material.color.setHex(0x00ff88);
-            } else {
-                material.wireframe = false;
-                material.color.setHex(0x00d2ff);
-            }
-        });
-
-        window.addEventListener('resize', () => {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-        });
-
-        let clock = new THREE.Clock();
-
-        function animate() {
-            requestAnimationFrame(animate);
-
-            let elapsedTime = clock.getElapsedTime();
-            let bass = 50;
-
-            if (analyser && isAudioInitialized) {
-                analyser.getByteFrequencyData(dataArray);
-                bass = dataArray[2] || 50;
-            }
-
-            // Animate Core Torus Knot to Bass
-            let bassScale = 1 + (bass / 90);
-            coreMesh.scale.set(bassScale, bassScale, bassScale);
-            coreMesh.rotation.x = elapsedTime * 0.4;
-            coreMesh.rotation.y = elapsedTime * 0.6;
-
-            // Animate Tunnel Flow
-            rings.forEach((ring, idx) => {
-                ring.position.z += 0.04 + (bass * 0.0005);
-                if (ring.position.z > 5) {
-                    ring.position.z = -ringCount * 3 + 5;
-                }
-                ring.rotation.z = elapsedTime * 0.06 + (idx * 0.1);
-            });
-
-            // Animate Swimming Fish
-            fishList.forEach((fish, idx) => {
-                fish.userData.angle += fish.userData.speed * 0.4;
-                fish.position.x = Math.cos(fish.userData.angle + idx) * fish.userData.radius;
-                fish.position.y = Math.sin(fish.userData.angle * 0.6 + idx) * 2.5;
-                fish.position.z += 0.08 + (bass * 0.001);
-                if (fish.position.z > 10) {
-                    fish.position.z = -35;
-                }
-                fish.rotation.y = Math.sin(fish.userData.angle);
-            });
-
-            // Animate Gliding Dragons
-            dragons.forEach((dragon, idx) => {
-                dragon.angle += dragon.speed;
-                dragon.mesh.position.x = Math.cos(dragon.angle) * (dragon.radius + Math.sin(elapsedTime) * 2);
-                dragon.mesh.position.y = Math.sin(elapsedTime * 0.8 + idx) * 2;
-                dragon.mesh.position.z = Math.sin(dragon.angle) * 10;
-                dragon.mesh.rotation.y = -dragon.angle;
-            });
-
-            // Animate Lagoon Waves & Fern Garden
-            const pos = waveGeo.attributes.position;
-            for (let i = 0; i < pos.count; i++) {
-                const u = pos.getX(i);
-                const v = pos.getZ(i);
-                const waveHeightVal = Math.sin(u * 0.4 + elapsedTime * 2.2) * Math.cos(v * 0.4 + elapsedTime * 2.2) * (1.0 + bass * 0.035);
-                pos.setY(i, waveHeightVal);
-            }
-            pos.needsUpdate = true;
-
-            renderer.render(scene, camera);
-        }
-        animate();
+// --- DEMO NOW-PLAYING ROTATION ---
+const DEMO_TRACKS = [
+ { title: 'Cybernetic Pulse', artist: 'Aether Wave ft. Synthia', genre: 'electronic' },
+ { title: 'Tide Synth Rising', artist: 'Dragon Nine Collective', genre: 'ambient' },
+ { title: 'Neon Undertow', artist: 'Volt Meridian
     </script>
 </body>
 </html>
