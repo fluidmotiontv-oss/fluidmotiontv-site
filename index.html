@@ -1,174 +1,416 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
- <meta charset="UTF-8">
- <meta name="viewport" content="width=device-width, initial-scale=1.0">
- <title>Fluid Motion TV — Broadcast Visual Engine</title>
- <style>
- * { box-sizing: border-box; margin: 0; padding: 0; }
- body { background: #000; overflow: hidden; font-family: 'Segoe UI', Tahoma, sans-serif; color: #fff; }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fluid Motion TV | The Fluid Motion of the Future</title>
+    <style>
+        :root {
+            --bg-deep: #070913;
+            --ocean-blue: #00c6ff;
+            --ocean-teal: #0072ff;
+            --sun-gold: #ffb703;
+            --glass-bg: rgba(12, 16, 28, 0.7);
+            --glass-border: rgba(0, 198, 255, 0.25);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+        }
 
- #hud {
- position: absolute; top: 0; left: 0; width: 100%; height: 100%;
- pointer-events: none; display: flex; flex-direction: column; justify-content: space-between;
- padding: 30px; z-index: 10;
- }
- .top-row { display: flex; justify-content: space-between; align-items: flex-start; }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
 
- .header-badge {
- display: inline-flex; align-items: center; gap: 8px;
- background: rgba(255, 0, 85, 0.2); border: 1px solid #ff0055;
- padding: 6px 14px; border-radius: 20px; font-weight: bold; font-size: 12px;
- letter-spacing: 1.5px; text-transform: uppercase; color: #ff0055;
- box-shadow: 0 0 15px rgba(255, 0, 85, 0.4); width: fit-content;
- }
- .live-dot { width: 8px; height: 8px; background: #ff0055; border-radius: 50%; animation: pulse 1s infinite; }
- @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+        body {
+            background-color: var(--bg-deep);
+            color: var(--text-main);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
 
- .brand-block { text-align: right; }
- .brand-block .brand {
- font-size: 15px; font-weight: 800; letter-spacing: 3px; text-transform: uppercase;
- background: linear-gradient(90deg, #00f3ff, #ff0055);
- -webkit-background-clip: text; background-clip: text; color: transparent;
- }
- .brand-block .tagline {
- font-size: 10px; letter-spacing: 2.5px; text-transform: uppercase;
- color: rgba(255,255,255,0.45); margin-top: 3px;
- }
- .brand-block .d9clock {
- font-size: 12px; font-variant-numeric: tabular-nums; letter-spacing: 1px;
- color: #00f3ff; margin-top: 6px; text-shadow: 0 0 10px rgba(0,243,255,0.6);
- }
- .brand-block .d9clock .apex { color: #ffaa00; text-shadow: 0 0 10px rgba(255,170,0,0.8); }
+        /* Subtle, Realistic Horizon Canvas */
+        #horizon-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            pointer-events: none;
+        }
 
- .bottom-row { display: flex; justify-content: space-between; align-items: flex-end; }
+        .portal-wrapper {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem 4rem 1.5rem;
+            position: relative;
+            z-index: 2;
+        }
 
- .track-card {
- display: flex; align-items: center; gap: 20px;
- background: rgba(10, 10, 20, 0.7); backdrop-filter: blur(12px);
- border: 1px solid rgba(255, 255, 255, 0.1); padding: 16px; border-radius: 12px;
- max-width: 480px; box-shadow: 0 20px 40px rgba(0,0,0,0.5);
- transition: all 0.5s ease;
- }
- .track-card.flash { animation: cardFlash 0.6s ease; }
- @keyframes cardFlash {
- 0% { border-color: #00f3ff; box-shadow: 0 0 40px rgba(0,243,255,0.5); }
- 100% { border-color: rgba(255,255,255,0.1); box-shadow: 0 20px 40px rgba(0,0,0,0.5); }
- }
- .album-art { width: 70px; height: 70px; border-radius: 8px; object-fit: cover; background: #111; }
- .track-info h2 { font-size: 20px; font-weight: 700; margin-bottom: 4px; color: #fff; }
- .track-info p { font-size: 14px; color: rgba(255, 255, 255, 0.7); }
- .track-info .genre-chip {
- display: inline-block; margin-top: 6px; font-size: 10px; letter-spacing: 1.5px;
- text-transform: uppercase; color: #00f3ff; border: 1px solid rgba(0,243,255,0.4);
- padding: 2px 8px; border-radius: 10px;
- }
+        /* Hero Header */
+        header {
+            text-align: center;
+            padding: 3rem 1rem 2rem 1.5rem;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            background: linear-gradient(180deg, rgba(7,9,19,0.85) 0%, rgba(7,9,19,0.3) 100%);
+            border-bottom: 1px solid var(--glass-border);
+            margin-bottom: 2.5rem;
+            border-radius: 0 0 20px 20px;
+        }
 
- .vu-strip {
- display: flex; gap: 3px; align-items: flex-end; height: 34px; margin-bottom: 10px;
- opacity: 0.9;
- }
- .vu-strip .bar {
- width: 5px; border-radius: 2px;
- background: linear-gradient(180deg, #ff0055, #00f3ff);
- transition: height 0.08s linear;
- }
+        header h1 {
+            font-size: clamp(2rem, 4.5vw, 4rem);
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            background: linear-gradient(135deg, #ffffff 0%, var(--ocean-blue) 60%, var(--sun-gold) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.75rem;
+        }
 
- #controls {
- position: absolute; bottom: 30px; right: 30px; z-index: 20;
- display: flex; gap: 10px; background: rgba(0,0,0,0.7); padding: 10px; border-radius: 10px;
- border: 1px solid rgba(255,255,255,0.1);
- }
- select, button {
- background: #111; color: #00f3ff; border: 1px solid #00f3ff;
- padding: 8px 16px; border-radius: 6px; font-weight: bold; cursor: pointer;
- outline: none; transition: 0.2s; font-size: 12px;
- }
- select:hover, button:hover { background: #00f3ff; color: #000; }
+        header p {
+            font-size: clamp(0.95rem, 1.8vw, 1.15rem);
+            color: var(--text-muted);
+            max-width: 580px;
+            margin: 0 auto 1.5rem auto;
+            line-height: 1.5;
+        }
 
- #hint {
- position: absolute; bottom: 90px; right: 30px; z-index: 20;
- font-size: 10px; color: rgba(255,255,255,0.35); letter-spacing: 1px; text-align: right;
- }
- </style>
+        /* Audio Player Bar */
+        .audio-player-bar {
+            display: inline-flex;
+            align-items: center;
+            gap: 1rem;
+            background: rgba(0, 198, 255, 0.08);
+            border: 1px solid var(--glass-border);
+            padding: 0.75rem 1.25rem;
+            border-radius: 30px;
+            backdrop-filter: blur(8px);
+        }
 
- <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
- <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/EffectComposer.js"></script>
- <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/RenderPass.js"></script>
- <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/ShaderPass.js"></script>
- <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/CopyShader.js"></script>
- <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/LuminosityHighPassShader.js"></script>
- <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/UnrealBloomPass.js"></script>
+        .audio-player-bar button {
+            background: var(--ocean-blue);
+            color: #070913;
+            border: none;
+            padding: 0.5rem 1rem;
+            font-weight: 600;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: transform 0.2s ease, background 0.2s ease;
+        }
+
+        .audio-player-bar button:hover {
+            transform: scale(1.05);
+            background: #fff;
+        }
+
+        .track-info {
+            font-size: 0.9rem;
+            color: var(--text-main);
+            font-weight: 500;
+        }
+
+        /* Section Title */
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            letter-spacing: 0.03em;
+            text-transform: uppercase;
+            color: var(--ocean-blue);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .section-title::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, var(--glass-border), transparent);
+        }
+
+        /* Nine Shop Tiers Grid */
+        .tiers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.25rem;
+            margin-bottom: 3rem;
+        }
+
+        .tier-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 14px;
+            padding: 1.75rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease;
+        }
+
+        .tier-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(0, 198, 255, 0.6);
+        }
+
+        .tier-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 0.75rem;
+        }
+
+        .tier-number {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--sun-gold);
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .tier-price {
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .tier-title {
+            font-size: 1.15rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-main);
+        }
+
+        .tier-desc {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+            margin-bottom: 1.5rem;
+        }
+
+        .checkout-btn {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: rgba(0, 198, 255, 0.1);
+            border: 1px solid var(--ocean-blue);
+            color: #fff;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .checkout-btn:hover {
+            background: var(--ocean-blue);
+            color: #070913;
+            box-shadow: 0 0 20px rgba(0, 198, 255, 0.3);
+        }
+
+        footer {
+            text-align: center;
+            padding: 2.5rem 1rem;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            border-top: 1px solid var(--glass-border);
+        }
+
+        footer span {
+            color: var(--ocean-blue);
+        }
+    </style>
 </head>
 <body>
 
- <div id="hud">
- <div class="top-row">
- <div class="header-badge"><div class="live-dot"></div> Studio 1 // On-Air</div>
- <div class="brand-block">
- <div class="brand">Fluid Motion TV</div>
- <div class="tagline">Dragon Nine &mdash; Fluid Motion of the Future</div>
- <div class="d9clock" id="d9clock">D9 --:--</div>
- </div>
- </div>
- <div class="bottom-row">
- <div>
- <div class="vu-strip" id="vuStrip"></div>
- <div class="track-card" id="trackCard">
- <img id="albumArt" class="album-art" src="" alt="Album Cover">
- <div class="track-info">
- <h2 id="songTitle">Cybernetic Pulse</h2>
- <p id="artistName">Aether Wave ft. Synthia</p>
- <span class="genre-chip" id="genreChip">Electronic</span>
- </div>
- </div>
- </div>
- </div>
- </div>
+    <!-- Subtle Realistic Horizon Canvas -->
+    <canvas id="horizon-canvas"></canvas>
 
- <div id="hint">demo mode &mdash; connect /api/nowplaying for live automation feed</div>
+    <div class="portal-wrapper">
+        <header>
+            <h1>Fluid Motion TV</h1>
+            <p>Real-time audio-reactive horizon, pure harmonic resonance, and the sovereign shop tiers.</p>
+            
+            <div class="audio-player-bar">
+                <button id="play-toggle-btn" onclick="togglePlaylist()">Play Audio</button>
+                <div class="track-info" id="track-label">Now Ready: Raw Power &rarr; Dawn's Mix</div>
+            </div>
+        </header>
 
- <div id="controls">
- <select id="genreSelect">
- <option value="electronic">Genre: Electronic / EDM</option>
- <option value="rock">Genre: Rock / Metal</option>
- <option value="ambient">Genre: Ambient / Lofi</option>
- <option value="talk">Genre: Talk Radio / Speech</option>
- </select>
- <button id="audioBtn">ACTIVATE LIVE AUDIO</button>
- </div>
+        <main>
+            <div class="section-title">Nine Sovereign Shop Tiers</div>
+            
+            <div class="tiers-grid">
+                <!-- Tier 1 -->
+                <div class="tier-card">
+                    <div>
+                        <div class="tier-header"><span class="tier-number">Tier 01</span><span class="tier-price">$9 NZD</span></div>
+                        <div class="tier-title">Harmonic Seed</div>
+                        <div class="tier-desc">Initial digital asset bundle featuring base 432Hz ambient audio stems and wallpaper suite.</div>
+                    </div>
+                    <a href="https://www.paypal.com/ncp/payment?hosted_button_id=YOUR_PAYPAL_ID_1" target="_blank" rel="noopener" class="checkout-btn">Secure Tier 01</a>
+                </div>
 
-<script>
-// --- PRESET CONFIGURATIONS ---
-const PRESETS = {
- electronic: { bloomStrength: 2.2, bounceMultiplier: 5.0, smokeSpeed: 2.2, light1Color: 0x00f3ff, light2Color: 0xff0055, light1Anisotropy: 0.75, freqBin: 2, label: 'Electronic' },
- rock: { bloomStrength: 1.5, bounceMultiplier: 3.5, smokeSpeed: 3.5, light1Color: 0xff3300, light2Color: 0xffaa00, light1Anisotropy: -0.2, freqBin: 6, label: 'Rock' },
- ambient: { bloomStrength: 0.8, bounceMultiplier: 1.2, smokeSpeed: 0.5, light1Color: 0x7700ff, light2Color: 0x00ffaa, light1Anisotropy: 0.3, freqBin: 1, label: 'Ambient' },
- talk: { bloomStrength: 0.5, bounceMultiplier: 2.0, smokeSpeed: 0.2, light1Color: 0xffffff, light2Color: 0x0088ff, light1Anisotropy: 0.0, freqBin: 12, label: 'Talk' }
-};
-let activePreset = PRESETS.electronic;
+                <!-- Tier 2 -->
+                <div class="tier-card">
+                    <div>
+                        <div class="tier-header"><span class="tier-number">Tier 02</span><span class="tier-price">$25 NZD</span></div>
+                        <div class="tier-title">Horizon Generator</div>
+                        <div class="tier-desc">Standalone WebGL canvas script and modular horizon animation engine for local server hosting.</div>
+                    </div>
+                    <a href="https://www.paypal.com/ncp/payment?hosted_button_id=YOUR_PAYPAL_ID_2" target="_blank" rel="noopener" class="checkout-btn">Secure Tier 02</a>
+                </div>
 
-// --- DRAGON NINE CLOCK (54-minute hours, 1600 D9 minutes per day) ---
-const APEX_HOURS = [9, 23];
-function updateD9Clock() {
- const now = new Date();
- const secToday = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
- const d9minTotal = Math.floor(secToday / 54);
- const h = Math.floor(d9minTotal / 60);
- const m = d9minTotal % 60;
- const isApex = APEX_HOURS.some(a => Math.abs(h - a) <= 0 && m < 18);
- const el = document.getElementById('d9clock');
- el.innerHTML = `D9 ${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}` +
- (isApex ? ' <span class="apex">&#9670; APEX</span>' : '');
-}
-setInterval(updateD9Clock, 1000);
-updateD9Clock();
+                <!-- Tier 3 -->
+                <div class="tier-card">
+                    <div>
+                        <div class="tier-header"><span class="tier-number">Tier 03</span><span class="tier-price">$50 NZD</span></div>
+                        <div class="tier-title">Plasma Frequency Suite</div>
+                        <div class="tier-desc">Full spectrum audio collection tuned with Solfeggio overtones and rhythmic dub loops.</div>
+                    </div>
+                    <a href="https://www.paypal.com/ncp/payment?hosted_button_id=YOUR_PAYPAL_ID_3" target="_blank" rel="noopener" class="checkout-btn">Secure Tier 03</a>
+                </div>
 
-// --- DEMO NOW-PLAYING ROTATION ---
-const DEMO_TRACKS = [
- { title: 'Cybernetic Pulse', artist: 'Aether Wave ft. Synthia', genre: 'electronic' },
- { title: 'Tide Synth Rising', artist: 'Dragon Nine Collective', genre: 'ambient' },
- { title: 'Neon Undertow', artist: 'Volt Meridian
+                <!-- Tier 4 -->
+                <div class="tier-card">
+                    <div>
+                        <div class="tier-header"><span class="tier-number">Tier 04</span><span class="tier-price">$99 NZD</span></div>
+                        <div class="tier-title">Sovereign Node Access</div>
+                        <div class="tier-desc">Early access pass to PWA factory portals, local node scripts, and decentralized streaming tools.</div>
+                    </div>
+                    <a href="https://www.paypal.com/ncp/payment?hosted_button_id=YOUR_PAYPAL_ID_4" target="_blank" rel="noopener" class="checkout-btn">Secure Tier 04</a>
+                </div>
+
+                <!-- Tier 5 -->
+                <div class="tier-card">
+                    <div>
+                        <div class="tier-header"><span class="tier-number">Tier 05</span><span class="tier-price">$150 NZD</span></div>
+                        <div class="tier-title">Creative Suite Pro</div>
+                        <div class="tier-desc">Complete source code repositories for all motion graphics templates, UI kits, and visual assets.</div>
+                    </div>
+                    <a href="https://www.paypal.com/ncp/payment?hosted_button_id=YOUR_PAYPAL_ID_5" target="_blank" rel="noopener" class="checkout-btn">Secure Tier 05</a>
+                </div>
+
+                <!-- Tier 6 -->
+                <div class="tier-card">
+                    <div>
+                        <div class="tier-header"><span class="tier-number">Tier 06</span><span class="tier-price">$250 NZD</span></div>
+                        <div class="tier-title">Atmospheric Grid Builder</div>
+                        <div class="tier-desc">Advanced harmonic grid calculator toolkit and local frequency harvesting documentation.</div>
+                    </div>
+                    <a href="https://www.paypal.com/ncp/payment?hosted_button_id=YOUR_PAYPAL_ID_6" target="_blank" rel="noopener" class="checkout-btn">Secure Tier 06</a>
+                </div>
+
+                <!-- Tier 7 -->
+                <div class="tier-card">
+                    <div>
+                        <div class="tier-header"><span class="tier-number">Tier 07</span><span class="tier-price">$500 NZD</span></div>
+                        <div class="tier-title">Broadcast Partner Pass</div>
+                        <div class="tier-desc">Direct licensing rights for streaming background environments and collaborative media production.</div>
+                    </div>
+                    <a href="https://www.paypal.com/ncp/payment?hosted_button_id=YOUR_PAYPAL_ID_7" target="_blank" rel="noopener" class="checkout-btn">Secure Tier 07</a>
+                </div>
+
+                <!-- Tier 8 -->
+                <div class="tier-card">
+                    <div>
+                        <div class="tier-header"><span class="tier-number">Tier 08</span><span class="tier-price">$1,000 NZD</span></div>
+                        <div class="tier-title">Core Infrastructure Tier</div>
+                        <div class="tier-desc">Full deployment package with dedicated Caddy reverse proxy configurations and multi-domain routing setups.</div>
+                    </div>
+                    <a href="https://www.paypal.com/ncp/payment?hosted_button_id=YOUR_PAYPAL_ID_8" target="_blank" rel="noopener" class="checkout-btn">Secure Tier 08</a>
+                </div>
+
+                <!-- Tier 9 -->
+                <div class="tier-card">
+                    <div>
+                        <div class="tier-header"><span class="tier-number">Tier 09</span><span class="tier-price">$2,500 NZD</span></div>
+                        <div class="tier-title">Ultimate Sovereign License</div>
+                        <div class="tier-desc">Unlimited enterprise access to all current and future modular PWA engines, repositories, and creator collaboration.</div>
+                    </div>
+                    <a href="https://www.paypal.com/ncp/payment?hosted_button_id=YOUR_PAYPAL_ID_9" target="_blank" rel="noopener" class="checkout-btn">Secure Tier 09</a>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>&copy; 2026 Fluid Motion Limited. Powered by <span>the fluid motion of the future</span>.</p>
+        </footer>
+    </div>
+
+    <!-- Hidden Audio Elements (Raw Power first, then Dawn's Track) -->
+    <audio id="track-1" src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" preload="auto"></audio>
+    <audio id="track-2" src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" preload="auto"></audio>
+
+    <!-- Subtle, Realistic & Reactive Ocean Horizon Script -->
+    <script>
+        const canvas = document.getElementById('horizon-canvas');
+        const ctx = canvas.getContext('2d');
+
+        let width, height;
+        function resize() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        let time = 0;
+        let isPlaying = false;
+        let audioLevel = 0.05; // Subtle base movement
+
+        const track1 = document.getElementById('track-1');
+        const track2 = document.getElementById('track-2');
+        let currentTrack = 1;
+
+        track1.onended = () => {
+            currentTrack = 2;
+            document.getElementById('track-label').innerText = "Now Playing: Dawn's 432Hz Mix";
+            track2.play();
+        };
+
+        function togglePlaylist() {
+            const btn = document.getElementById('play-toggle-btn');
+            if (!isPlaying) {
+                track1.play().then(() => {
+                    isPlaying = true;
+                    audioLevel = 0.18; // Boost reactive wave height
+                    btn.innerText = "Pause Audio";
+                    document.getElementById('track-label').innerText = "Now Playing: Raw Power";
+                }).catch(e => console.log("Audio play blocked", e));
+            } else {
+                track1.pause();
+                track2.pause();
+                isPlaying = false;
+                audioLevel = 0.05;
+                btn.innerText = "Play Audio";
+                document.getElementById('track-label').innerText = "Audio Paused";
+            }
+        }
+
+        function drawHorizon() {
+            ctx.clearRect(0, 0, width, height);
+
+            // Clean gradient sky to ocean
+            const bg = ctx.createLinearGradient(0, 0, 0, height);
+            bg.addColorStop(0, '#070913');
+            bg.addColorStop(0.5, '#0c1224');
+            bg.addColorStop(1, '#05070f');
+            ctx.fillStyle = bg;
+            ctx.fillRect(0, 0, width, height);
+
+            time += 0.01;
+
+            // Subtle realistic horizon glow line
+
     </script>
 </body>
 </html>
