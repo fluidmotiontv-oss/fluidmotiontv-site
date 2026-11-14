@@ -6,9 +6,526 @@
     <title>Fluid Motion TV | Dragon 9 Sovereign Ecosystem</title>
     <!-- Three.js for 3D Wave Mesh & Post-Processing Bloom -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/EffectComposer.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/RenderPass.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/ShaderPass.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/CopyShader.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/LuminosityHighPassShader.js"></script>
-    <script src="
+    <style>
+        :root {
+            --bg-deep: #030308;
+            --neon-cyan: #00f3ff;
+            --neon-purple: #b026ff;
+            --neon-gold: #ffd700;
+            --glass-bg: rgba(10, 10, 20, 0.7);
+            --glass-border: rgba(0, 243, 255, 0.2);
+            --text-main: #f0f0f5;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-deep);
+            color: var(--text-main);
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* 3D WebGL Background Canvas */
+        #webgl-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* Header & Dragon 9 Nonary Clock */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 40px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--glass-border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            letter-spacing: 2px;
+            background: linear-gradient(45deg, var(--neon-cyan), var(--neon-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-transform: uppercase;
+        }
+
+        .dragon9-clock {
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid var(--neon-gold);
+            padding: 8px 16px;
+            border-radius: 30px;
+            font-size: 0.9rem;
+            letter-spacing: 1.5px;
+            color: var(--neon-gold);
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.2);
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .hero-section {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .hero-section h1 {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            letter-spacing: 1px;
+            text-shadow: 0 0 20px rgba(0, 243, 255, 0.4);
+        }
+
+        .hero-section p {
+            font-size: 1.2rem;
+            color: #a0a0b0;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        /* Audio Player Widget */
+        .audio-player-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 30px;
+            backdrop-filter: blur(16px);
+            margin-bottom: 50px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .player-controls {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        button {
+            background: linear-gradient(135deg, var(--neon-cyan), var(--neon-purple));
+            color: #fff;
+            border: none;
+            padding: 12px 28px;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 15px rgba(0, 243, 255, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 25px rgba(176, 38, 255, 0.6);
+        }
+
+        /* 9-Tier PayPal Checkout Grid */
+        .tier-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 25px;
+        }
+
+        .tier-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: transform 0.3s ease, border-color 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .tier-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--neon-cyan);
+        }
+
+        .tier-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .tier-price {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--neon-gold);
+        }
+
+        .tier-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .tier-desc {
+            font-size: 0.950rem;
+            color: #b0b0c0;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .checkout-btn {
+            display: block;
+            text-align: center;
+            background: transparent;
+            border: 2px solid var(--neon-cyan);
+            color: var(--neon-cyan);
+            padding: 10px 20px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .checkout-btn:hover {
+            background: var(--neon-cyan);
+            color: var(--bg-deep);
+            box-shadow: 0 0 15px var(--neon-cyan);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 3D WebGL Background Container -->
+    <div id="webgl-container"></div>
+
+    <!-- Header & Dragon 9 Clock -->
+    <header>
+        <div class="logo">Fluid Motion TV</div>
+        <div class="dragon9-clock" id="dragonClock">DRAGON 9: 00:00 (Cycle 1/9)</div>
+    </header>
+
+    <div class="container">
+        <!-- Hero Section -->
+        <section class="hero-section">
+            <h1>Sovereign Media & Audio Reactor</h1>
+            <p>Experience harmonic 3D spatial wave animations, real-time audio reactivity, and complete sovereign digital asset tiers.</p>
+        </section>
+
+        <!-- Audio Player Section -->
+        <section class="audio-player-card">
+            <h3 style="margin-bottom: 10px; text-align: center;">Harmonic Audio Stream</h3>
+            <p id="trackTitle" style="text-align: center; color: var(--neon-cyan); margin-bottom: 15px;">Now Playing: Raw Power & Dawns (Aquarium Fern Tunnel Mix)</p>
+            
+            <audio id="audioElement" loop crossorigin="anonymous"></audio>
+
+            <div class="player-controls">
+                <button onclick="toggleAudio()">Play Stream</button>
+                <button onclick="switchTrack('raw_power')">Raw Power MP3</button>
+                <button onclick="switchTrack('dawns')">Dawns MP3</button>
+            </div>
+        </section>
+
+        <!-- 9-Tier Sovereign PayPal Checkout Suite -->
+        <section class="tier-grid">
+            <!-- $9 Tier -->
+            <div class="tier-card">
+                <div>
+                    <div class="tier-header">
+                        <span class="tier-title">Starter Asset</span>
+                        <span class="tier-price">$9</span>
+                    </div>
+                    <p class="tier-desc">1 3D Ebook mockup template + 1 digital copy of The Guide to Sovereign Media[cite: 1].</p>
+                </div>
+                <a href="https://paypal.me/fluidmotiontv/9" target="_blank" class="checkout-btn">Secure Checkout ($9)</a>
+            </div>
+
+            <!-- $18 Tier -->
+            <div class="tier-card">
+                <div>
+                    <div class="tier-header">
+                        <span class="tier-title">Quick-Win Template</span>
+                        <span class="tier-price">$18</span>
+                    </div>
+                    <p class="tier-desc">Dual-pack Dragon 9 3D ebook covers + Guide to Sovereign Media[cite: 1].</p>
+                </div>
+                <a href="https://paypal.me/fluidmotiontv/18" target="_blank" class="checkout-btn">Secure Checkout ($18)</a>
+            </div>
+
+            <!-- $54 Tier -->
+            <div class="tier-card">
+                <div>
+                    <div class="tier-header">
+                        <span class="tier-title">Complete Toolkit</span>
+                        <span class="tier-price">$54</span>
+                    </div>
+                    <p class="tier-desc">Full 3D ebook library, cover layouts, and complete manuscript[cite: 1].</p>
+                </div>
+                <a href="https://paypal.me/fluidmotiontv/54" target="_blank" class="checkout-btn">Secure Checkout ($54)</a>
+            </div>
+
+            <!-- $270 Tier -->
+            <div class="tier-card">
+                <div>
+                    <div class="tier-header">
+                        <span class="tier-title">Pro Creator Suite</span>
+                        <span class="tier-price">$270</span>
+                    </div>
+                    <p class="tier-desc">Advanced templates + 3 digital copies of the Guide + sovereign distribution checklists[cite: 1].</p>
+                </div>
+                <a href="https://paypal.me/fluidmotiontv/270" target="_blank" class="checkout-btn">Secure Checkout ($270)</a>
+            </div>
+
+            <!-- $540 Tier -->
+            <div class="tier-card">
+                <div>
+                    <div class="tier-header">
+                        <span class="tier-title">Masterclass Workshop</span>
+                        <span class="tier-price">$540</span>
+                    </div>
+                    <p class="tier-desc">5 digital copies + intensive video training on fluid digital presentations[cite: 1].</p>
+                </div>
+                <a href="https://paypal.me/fluidmotiontv/540" target="_blank" class="checkout-btn">Secure Checkout ($540)</a>
+            </div>
+
+            <!-- $810 Tier -->
+            <div class="tier-card">
+                <div>
+                    <div class="tier-header">
+                        <span class="tier-title">Style Accelerator</span>
+                        <span class="tier-price">$810</span>
+                    </div>
+                    <p class="tier-desc">10 digital copies + exclusive design vaults and community access pass[cite: 1].</p>
+                </div>
+                <a href="https://paypal.me/fluidmotiontv/810" target="_blank" class="checkout-btn">Secure Checkout ($810)</a>
+            </div>
+
+            <!-- $1,800 Tier -->
+            <div class="tier-card">
+                <div>
+                    <div class="tier-header">
+                        <span class="tier-title">Sovereign VIP Suite</span>
+                        <span class="tier-price">$1,800</span>
+                    </div>
+                    <p class="tier-desc">25 digital copies + turnkey architecture blueprints and server setup[cite: 1].</p>
+                </div>
+                <a href="https://paypal.me/fluidmotiontv/1800" target="_blank" class="checkout-btn">Secure Checkout ($1,800)</a>
+            </div>
+
+            <!-- $2,700 Tier -->
+            <div class="tier-card">
+                <div>
+                    <div class="tier-header">
+                        <span class="tier-title">Agency Licensing Pass</span>
+                        <span class="tier-price">$2,700</span>
+                    </div>
+                    <p class="tier-desc">Unlimited reseller licensing rights + agency 3D rendering engines[cite: 1].</p>
+                </div>
+                <a href="https://paypal.me/fluidmotiontv/2700" target="_blank" class="checkout-btn">Secure Checkout ($2,700)</a>
+            </div>
+
+            <!-- $5,400 Tier -->
+            <div class="tier-card">
+                <div>
+                    <div class="tier-header">
+                        <span class="tier-title">Done-For-You Flagship</span>
+                        <span class="tier-price">$5,400</span>
+                    </div>
+                    <p class="tier-desc">Fully bespoke custom 3D product range and sovereign media ecosystem built from scratch[cite: 1].</p>
+                </div>
+                <a href="https://paypal.me/fluidmotiontv/5400" target="_blank" class="checkout-btn">Secure Checkout ($5,400)</a>
+            </div>
+        </section>
+    </div>
+
+    <!-- JavaScript for 3D Wave Mesh & Dragon 9 Clock -->
+    <script>
+        // --- Dragon 9 Nonary Clock ---
+        function updateDragonClock() {
+            const now = new Date();
+            const totalMinutes = now.getHours() * 60 + now.getMinutes();
+            const cycleLength = 54;
+            const currentCycle = Math.floor((totalMinutes % (cycleLength * 9)) / cycleLength) + 1;
+            
+            const hours = String(Math.floor(totalMinutes / 60)).padStart(2, '0');
+            const mins = String(totalMinutes % 60).padStart(2, '0');
+            
+            document.getElementById('dragonClock').innerText = `DRAGON 9: ${hours}:${mins} (Cycle ${currentCycle}/9)`;
+        }
+        setInterval(updateDragonClock, 1000);
+        updateDragonClock();
+
+        // --- Three.js Dancing Wave Mesh & Audio Reactivity ---
+        let scene, camera, renderer, waveMesh, geometry;
+        let audioElement, audioCtx, analyser, dataArray, audioSource;
+        let isAudioPlaying = false;
+
+        function initThree() {
+            const container = document.getElementById('webgl-container');
+            
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.set(0, 30, 50);
+            camera.lookAt(0, 0, 0);
+
+            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            container.appendChild(renderer.domElement);
+
+            // Create Dancing Wave Mesh (Aquarium Fern Tunnel Aesthetic)
+            const width = 80;
+            const height = 80;
+            const segmentsX = 60;
+            const segmentsY = 60;
+
+            geometry = new THREE.PlaneGeometry(width, height, segmentsX, segmentsY);
+            geometry.rotateX(-Math.PI / 2);
+
+            const material = new THREE.MeshStandardMaterial({
+                color: 0x00f3ff,
+                wireframe: true,
+                roughness: 0.2,
+                metalness: 0.8,
+                emissive: 0x00aa88,
+                emissiveIntensity: 0.4
+            });
+
+            waveMesh = new THREE.Mesh(geometry, material);
+            scene.add(waveMesh);
+
+            // Lighting for vibrant color FX
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
+            scene.add(ambientLight);
+
+            const pointLight1 = new THREE.PointLight(0x00f3ff, 2, 100);
+            pointLight1.position.set(0, 20, 20);
+            scene.add(pointLight1);
+
+            const pointLight2 = new THREE.PointLight(0x00aa88, 2, 100);
+            pointLight2.position.set(20, -10, -20);
+            scene.add(pointLight2);
+
+            window.addEventListener('resize', onWindowResize);
+        }
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        // --- Audio Setup & Repository MP3 Integration ---
+        audioElement = document.getElementById('audioElement');
+
+        function toggleAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                analyser = audioCtx.createAnalyser();
+                analyser.fftSize = 256;
+                dataArray = new Uint8Array(analyser.frequencyBinCount);
+
+                audioSource = audioCtx.createMediaElementSource(audioElement);
+                audioSource.connect(analyser);
+                analyser.connect(audioCtx.destination);
+            }
+
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+
+            const btn = document.querySelector('.audio-player-card button');
+
+            if (isAudioPlaying) {
+                audioElement.pause();
+                isAudioPlaying = false;
+                btn.innerText = "Play Stream";
+            } else {
+                if (!audioElement.src) {
+                    audioElement.src = "raw_power.mp3"; // Default repo mp3
+                }
+                audioElement.play().then(() => {
+                    isAudioPlaying = true;
+                    btn.innerText = "Pause Stream";
+                }).catch(e => console.log("Audio play blocked or missing file:", e));
+            }
+        }
+
+        function switchTrack(trackName) {
+            const titleEl = document.getElementById('trackTitle');
+            if (trackName === 'raw_power') {
+                audioElement.src = "raw_power.mp3";
+                titleEl.innerText = "Now Playing: Raw Power MP3 (Aquarium Fern Tunnel)";
+            } else if (trackName === 'dawns') {
+                audioElement.src = "dawns.mp3";
+                titleEl.innerText = "Now Playing: Dawns MP3 (Dragon 9 Atmosphere)";
+            }
+            audioElement.load();
+            if (isAudioPlaying) {
+                audioElement.play();
+            } else {
+                toggleAudio();
+            }
+        }
+
+        // --- Animation Loop ---
+        let clock = new THREE.Clock();
+
+        function animate() {
+            requestAnimationFrame(animate);
+
+            const elapsedTime = clock.getElapsedTime();
+
+            if (geometry && geometry.attributes.position) {
+                const positionAttr = geometry.attributes.position;
+                let audioFactor = 0.5;
+
+                if (isAudioPlaying && analyser && dataArray) {
+                    analyser.getByteFrequencyData(dataArray);
+                    let sum = 0;
+                    for (let i = 0; i < dataArray.length; i++) {
+                        sum += dataArray[i];
+                    }
+                    audioFactor = 0.5 + (sum / dataArray.length) / 30;
+                }
+
+                // Wave vertex deformation simulating jumping wave mesh dancing to music
+                for (let i = 0; i < positionAttr.count; i++) {
+                    const x = positionAttr.getX(i);
+                    const z = positionAttr.getZ(i);
+                    
+                    const y = Math.sin(x * 0.15 + elapsedTime * 3) * Math.cos(z * 0.15 + elapsedTime * 2) * 4 * audioFactor;
+                    positionAttr.setY(i, y);
+                }
+                positionAttr.needsUpdate = true;
+            }
+
+            if (waveMesh) {
+                waveMesh.rotation.y = elapsedTime * 0.1;
+            }
+
+            renderer.render(scene, camera);
+        }
+
+        initThree();
+        animate();
+    </script>
+</body>
+</html>
