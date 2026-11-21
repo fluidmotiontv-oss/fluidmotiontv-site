@@ -439,7 +439,6 @@
       const now = new Date();
       const secondsSinceMidnight =
         now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds() + now.getMilliseconds() / 1000;
-      // 86400 standard seconds mapped to 26.6667 harmonic hours of 54 harmonic minutes (3240 sec)
       const harmonicTotalSeconds = secondsSinceMidnight;
       const hHours = Math.floor(harmonicTotalSeconds / 3240);
       const remAfterHours = harmonicTotalSeconds % 3240;
@@ -459,10 +458,9 @@
     let oscNodes = [];
     let chordIndex = 0;
 
-    // 432 Hz Pythagorean ratios (Root D4 = 288 Hz, A4 = 432 Hz, D9 voicing)
     const voicings = [
-      [144, 216, 288, 432],         // Pure 432 Hz Fifth/Octave
-      [144, 180, 216, 261.8, 324]   // D9 Harmonic Extension
+      [144, 216, 288, 432],
+      [144, 180, 216, 261.8, 324]
     ];
 
     const toggleBtn = document.getElementById("toggle-432");
@@ -539,7 +537,6 @@
           float r = length(uv);
           float a = atan(uv.y, uv.x);
 
-          // Octagonal sacred geometry & aquarium tunnel rings
           float oct = cos(8.0 * a + u_time * 0.4) * 0.15;
           float tunnel = sin(12.0 / (r + 0.25) - u_time * 1.8 + oct * 6.0);
           float wave = sin(uv.x * 5.0 + u_time * 1.2) * cos(uv.y * 5.0 - u_time * 0.9);
@@ -596,4 +593,3 @@
   </script>
 </body>
 </html>
-
