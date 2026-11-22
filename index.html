@@ -1,595 +1,2068 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Fluid Motion TV | FlowTouch Sovereign Portal</title>
-  <style>
-    :root {
-      --bg-deep: #030712;
-      --neon-cyan: #00f5d4;
-      --neon-purple: #9b5de5;
-      --neon-gold: #fee440;
-      --neon-magenta: #f15bb5;
-      --glass: rgba(10, 18, 36, 0.72);
-      --border: rgba(0, 245, 212, 0.28);
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fluid Motion TV • Dragon 9 Sovereign Ecosystem • FlowTouch Spatial Portal</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Three.js r128 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- Google Fonts: Space Grotesk & JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Space Grotesk', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        obsidian: '#04070d',
+                        cyanGlow: '#00f0ff',
+                        goldHarmonic: '#f5b841',
+                        emeraldFern: '#10b981',
+                    }
+                }
+            }
+        }
+    </script>
 
-    body {
-      background-color: var(--bg-deep);
-      color: #f8fafc;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      overflow-x: hidden;
-      min-height: 100vh;
-    }
+    <style>
+        /* Custom 3D Spatial & Holographic Glassmorphism Styles */
+        :root {
+            --accent-primary: #00f0ff;
+            --accent-secondary: #f5b841;
+            --accent-tertiary: #10b981;
+        }
 
-    #webgl-canvas {
-      position: fixed;
-      inset: 0;
-      width: 100vw;
-      height: 100vh;
-      z-index: 0;
-      pointer-events: none;
-    }
+        * {
+            box-sizing: border-box;
+        }
 
-    .hud-wrapper {
-      position: relative;
-      z-index: 2;
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 2rem 1.25rem 5rem;
-      display: flex;
-      flex-direction: column;
-      gap: 2.25rem;
-    }
+        body {
+            background-color: #04070d;
+            color: #e2e8f0;
+            overflow-x: hidden;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+        }
 
-    header {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
-      align-items: center;
-      gap: 1rem;
-      background: var(--glass);
-      backdrop-filter: blur(14px);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 1.25rem 1.75rem;
-      box-shadow: 0 0 30px rgba(0, 245, 212, 0.12);
-    }
+        /* Fullscreen Interactive 3D WebGL Canvas */
+        #webgl-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 0;
+            display: block;
+            cursor: grab;
+        }
 
-    .brand h1 {
-      font-size: clamp(1.4rem, 3vw, 2.1rem);
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      background: linear-gradient(90deg, var(--neon-cyan), var(--neon-gold), var(--neon-magenta));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
+        #webgl-canvas:active {
+            cursor: grabbing;
+        }
 
-    .brand p {
-      font-size: 0.85rem;
-      color: #94a3b8;
-      letter-spacing: 0.06em;
-      margin-top: 0.2rem;
-    }
+        /* 3D Perspective Container for Spatial Cards */
+        .spatial-stage {
+            perspective: 1400px;
+        }
 
-    .clock-pill {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-end;
-      background: rgba(0, 0, 0, 0.45);
-      border: 1px solid rgba(254, 228, 64, 0.35);
-      border-radius: 12px;
-      padding: 0.6rem 1rem;
-    }
+        /* Holographic Glassmorphic Panel */
+        .holo-card {
+            background: linear-gradient(145deg, rgba(10, 18, 32, 0.72) 0%, rgba(4, 7, 13, 0.86) 100%);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border: 1px solid rgba(0, 240, 255, 0.18);
+            box-shadow: 0 12px 35px -10px rgba(0, 0, 0, 0.85), inset 0 1px 0 0 rgba(255, 255, 255, 0.08);
+            transform-style: preserve-3d;
+            transition: transform 0.2s cubic-bezier(0.23, 1, 0.32, 1), border-color 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
 
-    .clock-pill span.label {
-      font-size: 0.7rem;
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-      color: var(--neon-gold);
-    }
+        .holo-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(0, 240, 255, 0.14), transparent 65%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
 
-    .clock-pill span.time {
-      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-      font-size: 1.25rem;
-      font-weight: 700;
-      color: #fff;
-    }
+        .holo-card:hover::before {
+            opacity: 1;
+        }
 
-    .audio-deck {
-      background: var(--glass);
-      backdrop-filter: blur(14px);
-      border: 1px solid rgba(155, 93, 229, 0.35);
-      border-radius: 16px;
-      padding: 1.25rem 1.5rem;
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: space-between;
-      gap: 1rem;
-    }
+        .holo-card:hover {
+            border-color: rgba(0, 240, 255, 0.55);
+            box-shadow: 0 20px 45px -12px rgba(0, 240, 255, 0.22), inset 0 1px 0 0 rgba(0, 240, 255, 0.25);
+        }
 
-    .audio-controls {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      gap: 0.75rem;
-    }
+        .holo-card-gold {
+            border-color: rgba(245, 184, 65, 0.22);
+        }
 
-    button {
-      background: rgba(0, 245, 212, 0.14);
-      color: var(--neon-cyan);
-      border: 1px solid var(--neon-cyan);
-      border-radius: 999px;
-      padding: 0.55rem 1.15rem;
-      font-size: 0.85rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
+        .holo-card-gold::before {
+            background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(245, 184, 65, 0.16), transparent 65%);
+        }
 
-    button:hover {
-      background: var(--neon-cyan);
-      color: #030712;
-      box-shadow: 0 0 18px rgba(0, 245, 212, 0.5);
-    }
+        .holo-card-gold:hover {
+            border-color: rgba(245, 184, 65, 0.65);
+            box-shadow: 0 20px 45px -12px rgba(245, 184, 65, 0.22), inset 0 1px 0 0 rgba(245, 184, 65, 0.3);
+        }
 
-    button.active {
-      background: var(--neon-gold);
-      border-color: var(--neon-gold);
-      color: #030712;
-    }
+        /* 3D Pop-Out Content Layers inside Tilt Cards */
+        .card-depth-1 {
+            transform: translateZ(16px);
+        }
+        .card-depth-2 {
+            transform: translateZ(28px);
+        }
 
-    .section-title {
-      font-size: 1rem;
-      text-transform: uppercase;
-      letter-spacing: 0.14em;
-      color: var(--neon-cyan);
-      margin-bottom: 1rem;
-      display: flex;
-      align-items: center;
-      gap: 0.6rem;
-    }
+        /* Glowing Pulse Animations */
+        @keyframes pulseGlow {
+            0%, 100% { opacity: 0.75; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.04); }
+        }
 
-    .portal-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 1.15rem;
-    }
+        .animate-pulse-glow {
+            animation: pulseGlow 4s ease-in-out infinite;
+        }
 
-    @media (max-width: 860px) {
-      .portal-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-    }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #04070d;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(0, 240, 255, 0.3);
+            border-radius: 9999px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(0, 240, 255, 0.6);
+        }
 
-    @media (max-width: 560px) {
-      .portal-grid {
-        grid-template-columns: 1fr;
-      }
-      .clock-pill {
-        align-items: flex-start;
-      }
-    }
-
-    .node-card {
-      background: var(--glass);
-      backdrop-filter: blur(12px);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 1.35rem;
-      text-decoration: none;
-      color: inherit;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      gap: 0.75rem;
-      transition: transform 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease;
-    }
-
-    .node-card:hover {
-      transform: translateY(-4px);
-      border-color: var(--neon-gold);
-      box-shadow: 0 10px 28px rgba(0, 245, 212, 0.18);
-    }
-
-    .node-tag {
-      font-size: 0.7rem;
-      text-transform: uppercase;
-      letter-spacing: 0.14em;
-      color: var(--neon-magenta);
-      font-weight: 700;
-    }
-
-    .node-card h3 {
-      font-size: 1.15rem;
-      color: #fff;
-    }
-
-    .node-card p {
-      font-size: 0.86rem;
-      color: #cbd5e1;
-      line-height: 1.45;
-    }
-
-    .store-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-      gap: 1.15rem;
-    }
-
-    .tier-card {
-      background: linear-gradient(160deg, rgba(15, 23, 42, 0.85), rgba(30, 27, 75, 0.65));
-      border: 1px solid rgba(254, 228, 64, 0.35);
-      border-radius: 16px;
-      padding: 1.4rem;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      gap: 1rem;
-    }
-
-    .tier-price {
-      font-size: 1.85rem;
-      font-weight: 800;
-      color: var(--neon-gold);
-    }
-
-    .tier-price span {
-      font-size: 0.8rem;
-      font-weight: 400;
-      color: #94a3b8;
-    }
-
-    .paypal-btn {
-      display: inline-block;
-      text-align: center;
-      width: 100%;
-      padding: 0.7rem 1rem;
-      border-radius: 10px;
-      background: linear-gradient(90deg, #0070ba, #1546a0);
-      color: #fff;
-      font-weight: 700;
-      font-size: 0.9rem;
-      text-decoration: none;
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      transition: filter 0.2s ease;
-    }
-
-    .paypal-btn:hover {
-      filter: brightness(1.15);
-    }
-
-    footer {
-      text-align: center;
-      font-size: 0.8rem;
-      color: #64748b;
-      padding-top: 1rem;
-      border-top: 1px solid rgba(255, 255, 255, 0.08);
-    }
-
-    footer a {
-      color: var(--neon-cyan);
-      text-decoration: none;
-    }
-  </style>
+        /* Walkthrough Mode Fade */
+        .hud-layer {
+            transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        body.walkthrough-active .hud-layer {
+            opacity: 0;
+            pointer-events: none;
+            transform: scale(0.97);
+        }
+    </style>
 </head>
-<body>
-  <canvas id="webgl-canvas"></canvas>
+<body class="antialiased selection:bg-cyan-500/30 selection:text-cyan-200">
 
-  <div class="hud-wrapper">
-    <header>
-      <div class="brand">
-        <h1>Fluid Motion TV</h1>
-        <p>Dragon 9 Sovereign Ecosystem &bull; FlowTouch Spatial Portal</p>
-      </div>
-      <div class="clock-pill">
-        <span class="label">Harmonic 54-Min Cycle</span>
-        <span class="time" id="harmonic-clock">00:00:00</span>
-      </div>
-    </header>
+    <!-- Fullscreen 3D Sacred Geometry WebGL Canvas -->
+    <canvas id="webgl-canvas"></canvas>
 
-    <section class="audio-deck">
-      <div>
-        <strong style="color: var(--neon-gold); letter-spacing: 0.05em;">432 Hz Dawn Engine Synthesis</strong>
-        <p style="font-size: 0.82rem; color: #94a3b8; margin-top: 0.2rem;">
-          Local zero-telemetry Pythagorean harmonic drone &amp; wave reactive field
-        </p>
-      </div>
-      <div class="audio-controls">
-        <button id="toggle-432" type="button">Engage 432 Hz Drone</button>
-        <button id="shift-harmonic" type="button">Shift D9 Chord</button>
-      </div>
-    </section>
+    <!-- Floating 3D Raycast Hover Tooltip -->
+    <div id="raycast-tooltip" class="fixed z-50 pointer-events-none hidden px-3.5 py-2 rounded-xl bg-slate-950/90 border border-amber-400/50 backdrop-blur-md shadow-xl text-xs font-mono text-amber-200 transition-opacity duration-150">
+        <div id="tooltip-title" class="font-bold text-white">Book Title</div>
+        <div id="tooltip-sub" class="text-[11px] text-cyan-300">Click to Inspect</div>
+    </div>
 
-    <section>
-      <div class="section-title">3 &times; 3 Spatial Ecosystem Matrix</div>
-      <div class="portal-grid">
-        <a class="node-card" href="https://fluidmotiontv.tech" target="_blank" rel="noopener">
-          <span class="node-tag">Node 01 &bull; Core Hub</span>
-          <h3>FluidMotionTV.tech</h3>
-          <p>Primary sovereign broadcast terminal, live streams, and ecosystem manifest.</p>
-        </a>
-
-        <a class="node-card" href="https://dragon9.online" target="_blank" rel="noopener">
-          <span class="node-tag">Node 02 &bull; Mesh &amp; OS</span>
-          <h3>Dragon 9 Online</h3>
-          <p>Sovereign ISP mesh architecture, WireGuard nodes, and local-first tools.</p>
-        </a>
-
-        <a class="node-card" href="https://github.com/fluidmotiontv-oss" target="_blank" rel="noopener">
-          <span class="node-tag">Node 03 &bull; Open Source</span>
-          <h3>fluidmotiontv-oss</h3>
-          <p>Source repositories, PWA factory modules, and WebGL spatial shaders.</p>
-        </a>
-
-        <a class="node-card" href="https://fluidmotiontv-oss.github.io/Fluidmotiontv-clock/" target="_blank" rel="noopener">
-          <span class="node-tag">Node 04 &bull; Chronometry</span>
-          <h3>54-Minute Harmonic Clock</h3>
-          <p>26.66-hour daily cycle timepiece synchronized to natural harmonic intervals.</p>
-        </a>
-
-        <a class="node-card" href="#flowtouch-foyer">
-          <span class="node-tag">Node 05 &bull; Spatial 3D</span>
-          <h3>Infinity Flow 3D / FlowTouch</h3>
-          <p>Ferns &amp; Flows WebGL walkthrough foyer and upright 3D book pedestals.</p>
-        </a>
-
-        <a class="node-card" href="#super-puff">
-          <span class="node-tag">Node 06 &bull; Animation</span>
-          <h3>Super Puff &amp; Cyber Dragon</h3>
-          <p>3D animated comedy series, WebGL broadcast anchors, and original characters.</p>
-        </a>
-
-        <a class="node-card" href="#dawn-engine">
-          <span class="node-tag">Node 07 &bull; 432 Hz Audio</span>
-          <h3>Dawn Engine Audio Lab</h3>
-          <p>Pythagorean procedural MIDI scripts, dub rhythms, and West Coast mixes.</p>
-        </a>
-
-        <a class="node-card" href="#dinero-9">
-          <span class="node-tag">Node 08 &bull; Exchange</span>
-          <h3>Dinero 9 &amp; Contra</h3>
-          <p>Creator reward token framework and direct community contra partnerships.</p>
-        </a>
-
-        <a class="node-card" href="#storefront">
-          <span class="node-tag">Node 09 &bull; Direct Support</span>
-          <h3>Harmonic Storefront</h3>
-          <p>Direct digital publications, master mixes, and sovereign production tiers.</p>
-        </a>
-      </div>
-    </section>
-
-    <section id="storefront">
-      <div class="section-title">Harmonic Storefront &amp; Sovereign Tiers</div>
-      <div class="store-grid">
-        <div class="tier-card">
-          <div>
-            <span class="node-tag">Tier I &bull; Seed</span>
-            <div class="tier-price">$3 <span>USD</span></div>
-            <p style="font-size: 0.85rem; color: #cbd5e1; margin-top: 0.5rem;">
-              Supporter pass &amp; 432 Hz digital audio single download.
-            </p>
-          </div>
-          <a class="paypal-btn" href="https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=fluidmotion.tv%40gmail.com&item_name=Fluid+Motion+TV+Tier+1+Seed&amount=3.00&currency_code=USD" target="_blank" rel="noopener">
-            Checkout via PayPal ($3)
-          </a>
+    <!-- Floating Top Camera Preset & Spatial View Control Bar -->
+    <div class="fixed top-4 left-4 right-4 z-50 flex flex-wrap items-center justify-between gap-2 pointer-events-none">
+        <!-- Camera Quick-Jump Presets -->
+        <div class="pointer-events-auto flex flex-wrap items-center gap-1.5 bg-slate-950/80 border border-cyan-500/30 backdrop-blur-md p-1.5 rounded-full shadow-lg">
+            <button onclick="setCameraPreset('core')" id="cam-btn-core"
+                class="cam-preset-btn px-3 py-1 rounded-full text-[11px] font-mono font-semibold bg-cyan-500/25 text-cyan-200 border border-cyan-400/50 transition cursor-pointer">
+                ◈ Core Nexus
+            </button>
+            <button onclick="setCameraPreset('books')" id="cam-btn-books"
+                class="cam-preset-btn px-3 py-1 rounded-full text-[11px] font-mono font-semibold text-slate-300 hover:text-amber-200 hover:bg-amber-500/15 border border-transparent transition cursor-pointer">
+                📖 Book Pedestals
+            </button>
+            <button onclick="setCameraPreset('dragon')" id="cam-btn-dragon"
+                class="cam-preset-btn px-3 py-1 rounded-full text-[11px] font-mono font-semibold text-slate-300 hover:text-emerald-200 hover:bg-emerald-500/15 border border-transparent transition cursor-pointer">
+                🐉 Follow Cyber Dragon
+            </button>
+            <button onclick="setCameraPreset('matrix')" id="cam-btn-matrix"
+                class="cam-preset-btn px-3 py-1 rounded-full text-[11px] font-mono font-semibold text-slate-300 hover:text-cyan-200 hover:bg-cyan-500/15 border border-transparent transition cursor-pointer">
+                ⊞ Matrix Overview
+            </button>
         </div>
 
-        <div class="tier-card">
-          <div>
-            <span class="node-tag">Tier II &bull; Dragon 9</span>
-            <div class="tier-price">$9 <span>USD</span></div>
-            <p style="font-size: 0.85rem; color: #cbd5e1; margin-top: 0.5rem;">
-              Digital publication: The 54-Minute Clock &amp; Sovereign Media Guide.
-            </p>
-          </div>
-          <a class="paypal-btn" href="https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=fluidmotion.tv%40gmail.com&item_name=Fluid+Motion+TV+Tier+2+Dragon+9&amount=9.00&currency_code=USD" target="_blank" rel="noopener">
-            Checkout via PayPal ($9)
-          </a>
+        <!-- Right Status & Walkthrough Toggle -->
+        <div class="pointer-events-auto flex items-center gap-2 sm:gap-3 ml-auto">
+            <div id="audio-status-pill" class="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-950/80 border border-cyan-500/30 backdrop-blur-md text-xs font-mono text-cyan-300">
+                <span id="audio-led" class="w-2 h-2 rounded-full bg-slate-600"></span>
+                <span id="chord-readout">D9 RATIO 1:1 • 432.0 Hz</span>
+            </div>
+
+            <button id="toggle-walkthrough-btn" onclick="toggleWalkthroughMode()"
+                class="px-3.5 py-2 rounded-full bg-slate-950/85 hover:bg-cyan-950/90 border border-cyan-400/40 hover:border-cyan-300 text-xs font-mono font-semibold text-cyan-200 backdrop-blur-md shadow-lg shadow-cyan-500/10 transition-all flex items-center gap-2 cursor-pointer">
+                <svg class="w-4 h-4 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
+                </svg>
+                <span id="walkthrough-btn-label">3D Spatial View</span>
+            </button>
         </div>
+    </div>
 
-        <div class="tier-card">
-          <div>
-            <span class="node-tag">Tier III &bull; Harmonic</span>
-            <div class="tier-price">$27 <span>USD</span></div>
-            <p style="font-size: 0.85rem; color: #cbd5e1; margin-top: 0.5rem;">
-              Full FlowTouch WebGL asset bundle, master audio stems &amp; sacred geometry pack.
-            </p>
-          </div>
-          <a class="paypal-btn" href="https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=fluidmotion.tv%40gmail.com&item_name=Fluid+Motion+TV+Tier+3+Harmonic&amount=27.00&currency_code=USD" target="_blank" rel="noopener">
-            Checkout via PayPal ($27)
-          </a>
+    <!-- Walkthrough Helper Overlay (Visible only when HUD is hidden) -->
+    <div id="walkthrough-hint" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 pointer-events-none opacity-0 transition-opacity duration-500">
+        <div class="px-5 py-2.5 rounded-full bg-slate-950/85 border border-cyan-500/40 backdrop-blur-md text-xs font-mono text-cyan-200 shadow-2xl flex items-center gap-3">
+            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+            <span>DRAG TO ORBIT • SCROLL TO ZOOM • CLICK ANY 3D BOOK PEDESTAL OR CYBER DRAGON</span>
         </div>
+    </div>
 
-        <div class="tier-card">
-          <div>
-            <span class="node-tag">Tier IV &bull; Sovereign Patron</span>
-            <div class="tier-price">$54 <span>USD</span></div>
-            <p style="font-size: 0.85rem; color: #cbd5e1; margin-top: 0.5rem;">
-              Full Dragon 9 archive access, Super Puff pilot masters &amp; producer credit.
+    <!-- Main HUD Layer -->
+    <main id="main-hud" class="hud-layer relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-24 pointer-events-none">
+                    <!-- 54-Minute Harmonic Cycle & 26.66-Hour Daily Chronometer -->
+                    <div class="card-depth-2 mt-6 pt-6 border-t border-cyan-500/20 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                        <div class="flex items-center gap-4">
+                            <!-- SVG Harmonic Dial -->
+                            <div class="relative w-16 h-16 flex-shrink-0">
+                                <svg class="w-16 h-16 -rotate-90" viewBox="0 0 64 64">
+                                    <circle cx="32" cy="32" r="27" fill="none" stroke="rgba(0, 240, 255, 0.15)" stroke-width="4" />
+                                    <circle id="harmonic-ring" cx="32" cy="32" r="27" fill="none" stroke="#00f0ff" stroke-width="4"
+                                        stroke-dasharray="169.65" stroke-dashoffset="42" stroke-linecap="round" />
+                                    <circle cx="32" cy="32" r="19" fill="none" stroke="rgba(245, 184, 65, 0.35)" stroke-width="1.5" stroke-dasharray="3 3" />
+                                </svg>
+                                <div class="absolute inset-0 flex items-center justify-center font-mono text-[10px] font-bold text-amber-300">
+                                    54M
+                                </div>
+                            </div>
+
+                            <div>
+                                <div class="text-xs font-mono uppercase tracking-widest text-cyan-400">Harmonic 54-Min Cycle</div>
+                                <div id="harmonic-clock-display" class="text-2xl sm:text-3xl font-mono font-bold text-white tracking-wider">
+                                    00:09:00
+                                </div>
+                                <div id="cycle-subtext" class="text-xs font-mono text-slate-400 mt-0.5">
+                                    26.66-Hr Sovereign Day • Phase <span id="cycle-phase-num" class="text-emerald-400">01/27</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center gap-2">
+                            <button onclick="setCameraPreset('books')"
+                                class="px-3 py-1.5 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 border border-amber-400/40 text-xs font-mono text-amber-200 transition cursor-pointer">
+                                Inspect 3D Books ↗
+                            </button>
+                            <button onclick="resetCycleAnchor()" title="Reset to 00:09 Harmonic Anchor"
+                                class="px-3 py-1.5 rounded-xl bg-slate-900/80 hover:bg-cyan-950/70 border border-slate-700 hover:border-cyan-400/50 text-xs font-mono text-slate-300 hover:text-cyan-200 transition cursor-pointer">
+                                00:09 Sync ↻
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: 432 Hz Dawn Engine Synthesis Console -->
+                <div class="holo-card rounded-3xl p-6 sm:p-8 lg:w-[460px] flex flex-col justify-between" data-tilt>
+                    <div class="card-depth-1">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-xs font-mono uppercase tracking-widest text-emerald-400 flex items-center gap-2">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
+                                </svg>
+                                Dawn Engine Audio Lab
+                            </span>
+                            <span id="freq-hz-badge" class="px-2.5 py-0.5 rounded-md bg-emerald-500/15 border border-emerald-400/30 font-mono text-xs text-emerald-300">
+                                432.00 Hz
+                            </span>
+                        </div>
+
+                        <h2 class="text-xl sm:text-2xl font-bold text-white mb-1">
+                            432 Hz Dawn Engine Synthesis
+                        </h2>
+                        <p class="text-xs sm:text-sm text-slate-300/85 leading-relaxed">
+                            Local zero-telemetry Pythagorean harmonic drone &amp; wave reactive field driving the 3D sacred geometry core.
+                        </p>
+                    </div>
+
+                    <!-- Live Harmonic Waveform Canvas -->
+                    <div class="card-depth-1 my-5 rounded-2xl bg-slate-950/90 border border-cyan-500/20 p-2.5 relative overflow-hidden">
+                        <canvas id="waveform-canvas" class="w-full h-16 block rounded-lg"></canvas>
+                        <div class="flex justify-between items-center mt-1.5 px-1 text-[10px] font-mono text-slate-400">
+                            <span id="chord-name-label">PYTHAGOREAN UNISON (1:1)</span>
+                            <span id="harmonics-ratio-label">216Hz • 432Hz • 648Hz • 864Hz</span>
+                        </div>
+                    </div>
+
+                    <!-- Interactive Synth Controls -->
+                    <div class="card-depth-2 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <button id="engage-drone-btn" onclick="toggleDrone()"
+                            class="px-4 py-3 rounded-2xl bg-gradient-to-r from-cyan-500 to-emerald-500 hover:from-cyan-400 hover:to-emerald-400 text-slate-950 font-bold text-sm shadow-lg shadow-cyan-500/25 transition-all flex items-center justify-center gap-2 cursor-pointer">
+                            <span id="drone-btn-icon">▶</span>
+                            <span id="drone-btn-text">Engage 432 Hz Drone</span>
+                        </button>
+
+                        <button id="shift-chord-btn" onclick="shiftD9Chord()"
+                            class="px-4 py-3 rounded-2xl bg-slate-900/90 hover:bg-amber-500/20 border border-amber-400/40 hover:border-amber-300 text-amber-200 font-mono font-semibold text-sm shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer">
+                            <span>◈</span>
+                            <span>Shift D9 Chord</span>
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </header>
+
+        <!-- SECTION 1: 3 x 3 SPATIAL ECOSYSTEM MATRIX -->
+        <section class="pointer-events-auto mb-16">
+            <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-6 gap-2">
+                <div>
+                    <div class="text-xs font-mono uppercase tracking-widest text-cyan-400 mb-1">
+                        Sovereign Network Architecture
+                    </div>
+                    <h2 class="text-2xl sm:text-3xl font-bold text-white">
+                        3 × 3 Spatial Ecosystem Matrix
+                    </h2>
+                </div>
+                <p class="text-xs font-mono text-slate-400">
+                    SELECT ANY NODE TO FOCUS 3D BEACON &amp; INSPECT TELEMETRY
+                </p>
+            </div>
+
+            <!-- 3x3 Spatial Grid -->
+            <div id="ecosystem-grid" class="spatial-stage grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                <!-- Populated dynamically via JavaScript for rich 3D tilt & interactive telemetry -->
+            </div>
+        </section>
+
+        <!-- SECTION 2: HARMONIC STOREFRONT & SOVEREIGN TIERS -->
+        <section class="pointer-events-auto">
+            <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-6 gap-2">
+                <div>
+                    <div class="text-xs font-mono uppercase tracking-widest text-amber-400 mb-1">
+                        Direct Sovereign Patronage • Zero Middlemen
+                    </div>
+                    <h2 class="text-2xl sm:text-3xl font-bold text-white">
+                        Harmonic Storefront &amp; Sovereign Tiers
+                    </h2>
+                </div>
+                <p class="text-xs font-mono text-slate-400">
+                    PYTHAGOREAN PRICING HARMONICS ($3 • $9 • $27 • $54)
+                </p>
+            </div>
+
+            <div id="storefront-grid" class="spatial-stage grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+                <!-- Populated dynamically via JavaScript -->
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="pointer-events-auto mt-16 pt-8 border-t border-slate-800/80 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-mono text-slate-400">
+            <div class="flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+                <span>FLUID MOTION TV • DRAGON 9 SOVEREIGN ECOSYSTEM • FLUIDMOTIONTV.TECH</span>
+            </div>
+            <div>
+                ZERO-TELEMETRY LOCAL-FIRST SPATIAL PORTAL • TUNED TO A=432 HZ
+            </div>
+        </footer>
+    </main>
+
+    <!-- DISTINGUISHED THOUGHTS 3D BOOK PEDESTAL MODAL -->
+    <div id="book-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md">
+        <div class="holo-card holo-card-gold rounded-3xl max-w-lg w-full p-6 sm:p-8 border-amber-400/50 shadow-2xl relative">
+            <button onclick="closeBookModal()" class="absolute top-5 right-5 w-9 h-9 rounded-full bg-slate-900/90 border border-slate-700 hover:border-amber-400 text-slate-300 hover:text-white flex items-center justify-center cursor-pointer">
+                ✕
+            </button>
+
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/15 border border-amber-400/40 text-xs font-mono text-amber-300 mb-3">
+                DISTINGUISHED THOUGHTS • 3D PEDESTAL EDITION
+            </div>
+
+            <h3 id="book-modal-title" class="text-2xl sm:text-3xl font-bold text-white mb-1">
+                The 54-Minute Hour
+            </h3>
+            <div id="book-modal-author" class="text-xs font-mono text-cyan-300 mb-3">
+                Fluid Motion TV Sovereign Press
+            </div>
+            <div id="book-modal-price" class="text-3xl font-mono font-bold text-amber-300 mb-4">
+                $9 USD
+            </div>
+
+            <p id="book-modal-synopsis" class="text-sm text-slate-300 leading-relaxed mb-5">
+                Synopsis goes here.
             </p>
-          </div>
-          <a class="paypal-btn" href="https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=fluidmotion.tv%40gmail.com&item_name=Fluid+Motion+TV+Tier+4+Patron&amount=54.00&currency_code=USD" target="_blank" rel="noopener">
-            Checkout via PayPal ($54)
-          </a>
+
+            <div class="rounded-2xl bg-slate-950/90 border border-slate-800 p-4 mb-6 text-xs font-mono text-slate-300 space-y-1.5">
+                <div class="flex justify-between">
+                    <span class="text-slate-400">DIRECT RECIPIENT:</span>
+                    <span class="text-cyan-300">fluidmotion.tv@gmail.com</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-slate-400">FORMAT:</span>
+                    <span class="text-emerald-400">DRM-Free Digital Edition + 432 Hz Audio Key</span>
+                </div>
+            </div>
+
+            <div class="flex flex-col sm:flex-row gap-3">
+                <a id="book-paypal-link" href="https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=fluidmotion.tv%40gmail.com&currency_code=USD" target="_blank" rel="noopener noreferrer"
+                    onclick="showToast('Opening Direct PayPal Checkout → fluidmotion.tv@gmail.com')"
+                    class="flex-1 py-3.5 px-5 rounded-2xl bg-gradient-to-r from-amber-400 via-amber-300 to-yellow-400 hover:from-amber-300 hover:to-yellow-300 text-slate-950 font-bold text-sm text-center shadow-lg shadow-amber-500/25 transition-all cursor-pointer">
+                    Checkout via PayPal ($9) ↗
+                </a>
+                <button onclick="closeBookModal()" class="px-4 py-3.5 rounded-2xl bg-slate-900 hover:bg-slate-800 border border-slate-700 text-xs font-mono text-slate-300 cursor-pointer">
+                    Return to 3D Gallery
+                </button>
+            </div>
         </div>
-      </div>
-    </section>
+    </div>
 
-    <footer>
-      <p>
-        Fluid Motion Limited &bull; Pee Dub (Port Waikato), Aotearoa New Zealand &bull;
-        Direct PayPal: <a href="mailto:fluidmotion.tv@gmail.com">fluidmotion.tv@gmail.com</a>
-      </p>
-    </footer>
-  </div>
+    <!-- CYBER DRAGON / SUPER PUFF INTERACTION MODAL -->
+    <div id="dragon-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md">
+        <div class="holo-card rounded-3xl max-w-lg w-full p-6 sm:p-8 border-emerald-400/50 shadow-2xl relative">
+            <button onclick="closeDragonModal()" class="absolute top-5 right-5 w-9 h-9 rounded-full bg-slate-900/90 border border-slate-700 hover:border-emerald-400 text-slate-300 hover:text-white flex items-center justify-center cursor-pointer">
+                ✕
+            </button>
 
-  <script>
-    // 1. 54-Minute Hour / 26.66-Hour Daily Cycle Clock
-    function updateHarmonicClock() {
-      const now = new Date();
-      const secondsSinceMidnight =
-        now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds() + now.getMilliseconds() / 1000;
-      const harmonicTotalSeconds = secondsSinceMidnight;
-      const hHours = Math.floor(harmonicTotalSeconds / 3240);
-      const remAfterHours = harmonicTotalSeconds % 3240;
-      const hMinutes = Math.floor(remAfterHours / 60);
-      const hSeconds = Math.floor(remAfterHours % 60);
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/15 border border-emerald-400/40 text-xs font-mono text-emerald-300 mb-3">
+                NODE 06 • CYBER DRAGON / SUPER PUFF ENTITY
+            </div>
 
-      const pad = (n) => String(n).padStart(2, "0");
-      document.getElementById("harmonic-clock").textContent =
-        `${pad(hHours)}:${pad(hMinutes)}:${pad(hSeconds)}`;
-      requestAnimationFrame(updateHarmonicClock);
-    }
-    updateHarmonicClock();
+            <h3 class="text-2xl sm:text-3xl font-bold text-white mb-2">
+                Cyber Dragon • Guardian of the 9th Harmonic
+            </h3>
+            <p class="text-sm text-slate-300 leading-relaxed mb-5">
+                Low-poly autonomous WebGL broadcast entity patrolling the FlowTouch spatial foyer and Distinguished Thoughts pedestals. Synchronized to the 432 Hz Dawn Engine wing-beat spectrum.
+            </p>
 
-    // 2. Zero-Telemetry Web Audio 432 Hz Dawn Engine Drone
-    let audioCtx = null;
-    let isPlaying = false;
-    let oscNodes = [];
-    let chordIndex = 0;
+            <div class="rounded-2xl bg-slate-950/90 border border-slate-800 p-4 mb-6 text-xs font-mono space-y-2">
+                <div class="flex justify-between">
+                    <span class="text-slate-400">ENTITY TELEMETRY:</span>
+                    <span id="dragon-telemetry-readout" class="text-emerald-400">ORBITING HARMONIC FIGURE-8</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-slate-400">WING RESONANCE:</span>
+                    <span class="text-cyan-300">432 Hz / 648 Hz PHASE LOCKED</span>
+                </div>
+            </div>
 
-    const voicings = [
-      [144, 216, 288, 432],
-      [144, 180, 216, 261.8, 324]
-    ];
+            <div class="flex flex-wrap gap-3">
+                <button onclick="triggerDragonRoar(true)" class="flex-1 py-3 px-4 rounded-2xl bg-gradient-to-r from-emerald-500 to-cyan-500 text-slate-950 font-bold text-xs uppercase tracking-wider shadow-lg cursor-pointer">
+                    Trigger Harmonic Roar Pulse 🐉
+                </button>
+                <button onclick="setCameraPreset('dragon'); closeDragonModal();" class="px-4 py-3 rounded-2xl bg-slate-900 hover:bg-emerald-950 border border-emerald-400/40 text-emerald-200 font-mono text-xs cursor-pointer">
+                    Track Flight Cam
+                </button>
+            </div>
+        </div>
+    </div>
 
-    const toggleBtn = document.getElementById("toggle-432");
-    const shiftBtn = document.getElementById("shift-harmonic");
+    <!-- NODE INSPECTOR MODAL (Holographic Drawer) -->
+    <div id="node-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-slate-950/75 backdrop-blur-md">
+        <div class="holo-card rounded-3xl max-w-xl w-full p-6 sm:p-8 border-cyan-400/50 shadow-2xl relative animate-fade-in">
+            <button onclick="closeNodeModal()" class="absolute top-5 right-5 w-9 h-9 rounded-full bg-slate-900/90 border border-slate-700 hover:border-cyan-400 text-slate-300 hover:text-white flex items-center justify-center cursor-pointer">
+                ✕
+            </button>
 
-    function startDrone() {
-      if (!audioCtx) {
-        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      }
-      if (audioCtx.state === "suspended") audioCtx.resume();
-      stopDrone();
+            <div id="modal-node-badge" class="inline-block px-3 py-1 rounded-full bg-cyan-500/15 border border-cyan-400/40 text-xs font-mono text-cyan-300 mb-3">
+                NODE 01 • CORE HUB
+            </div>
 
-      const freqs = voicings[chordIndex];
-      const masterGain = audioCtx.createGain();
-      masterGain.gain.setValueAtTime(0.06, audioCtx.currentTime);
-      masterGain.connect(audioCtx.destination);
+            <h3 id="modal-node-title" class="text-2xl sm:text-3xl font-bold text-white mb-2">
+                FluidMotionTV.tech
+            </h3>
 
-      freqs.forEach((f, i) => {
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.type = i === 0 ? "sine" : "triangle";
-        osc.frequency.setValueAtTime(f, audioCtx.currentTime);
-        gain.gain.setValueAtTime(0.25 / (i + 1), audioCtx.currentTime);
-        osc.connect(gain);
-        gain.connect(masterGain);
-        osc.start();
-        oscNodes.push(osc);
-      });
+            <p id="modal-node-desc" class="text-slate-300 text-sm sm:text-base leading-relaxed mb-5">
+                Primary sovereign broadcast terminal, live streams, and ecosystem manifest.
+            </p>
 
-      isPlaying = true;
-      toggleBtn.textContent = "Disengage 432 Hz Drone";
-      toggleBtn.classList.add("active");
-    }
+            <div class="rounded-2xl bg-slate-950/90 border border-slate-800 p-4 mb-6 font-mono text-xs space-y-2">
+                <div class="flex justify-between">
+                    <span class="text-slate-400">SPATIAL COORDINATES:</span>
+                    <span id="modal-node-coords" class="text-cyan-300">X: 0.00 • Y: 2.40 • Z: -4.10</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-slate-400">HARMONIC RESONANCE:</span>
+                    <span id="modal-node-freq" class="text-emerald-400">432.0 Hz LOCKED</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-slate-400">PROTOCOL STATUS:</span>
+                    <span class="text-amber-300">SOVEREIGN MESH ACTIVE</span>
+                </div>
+                <div id="modal-node-details" class="pt-2 border-t border-slate-800/80 text-slate-300 leading-relaxed">
+                    Detailed node specifications and live stream manifest ready.
+                </div>
+            </div>
 
-    function stopDrone() {
-      oscNodes.forEach((osc) => {
-        try { osc.stop(); osc.disconnect(); } catch (e) {}
-      });
-      oscNodes = [];
-      isPlaying = false;
-      toggleBtn.textContent = "Engage 432 Hz Drone";
-      toggleBtn.classList.remove("active");
-    }
+            <div class="flex flex-wrap items-center justify-end gap-3">
+                <button onclick="focusNodeIn3D()" class="px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-cyan-950 border border-cyan-400/40 text-cyan-200 font-mono text-xs font-semibold cursor-pointer">
+                    Orbit Beacon in 3D
+                </button>
+                <button onclick="launchNodeSimulation()" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-emerald-500 text-slate-950 font-bold text-xs uppercase tracking-wider shadow-lg shadow-cyan-500/20 cursor-pointer">
+                    Initialize Terminal ↗
+                </button>
+            </div>
+        </div>
+    </div>
 
-    toggleBtn.addEventListener("click", () => {
-      if (isPlaying) stopDrone();
-      else startDrone();
-    });
+    <!-- PAYPAL SOVEREIGN CHECKOUT MODAL -->
+    <div id="checkout-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md">
+        <div class="holo-card holo-card-gold rounded-3xl max-w-md w-full p-6 sm:p-8 border-amber-400/50 shadow-2xl relative">
+            <button onclick="closeCheckoutModal()" class="absolute top-5 right-5 w-9 h-9 rounded-full bg-slate-900/90 border border-slate-700 hover:border-amber-400 text-slate-300 hover:text-white flex items-center justify-center cursor-pointer">
+                ✕
+            </button>
 
-    shiftBtn.addEventListener("click", () => {
-      chordIndex = (chordIndex + 1) % voicings.length;
-      if (isPlaying) startDrone();
-    });
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/15 border border-amber-400/40 text-xs font-mono text-amber-300 mb-3">
+                SOVEREIGN DIRECT SUPPORT
+            </div>
 
-    // 3. Lightweight WebGL Neon Wave & Aquarium Tunnel Background
-    const canvas = document.getElementById("webgl-canvas");
-    const gl = canvas.getContext("webgl");
+            <h3 id="checkout-tier-title" class="text-2xl font-bold text-white mb-1">
+                Tier II • Dragon 9
+            </h3>
+            <div id="checkout-tier-price" class="text-3xl font-mono font-bold text-amber-300 mb-3">
+                $9 USD
+            </div>
+            <p id="checkout-tier-desc" class="text-sm text-slate-300 mb-6 leading-relaxed">
+                Digital publication: The 54-Minute Clock &amp; Sovereign Media Guide.
+            </p>
 
-    if (gl) {
-      const vsSource = `
-        attribute vec2 a_pos;
-        void main() {
-          gl_Position = vec4(a_pos, 0.0, 1.0);
+            <div id="checkout-status-box" class="rounded-2xl bg-slate-950/90 border border-slate-800 p-4 mb-6 text-xs font-mono text-slate-300 space-y-1.5">
+                <div class="flex justify-between">
+                    <span class="text-slate-400">GATEWAY:</span>
+                    <span class="text-cyan-300">fluidmotion.tv@gmail.com</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-slate-400">DELIVERY:</span>
+                    <span class="text-emerald-400">Instant Sovereign Fulfillment</span>
+                </div>
+            </div>
+
+            <a id="confirm-paypal-link" href="https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=fluidmotion.tv%40gmail.com&currency_code=USD" target="_blank" rel="noopener noreferrer"
+                onclick="processSimulatedPayPal()"
+                class="w-full py-3.5 px-5 rounded-2xl bg-gradient-to-r from-amber-400 via-amber-300 to-yellow-400 hover:from-amber-300 hover:to-yellow-300 text-slate-950 font-bold text-sm shadow-lg shadow-amber-500/25 transition-all flex items-center justify-center gap-2 cursor-pointer">
+                <span id="confirm-paypal-label">Proceed to PayPal Gateway</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Custom Toast Notification Banner (No alert() calls) -->
+    <div id="toast-banner" class="fixed bottom-5 right-5 z-50 max-w-sm transform translate-y-24 opacity-0 transition-all duration-300 pointer-events-none">
+        <div class="px-4 py-3 rounded-2xl bg-slate-950/95 border border-cyan-400/50 backdrop-blur-md shadow-2xl flex items-center gap-3">
+            <span class="w-2.5 h-2.5 rounded-full bg-cyan-400 flex-shrink-0"></span>
+            <p id="toast-message" class="text-xs font-mono text-cyan-100">System message</p>
+        </div>
+    </div>
+
+    <script>
+        // =========================================================================
+        // 1. DATA MANIFEST: 3x3 ECOSYSTEM MATRIX & HARMONIC STOREFRONT TIERS
+        // =========================================================================
+        const ECOSYSTEM_NODES = [
+            {
+                id: '01',
+                tag: 'Node 01 • Core Hub',
+                title: 'FluidMotionTV.tech',
+                desc: 'Primary sovereign broadcast terminal, live streams, and ecosystem manifest.',
+                details: 'Decentralized HLS/WebRTC broadcast ingest with zero third-party ad trackers. Hosts the master Dragon 9 index and live 432 Hz visual transmissions.',
+                freq: '432.0 Hz (1:1)',
+                color: '#00f0ff',
+                coords: [0, 3.2, -3.5]
+            },
+            {
+                id: '02',
+                tag: 'Node 02 • Mesh & OS',
+                title: 'Dragon 9 Online',
+                desc: 'Sovereign ISP mesh architecture, WireGuard nodes, and local-first tools.',
+                details: 'Encrypted WireGuard overlay routing across community-operated nodes, resilient offline-first web utilities, and sovereign DNS resolvers.',
+                freq: '486.0 Hz (9:8)',
+                color: '#10b981',
+                coords: [3.4, 2.2, -2.0]
+            },
+            {
+                id: '03',
+                tag: 'Node 03 • Open Source',
+                title: 'fluidmotiontv-oss',
+                desc: 'Source repositories, PWA factory modules, and WebGL spatial shaders.',
+                details: 'MIT/Sovereign licensed single-file PWA generators, GLSL sacred geometry fragment shaders, and zero-dependency Web Audio synthesizers.',
+                freq: '540.0 Hz (5:4)',
+                color: '#38bdf8',
+                coords: [4.2, -0.5, 1.5]
+            },
+            {
+                id: '04',
+                tag: 'Node 04 • Chronometry',
+                title: '54-Minute Harmonic Clock',
+                desc: '26.66-hour daily cycle timepiece synchronized to natural harmonic intervals.',
+                details: 'Divides the solar rotation into 26.666 harmonic cycles of 54 minutes (3,240 seconds), aligning deep creative flow states with Pythagorean intervals.',
+                freq: '576.0 Hz (4:3)',
+                color: '#f5b841',
+                coords: [2.5, -3.0, 3.2]
+            },
+            {
+                id: '05',
+                tag: 'Node 05 • Spatial 3D',
+                title: 'Infinity Flow 3D / FlowTouch',
+                desc: 'Ferns & Flows WebGL walkthrough foyer and upright 3D book pedestals.',
+                details: 'Interactive WebGL architectural foyer featuring bioluminescent botanical geometry, spatial audio zones, and readable 3D publication pedestals.',
+                freq: '648.0 Hz (3:2)',
+                color: '#00f0ff',
+                coords: [0, -3.6, 0]
+            },
+            {
+                id: '06',
+                tag: 'Node 06 • Animation',
+                title: 'Super Puff & Cyber Dragon',
+                desc: '3D animated comedy series, WebGL broadcast anchors, and original characters.',
+                details: 'Real-time rigged 3D characters, procedural lip-sync broadcast hosts, and episodic sci-fi satire produced inside the Dragon 9 pipeline.',
+                freq: '729.0 Hz (27:16)',
+                color: '#a855f7',
+                coords: [-2.8, -2.8, 3.0]
+            },
+            {
+                id: '07',
+                tag: 'Node 07 • 432 Hz Audio',
+                title: 'Dawn Engine Audio Lab',
+                desc: 'Pythagorean procedural MIDI scripts, dub rhythms, and West Coast mixes.',
+                details: 'Pure-ratio tuning tables, sub-harmonic dub delay networks, and procedural Web Audio synthesis tuned strictly to A=432 Hz.',
+                freq: '864.0 Hz (2:1)',
+                color: '#10b981',
+                coords: [-4.2, -0.2, 1.2]
+            },
+            {
+                id: '08',
+                tag: 'Node 08 • Exchange',
+                title: 'Dinero 9 & Contra',
+                desc: 'Creator reward token framework and direct community contra partnerships.',
+                details: 'Mutual-credit exchange ledger enabling direct skill swaps, studio time contra, and transparent creator patronage without predatory fees.',
+                freq: '972.0 Hz (9:4)',
+                color: '#f5b841',
+                coords: [-3.2, 2.5, -2.2]
+            },
+            {
+                id: '09',
+                tag: 'Node 09 • Direct Support',
+                title: 'Harmonic Storefront',
+                desc: 'Direct digital publications, master mixes, and sovereign production tiers.',
+                details: 'Direct-to-creator digital fulfillment for 432 Hz lossless masters, sacred geometry shader packs, and Dragon 9 printed/digital guides.',
+                freq: '1296.0 Hz (3:1)',
+                color: '#00f0ff',
+                coords: [0, 0, 4.5]
+            }
+        ];
+
+        const STOREFRONT_TIERS = [
+            {
+                id: 'tier-1',
+                tier: 'Tier I • Seed',
+                price: '$3 USD',
+                numericPrice: 3,
+                desc: 'Supporter pass & 432 Hz digital audio single download.',
+                btnText: 'Checkout via PayPal ($3)',
+                accent: 'cyan'
+            },
+            {
+                id: 'tier-2',
+                tier: 'Tier II • Dragon 9',
+                price: '$9 USD',
+                numericPrice: 9,
+                desc: 'Digital publication: The 54-Minute Clock & Sovereign Media Guide.',
+                btnText: 'Checkout via PayPal ($9)',
+                accent: 'emerald'
+            },
+            {
+                id: 'tier-3',
+                tier: 'Tier III • Harmonic',
+                price: '$27 USD',
+                numericPrice: 27,
+                desc: 'Full FlowTouch WebGL asset bundle, master audio stems & sacred geometry pack.',
+                btnText: 'Checkout via PayPal ($27)',
+                accent: 'gold'
+            },
+            {
+                id: 'tier-4',
+                tier: 'Tier IV • Sovereign Patron',
+                price: '$54 USD',
+                numericPrice: 54,
+                desc: 'Full Dragon 9 archive access, Super Puff pilot masters & producer credit.',
+                btnText: 'Checkout via PayPal ($54)',
+                accent: 'gold'
+            }
+        ];
+
+        // Distinguished Thoughts: 5 Upright 3D Book Pedestals
+        const DISTINGUISHED_BOOKS = [
+            {
+                id: 'book-1',
+                title: 'The 54-Minute Hour',
+                subtitle: '26.66-Cycle Chronometry',
+                author: 'Fluid Motion TV Sovereign Press',
+                price: 9,
+                accentColor: '#00f0ff',
+                bgDark: '#061424',
+                synopsis: 'A comprehensive architectural treatise on replacing fragmented 60-minute industrial clocks with 54-minute natural harmonic flow cycles across a 26.66-phase daily rhythm.',
+                angle: -Math.PI * 0.36
+            },
+            {
+                id: 'book-2',
+                title: 'The Future Fluid Media Framework',
+                subtitle: 'Zero-Telemetry Broadcast Architecture',
+                author: 'by Dr. Agonine',
+                price: 18,
+                accentColor: '#10b981',
+                bgDark: '#051d18',
+                synopsis: 'Dr. Agonine presents the blueprint for sovereign mesh broadcasting, local-first WebGL spatial portals, and creator-owned distribution networks freed from algorithmic capture.',
+                angle: -Math.PI * 0.18
+            },
+            {
+                id: 'book-3',
+                title: 'Hydroponic 33',
+                subtitle: 'Closed-Loop Botanical Geometry',
+                author: 'Dragon 9 Agro-Spatial Lab',
+                price: 27,
+                accentColor: '#38bdf8',
+                bgDark: '#07192c',
+                synopsis: 'Thirty-three modular vertical hydroponic and aeroponic nutrient architectures engineered for high-yield sovereign food autonomy and bio-harmonic resonance.',
+                angle: 0
+            },
+            {
+                id: 'book-4',
+                title: 'The Augmentum',
+                subtitle: 'Sovereign Cognitive & Spatial Tools',
+                author: 'Fluid Motion TV Core Collective',
+                price: 54,
+                accentColor: '#f5b841',
+                bgDark: '#1f1505',
+                synopsis: 'The master codex of human-centric intelligence amplification, sacred geometric interfaces, Pythagorean 432 Hz acoustics, and local-first cryptographic sovereignty.',
+                angle: Math.PI * 0.18
+            },
+            {
+                id: 'book-5',
+                title: 'Super Puff: Cyber Dragon',
+                subtitle: 'Illustrated Pilot Script & Lorebook',
+                author: 'Super Puff Animation Studio',
+                price: 3,
+                accentColor: '#a855f7',
+                bgDark: '#190a29',
+                synopsis: 'Official pilot script, low-poly character schematics, and lore compendium from the animated sci-fi comedy series Super Puff & Cyber Dragon.',
+                angle: Math.PI * 0.36
+            }
+        ];
+
+        // Pythagorean Harmonic Chords for "Shift D9 Chord"
+        const D9_CHORDS = [
+            { name: 'PYTHAGOREAN UNISON (1:1)', ratioText: '1:1', root: 432, fifth: 648, octave: 864, sub: 216, colorHex: 0x00f0ff, cssColor: '#00f0ff' },
+            { name: 'DRAGON FIFTH (3:2)', ratioText: '3:2', root: 432, fifth: 648, octave: 972, sub: 216, colorHex: 0x10b981, cssColor: '#10b981' },
+            { name: 'SOLAR FOURTH (4:3)', ratioText: '4:3', root: 432, fifth: 576, octave: 864, sub: 144, colorHex: 0xf5b841, cssColor: '#f5b841' },
+            { name: 'PYTHAGOREAN WHOLE TONE (9:8)', ratioText: '9:8', root: 486, fifth: 729, octave: 972, sub: 243, colorHex: 0x38bdf8, cssColor: '#38bdf8' },
+            { name: 'HARMONIC SIXTH (27:16)', ratioText: '27:16', root: 432, fifth: 729, octave: 1080, sub: 216, colorHex: 0xa855f7, cssColor: '#a855f7' },
+            { name: 'GOLDEN TRIAD (5:4 • 3:2)', ratioText: '5:4', root: 432, fifth: 540, octave: 648, sub: 216, colorHex: 0xf5b841, cssColor: '#f5b841' },
+            { name: 'FERNS & FLOWS SUSPENSION', ratioText: '16:9', root: 384, fifth: 576, octave: 768, sub: 192, colorHex: 0x10b981, cssColor: '#10b981' },
+            { name: 'CYBER DRAGON OCTAVE (2:1)', ratioText: '2:1', root: 432, fifth: 864, octave: 1296, sub: 216, colorHex: 0x00f0ff, cssColor: '#00f0ff' },
+            { name: 'SOVEREIGN 9TH HARMONIC', ratioText: '9:4', root: 432, fifth: 648, octave: 972, sub: 108, colorHex: 0xf43f5e, cssColor: '#f43f5e' }
+        ];
+
+        // =========================================================================
+        // 2. RENDER SPATIAL CARDS & ATTACH 3D TILT PHYSICS
+        // =========================================================================
+        function renderSpatialCards() {
+            const ecoGrid = document.getElementById('ecosystem-grid');
+            ecoGrid.innerHTML = ECOSYSTEM_NODES.map((node, index) => `
+                <article onclick="openNodeModal(${index})"
+                    class="holo-card rounded-2xl p-5 sm:p-6 cursor-pointer group flex flex-col justify-between"
+                    data-tilt>
+                    <div class="card-depth-1">
+                        <div class="flex items-center justify-between gap-2 mb-3">
+                            <span class="text-xs font-mono font-semibold tracking-wider uppercase" style="color: ${node.color}">
+                                ${node.tag}
+                            </span>
+                            <span class="w-2 h-2 rounded-full opacity-75 group-hover:opacity-100 group-hover:scale-125 transition-all"
+                                style="background-color: ${node.color}; box-shadow: 0 0 10px ${node.color};"></span>
+                        </div>
+                        <h3 class="text-lg sm:text-xl font-bold text-white group-hover:text-cyan-200 transition-colors mb-2">
+                            ${node.title}
+                        </h3>
+                        <p class="text-xs sm:text-sm text-slate-300/85 leading-relaxed">
+                            ${node.desc}
+                        </p>
+                    </div>
+
+                    <div class="card-depth-2 mt-5 pt-3 border-t border-slate-800/80 flex items-center justify-between text-[11px] font-mono text-slate-400">
+                        <span>${node.freq}</span>
+                        <span class="text-cyan-300 group-hover:translate-x-1 transition-transform">INSPECT NODE →</span>
+                    </div>
+                </article>
+            `).join('');
+
+            const storeGrid = document.getElementById('storefront-grid');
+            storeGrid.innerHTML = STOREFRONT_TIERS.map((tier, index) => `
+                <article class="holo-card ${tier.accent === 'gold' ? 'holo-card-gold' : ''} rounded-2xl p-6 flex flex-col justify-between" data-tilt>
+                    <div class="card-depth-1">
+                        <div class="text-xs font-mono uppercase tracking-widest text-amber-300/90 mb-2">
+                            ${tier.tier}
+                        </div>
+                        <div class="text-3xl font-mono font-bold text-white mb-3">
+                            ${tier.price}
+                        </div>
+                        <p class="text-xs sm:text-sm text-slate-300/90 leading-relaxed mb-6">
+                            ${tier.desc}
+                        </p>
+                    </div>
+
+                    <div class="card-depth-2">
+                        <button onclick="openCheckoutModal(${index})"
+                            class="w-full py-3 px-4 rounded-xl bg-slate-900/95 hover:bg-amber-400 text-amber-200 hover:text-slate-950 border border-amber-400/40 hover:border-amber-300 font-mono font-semibold text-xs transition-all shadow-md cursor-pointer">
+                            ${tier.btnText}
+                        </button>
+                    </div>
+                </article>
+            `).join('');
+
+            initCardTiltPhysics();
         }
-      `;
 
-      const fsSource = `
-        precision mediump float;
-        uniform float u_time;
-        uniform vec2 u_res;
+        function initCardTiltPhysics() {
+            const cards = document.querySelectorAll('[data-tilt]');
+            cards.forEach(card => {
+                card.addEventListener('mousemove', (e) => {
+                    const rect = card.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    const centerX = rect.width / 2;
+                    const centerY = rect.height / 2;
 
-        void main() {
-          vec2 uv = (gl_FragCoord.xy * 2.0 - u_res.xy) / min(u_res.x, u_res.y);
-          float r = length(uv);
-          float a = atan(uv.y, uv.x);
+                    const rotateX = ((y - centerY) / centerY) * -7;
+                    const rotateY = ((x - centerX) / centerX) * 7;
 
-          float oct = cos(8.0 * a + u_time * 0.4) * 0.15;
-          float tunnel = sin(12.0 / (r + 0.25) - u_time * 1.8 + oct * 6.0);
-          float wave = sin(uv.x * 5.0 + u_time * 1.2) * cos(uv.y * 5.0 - u_time * 0.9);
+                    card.style.setProperty('--mouse-x', `${(x / rect.width) * 100}%`);
+                    card.style.setProperty('--mouse-y', `${(y / rect.height) * 100}%`);
+                    card.style.transform = `rotateX(${rotateX.toFixed(2)}deg) rotateY(${rotateY.toFixed(2)}deg) translateY(-4px)`;
+                });
 
-          vec3 cyan = vec3(0.0, 0.96, 0.83);
-          vec3 purple = vec3(0.61, 0.36, 0.90);
-          vec3 gold = vec3(0.99, 0.89, 0.25);
-
-          vec3 col = mix(purple * 0.25, cyan * 0.35, smoothstep(-0.6, 0.8, tunnel));
-          col += gold * 0.12 * smoothstep(0.7, 1.0, wave * tunnel);
-          col *= smoothstep(1.8, 0.15, r);
-
-          gl_FragColor = vec4(col, 1.0);
+                card.addEventListener('mouseleave', () => {
+                    card.style.transform = 'rotateX(0deg) rotateY(0deg) translateY(0px)';
+                });
+            });
         }
-      `;
 
-      function compile(type, src) {
-        const s = gl.createShader(type);
-        gl.shaderSource(s, src);
-        gl.compileShader(s);
-        return s;
-      }
+        // =========================================================================
+        // 3. 54-MINUTE HARMONIC CHRONOMETER (26.66-HOUR CYCLE)
+        // =========================================================================
+        // Synchronized to 00:09:00 start anchor as requested
+        let anchorOffsetSeconds = (9 * 60);
+        let lastTickTime = Date.now();
 
-      const prog = gl.createProgram();
-      gl.attachShader(prog, compile(gl.VERTEX_SHADER, vsSource));
-      gl.attachShader(prog, compile(gl.FRAGMENT_SHADER, fsSource));
-      gl.linkProgram(prog);
-      gl.useProgram(prog);
+        function updateHarmonicClock() {
+            const now = Date.now();
+            const deltaSec = (now - lastTickTime) / 1000;
+            lastTickTime = now;
 
-      const buf = gl.createBuffer();
-      gl.bindBuffer(gl.ARRAY_BUFFER, buf);
-      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
+            // Advance live clock smoothly
+            anchorOffsetSeconds = (anchorOffsetSeconds + deltaSec) % (24 * 3600);
 
-      const posLoc = gl.getAttribLocation(prog, "a_pos");
-      gl.enableVertexAttribArray(posLoc);
-      gl.vertexAttribPointer(posLoc, 2, gl.FLOAT, false, 0, 0);
+            const hrs = Math.floor(anchorOffsetSeconds / 3600);
+            const mins = Math.floor((anchorOffsetSeconds % 3600) / 60);
+            const secs = Math.floor(anchorOffsetSeconds % 60);
 
-      const timeLoc = gl.getUniformLocation(prog, "u_time");
-      const resLoc = gl.getUniformLocation(prog, "u_res");
+            const formatted = [
+                String(hrs).padStart(2, '0'),
+                String(mins).padStart(2, '0'),
+                String(secs).padStart(2, '0')
+            ].join(':');
 
-      function render(ms) {
-        if (canvas.width !== window.innerWidth || canvas.height !== window.innerHeight) {
-          canvas.width = window.innerWidth;
-          canvas.height = window.innerHeight;
-          gl.viewport(0, 0, canvas.width, canvas.height);
+            const clockEl = document.getElementById('harmonic-clock-display');
+            if (clockEl) clockEl.textContent = formatted;
+
+            // 54-Minute Cycle Calculation (3240 seconds per cycle, 26.666 cycles per 24h)
+            const cycleLengthSec = 54 * 60;
+            const currentCycleIndex = Math.floor(anchorOffsetSeconds / cycleLengthSec) + 1;
+            const progressInCycle = (anchorOffsetSeconds % cycleLengthSec) / cycleLengthSec;
+
+            const ring = document.getElementById('harmonic-ring');
+            if (ring) {
+                const circumference = 169.65;
+                ring.style.strokeDashoffset = (circumference * (1 - progressInCycle)).toFixed(2);
+            }
+
+            const phaseEl = document.getElementById('cycle-phase-num');
+            if (phaseEl) {
+                phaseEl.textContent = `${String(currentCycleIndex).padStart(2, '0')}/27`;
+            }
         }
-        gl.uniform1f(timeLoc, ms * 0.001);
-        gl.uniform2f(resLoc, canvas.width, canvas.height);
-        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-        requestAnimationFrame(render);
-      }
-      requestAnimationFrame(render);
-    }
-  </script>
+
+        function resetCycleAnchor() {
+            anchorOffsetSeconds = (9 * 60);
+            lastTickTime = Date.now();
+            updateHarmonicClock();
+            showToast('Synchronized 54-Minute Chronometer to 00:09 Harmonic Anchor');
+        }
+
+        setInterval(updateHarmonicClock, 250);
+
+        // =========================================================================
+        // 5. THREE.JS 3D SPATIAL SACRED GEOMETRY, BOOK PEDESTALS & CYBER DRAGON
+        // =========================================================================
+        let scene, camera, renderer;
+        let coreGroup, torusKnotMesh, outerGeoMesh, innerOrbMesh, particleSystem, gridHelper;
+        let nodeBeacons = [];
+        let bookPedestals = [];
+        let interactiveMeshes = [];
+
+        // Dawn Engine Audio Lab States
+        let isDroneActive = false;
+        let audioCtx = null;
+        let droneOsc1 = null, droneOsc2 = null, droneSub = null;
+        let filterNode = null, masterGainNode = null;
+        let analyserNode = null, frequencyDataArray = null;
+        let currentChordIndex = 0;
+
+        // Cyber Dragon 3D Entity State
+        let dragonGroup, dragonHeadGroup, dragonLeftWing, dragonRightWing, dragonTailTip;
+        let dragonSpineSegments = [];
+        let dragonRoarPulse = 0;
+        let roarShockwaveMesh;
+
+        // Camera Orbit & Preset State
+        let cameraMode = 'core'; // 'core' | 'books' | 'dragon' | 'matrix' | 'focusBook'
+        let focusedBookPos = new THREE.Vector3();
+        let targetLookAt = new THREE.Vector3(0, 0, 0);
+        let currentLookAt = new THREE.Vector3(0, 0, 0);
+        let targetCameraPos = new THREE.Vector3(0, 1.8, 12.2);
+        let isDragging = false;
+        let dragDistance = 0;
+        let previousMousePos = { x: 0, y: 0 };
+        let sphericalAngles = { theta: 0, phi: Math.PI / 2.25, radius: 12.2 };
+        let targetCoreColor = new THREE.Color(0x00f0ff);
+
+        // Raycaster for 3D Book Pedestal & Cyber Dragon Hover/Click
+        const raycaster = new THREE.Raycaster();
+        const pointerNDC = new THREE.Vector2(-99, -99);
+        let hoveredInteractiveObj = null;
+
+        function createBookCoverTexture(book) {
+            const canvas = document.createElement('canvas');
+            canvas.width = 512;
+            canvas.height = 768;
+            const ctx = canvas.getContext('2d');
+
+            // Rich obsidian-tinted gradient background
+            const grad = ctx.createLinearGradient(0, 0, 512, 768);
+            grad.addColorStop(0, book.bgDark);
+            grad.addColorStop(0.55, '#04070d');
+            grad.addColorStop(1, book.bgDark);
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, 512, 768);
+
+            // Outer & Inner Metallic Gold / Accent Border Frames
+            ctx.strokeStyle = '#f5b841';
+            ctx.lineWidth = 10;
+            ctx.strokeRect(24, 24, 464, 720);
+
+            ctx.strokeStyle = book.accentColor;
+            ctx.lineWidth = 3;
+            ctx.strokeRect(38, 38, 436, 692);
+
+            // Sacred Geometry Emblem in Center
+            ctx.save();
+            ctx.translate(256, 390);
+            ctx.strokeStyle = book.accentColor;
+            ctx.lineWidth = 2.5;
+            for (let i = 0; i < 6; i++) {
+                ctx.rotate(Math.PI / 3);
+                ctx.beginPath();
+                ctx.arc(0, -48, 68, 0, Math.PI * 2);
+                ctx.stroke();
+            }
+            ctx.strokeStyle = '#f5b841';
+            ctx.beginPath();
+            ctx.arc(0, 0, 118, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.restore();
+
+            // Header Tag
+            ctx.fillStyle = '#f5b841';
+            ctx.font = 'bold 20px monospace';
+            ctx.textAlign = 'center';
+            ctx.fillText('DISTINGUISHED THOUGHTS', 256, 86);
+
+            // Book Title Word-Wrap
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 42px sans-serif';
+            const words = book.title.split(' ');
+            let line = '';
+            let y = 155;
+            for (let n = 0; n < words.length; n++) {
+                const testLine = line + words[n] + ' ';
+                const metrics = ctx.measureText(testLine);
+                if (metrics.width > 400 && n > 0) {
+                    ctx.fillText(line.trim(), 256, y);
+                    line = words[n] + ' ';
+                    y += 48;
+                } else {
+                    line = testLine;
+                }
+            }
+            ctx.fillText(line.trim(), 256, y);
+
+            // Subtitle & Author
+            ctx.fillStyle = book.accentColor;
+            ctx.font = '600 22px monospace';
+            ctx.fillText(book.subtitle, 256, y + 44);
+
+            ctx.fillStyle = '#cbd5e1';
+            ctx.font = 'italic 24px sans-serif';
+            ctx.fillText(book.author, 256, 615);
+
+            // Sovereign Price Seal
+            ctx.fillStyle = 'rgba(245, 184, 65, 0.16)';
+            ctx.fillRect(156, 648, 200, 52);
+            ctx.strokeStyle = '#f5b841';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(156, 648, 200, 52);
+
+            ctx.fillStyle = '#f5b841';
+            ctx.font = 'bold 26px monospace';
+            ctx.fillText(`$${book.price} USD`, 256, 682);
+
+            const tex = new THREE.CanvasTexture(canvas);
+            tex.anisotropy = 4;
+            return tex;
+        }
+
+        function createBookSpineTexture(book) {
+            const canvas = document.createElement('canvas');
+            canvas.width = 128;
+            canvas.height = 768;
+            const ctx = canvas.getContext('2d');
+
+            ctx.fillStyle = book.bgDark;
+            ctx.fillRect(0, 0, 128, 768);
+
+            ctx.strokeStyle = '#f5b841';
+            ctx.lineWidth = 6;
+            ctx.strokeRect(8, 12, 112, 744);
+
+            ctx.save();
+            ctx.translate(64, 384);
+            ctx.rotate(-Math.PI / 2);
+            ctx.fillStyle = '#f5b841';
+            ctx.font = 'bold 26px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText(book.title.toUpperCase(), 0, 8);
+            ctx.restore();
+
+            return new THREE.CanvasTexture(canvas);
+        }
+
+        function buildBookPedestals() {
+            const arcRadius = 6.6;
+            const baseY = -3.6;
+
+            DISTINGUISHED_BOOKS.forEach((book, idx) => {
+                const pedestalGroup = new THREE.Group();
+                const x = Math.sin(book.angle) * arcRadius;
+                const z = Math.cos(book.angle) * arcRadius;
+                pedestalGroup.position.set(x, baseY, z);
+                // Face toward center/viewer arc
+                pedestalGroup.lookAt(0, baseY, 0);
+                pedestalGroup.rotateY(Math.PI);
+
+                // Stepped Obsidian-and-Gold Plinth
+                const lowerBaseGeo = new THREE.CylinderGeometry(0.95, 1.15, 0.35, 8);
+                const obsidianMat = new THREE.MeshStandardMaterial({
+                    color: 0x070d19,
+                    roughness: 0.25,
+                    metalness: 0.85
+                });
+                const lowerBase = new THREE.Mesh(lowerBaseGeo, obsidianMat);
+                lowerBase.position.y = -1.35;
+                pedestalGroup.add(lowerBase);
+
+                const pillarGeo = new THREE.CylinderGeometry(0.55, 0.72, 2.1, 8);
+                const pillar = new THREE.Mesh(pillarGeo, obsidianMat);
+                pillar.position.y = -0.15;
+                pedestalGroup.add(pillar);
+
+                const topCapGeo = new THREE.CylinderGeometry(0.88, 0.72, 0.22, 8);
+                const goldTrimMat = new THREE.MeshStandardMaterial({
+                    color: 0xf5b841,
+                    emissive: 0x784b08,
+                    emissiveIntensity: 0.45,
+                    roughness: 0.3,
+                    metalness: 0.9
+                });
+                const topCap = new THREE.Mesh(topCapGeo, goldTrimMat);
+                topCap.position.y = 0.98;
+                pedestalGroup.add(topCap);
+
+                // Floating Holographic Title Ring around Pedestal Top
+                const holoRingGeo = new THREE.RingGeometry(0.98, 1.08, 32);
+                const holoRingMat = new THREE.MeshBasicMaterial({
+                    color: new THREE.Color(book.accentColor),
+                    side: THREE.DoubleSide,
+                    transparent: true,
+                    opacity: 0.75
+                });
+                const holoRing = new THREE.Mesh(holoRingGeo, holoRingMat);
+                holoRing.rotation.x = -Math.PI / 2;
+                holoRing.position.y = 1.18;
+                pedestalGroup.add(holoRing);
+
+                // Upright 3D Hardcover Book Assembly
+                const bookGroup = new THREE.Group();
+                bookGroup.position.set(0, 2.05, 0);
+                bookGroup.rotation.x = -0.14; // Slight lectern tilt for readability
+
+                const coverTex = createBookCoverTexture(book);
+                const spineTex = createBookSpineTexture(book);
+
+                const frontCoverMat = new THREE.MeshStandardMaterial({
+                    map: coverTex,
+                    roughness: 0.35,
+                    metalness: 0.25
+                });
+                const backCoverMat = new THREE.MeshStandardMaterial({
+                    color: new THREE.Color(book.bgDark),
+                    roughness: 0.4,
+                    metalness: 0.5
+                });
+                const spineMat = new THREE.MeshStandardMaterial({
+                    map: spineTex,
+                    roughness: 0.35,
+                    metalness: 0.45
+                });
+                const pagesMat = new THREE.MeshStandardMaterial({
+                    color: 0xf1ebd9,
+                    roughness: 0.85
+                });
+                const goldEdgeMat = new THREE.MeshStandardMaterial({
+                    color: 0xf5b841,
+                    metalness: 0.85,
+                    roughness: 0.25
+                });
+
+                // BoxGeometry material order: [+X right/fore-edge, -X left/spine, +Y top, -Y bottom, +Z front cover, -Z back cover]
+                const bookMaterials = [
+                    pagesMat,
+                    spineMat,
+                    goldEdgeMat,
+                    goldEdgeMat,
+                    frontCoverMat,
+                    backCoverMat
+                ];
+
+                const bookGeo = new THREE.BoxGeometry(1.12, 1.62, 0.24);
+                const bookMesh = new THREE.Mesh(bookGeo, bookMaterials);
+                bookMesh.userData = { type: 'book', bookIndex: idx, bookData: book };
+                bookGroup.add(bookMesh);
+
+                // Subtle Glowing Rim Frame around the Book
+                const rimGeo = new THREE.EdgesGeometry(new THREE.BoxGeometry(1.17, 1.67, 0.27));
+                const rimMat = new THREE.LineBasicMaterial({
+                    color: new THREE.Color(book.accentColor),
+                    transparent: true,
+                    opacity: 0.45
+                });
+                const rimLines = new THREE.LineSegments(rimGeo, rimMat);
+                bookGroup.add(rimLines);
+
+                pedestalGroup.add(bookGroup);
+                scene.add(pedestalGroup);
+
+                interactiveMeshes.push(bookMesh);
+                bookPedestals.push({
+                    pedestalGroup,
+                    bookGroup,
+                    bookMesh,
+                    holoRing,
+                    rimMat,
+                    baseBookY: 2.05,
+                    phase: idx * 1.15
+                });
+            });
+        }
+
+        function buildCyberDragon() {
+            dragonGroup = new THREE.Group();
+            scene.add(dragonGroup);
+
+            const scaleArmorMat = new THREE.MeshStandardMaterial({
+                color: 0x0f172a,
+                emissive: 0x064e3b,
+                emissiveIntensity: 0.55,
+                roughness: 0.28,
+                metalness: 0.85,
+                flatShading: true
+            });
+
+            const neonCyanMat = new THREE.MeshBasicMaterial({
+                color: 0x00f0ff
+            });
+
+            const goldHornMat = new THREE.MeshStandardMaterial({
+                color: 0xf5b841,
+                emissive: 0x92400e,
+                emissiveIntensity: 0.5,
+                roughness: 0.25,
+                metalness: 0.9,
+                flatShading: true
+            });
+
+            const wingMembraneMat = new THREE.MeshStandardMaterial({
+                color: 0x10b981,
+                emissive: 0x00f0ff,
+                emissiveIntensity: 0.4,
+                transparent: true,
+                opacity: 0.62,
+                side: THREE.DoubleSide,
+                flatShading: true
+            });
+
+            // 1. Horned Low-Poly Head
+            dragonHeadGroup = new THREE.Group();
+            dragonHeadGroup.position.set(0, 0.15, 1.25);
+
+            const skullGeo = new THREE.ConeGeometry(0.36, 0.95, 5);
+            skullGeo.rotateX(Math.PI / 2);
+            const skullMesh = new THREE.Mesh(skullGeo, scaleArmorMat);
+            skullMesh.userData = { type: 'dragon' };
+            dragonHeadGroup.add(skullMesh);
+            interactiveMeshes.push(skullMesh);
+
+            // Swept-back Golden Horns
+            [-1, 1].forEach(side => {
+                const hornGeo = new THREE.ConeGeometry(0.07, 0.72, 4);
+                hornGeo.rotateX(-Math.PI * 0.35);
+                hornGeo.rotateZ(side * -0.28);
+                const horn = new THREE.Mesh(hornGeo, goldHornMat);
+                horn.position.set(side * 0.18, 0.22, -0.35);
+                dragonHeadGroup.add(horn);
+
+                // Glowing Cyan Eyes
+                const eyeGeo = new THREE.OctahedronGeometry(0.065, 0);
+                const eye = new THREE.Mesh(eyeGeo, neonCyanMat);
+                eye.position.set(side * 0.19, 0.08, 0.15);
+                dragonHeadGroup.add(eye);
+            });
+
+            dragonGroup.add(dragonHeadGroup);
+
+            // 2. Articulated Multi-Segment Low-Poly Spine & Tail
+            const segmentCount = 9;
+            dragonSpineSegments = [];
+            for (let i = 0; i < segmentCount; i++) {
+                const radius = Math.max(0.11, 0.38 - i * 0.032);
+                const segGeo = new THREE.OctahedronGeometry(radius, 0);
+                segGeo.scale(1.0, 0.85, 1.35);
+                const segMesh = new THREE.Mesh(segGeo, i % 2 === 0 ? scaleArmorMat : goldHornMat);
+                segMesh.position.set(0, 0, 0.65 - i * 0.44);
+                segMesh.userData = { type: 'dragon' };
+                dragonGroup.add(segMesh);
+                interactiveMeshes.push(segMesh);
+                dragonSpineSegments.push({ mesh: segMesh, baseZ: 0.65 - i * 0.44, index: i });
+            }
+
+            // Tail Spade Tip
+            const spadeGeo = new THREE.ConeGeometry(0.24, 0.55, 4);
+            spadeGeo.rotateX(-Math.PI / 2);
+            spadeGeo.scale(1.3, 0.3, 1.0);
+            dragonTailTip = new THREE.Mesh(spadeGeo, neonCyanMat);
+            dragonTailTip.position.set(0, 0, -3.35);
+            dragonGroup.add(dragonTailTip);
+
+            // 3. Faceted Luminescent Bat-Like Wings (Left & Right Pivots)
+            function buildWing(sideSign) {
+                const wingPivot = new THREE.Group();
+                wingPivot.position.set(sideSign * 0.24, 0.12, 0.45);
+
+                // Custom faceted triangular wing BufferGeometry
+                const vertices = new Float32Array([
+                    0, 0, 0.25,
+                    sideSign * 1.45, 0.35, 0.45,
+                    sideSign * 1.05, 0.1, -0.55,
+
+                    0, 0, 0.25,
+                    sideSign * 1.05, 0.1, -0.55,
+                    0, -0.05, -0.65,
+
+                    sideSign * 1.45, 0.35, 0.45,
+                    sideSign * 2.45, 0.15, -0.15,
+                    sideSign * 1.05, 0.1, -0.55
+                ]);
+                const wingGeo = new THREE.BufferGeometry();
+                wingGeo.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
+                wingGeo.computeVertexNormals();
+
+                const wingMesh = new THREE.Mesh(wingGeo, wingMembraneMat);
+                wingMesh.userData = { type: 'dragon' };
+                wingPivot.add(wingMesh);
+                interactiveMeshes.push(wingMesh);
+
+                // Wing Leading Spar
+                const sparGeo = new THREE.CylinderGeometry(0.025, 0.04, 1.5, 5);
+                sparGeo.rotateZ(sideSign * -Math.PI / 2);
+                const spar = new THREE.Mesh(sparGeo, goldHornMat);
+                spar.position.set(sideSign * 0.72, 0.18, 0.35);
+                wingPivot.add(spar);
+
+                return wingPivot;
+            }
+
+            dragonLeftWing = buildWing(-1);
+            dragonRightWing = buildWing(1);
+            dragonGroup.add(dragonLeftWing);
+            dragonGroup.add(dragonRightWing);
+
+            // 4. Harmonic Roar Shockwave Ring attached to Dragon
+            const shockGeo = new THREE.RingGeometry(0.4, 0.55, 32);
+            const shockMat = new THREE.MeshBasicMaterial({
+                color: 0x00f0ff,
+                side: THREE.DoubleSide,
+                transparent: true,
+                opacity: 0
+            });
+            roarShockwaveMesh = new THREE.Mesh(shockGeo, shockMat);
+            roarShockwaveMesh.position.set(0, 0.15, 1.6);
+            dragonGroup.add(roarShockwaveMesh);
+        }
+
+        function initThreeJS() {
+            const canvas = document.getElementById('webgl-canvas');
+            scene = new THREE.Scene();
+            scene.fog = new THREE.FogExp2(0x04070d, 0.034);
+
+            camera = new THREE.PerspectiveCamera(58, window.innerWidth / window.innerHeight, 0.1, 140);
+            camera.position.set(0, 1.8, 12.2);
+
+            renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+            // Ambient & Point Lights
+            const ambientLight = new THREE.AmbientLight(0x334155, 1.8);
+            scene.add(ambientLight);
+
+            const cyanLight = new THREE.PointLight(0x00f0ff, 2.6, 35);
+            cyanLight.position.set(5, 6, 6);
+            scene.add(cyanLight);
+
+            const goldLight = new THREE.PointLight(0xf5b841, 2.4, 35);
+            goldLight.position.set(0, 1.5, 7.5);
+            scene.add(goldLight);
+
+            // Central Sacred Geometry Core Group
+            coreGroup = new THREE.Group();
+            scene.add(coreGroup);
+
+            // 1. Harmonic Torus Knot (432 Hz Resonance Mesh)
+            const torusGeo = new THREE.TorusKnotGeometry(1.85, 0.38, 140, 20, 3, 5);
+            const torusMat = new THREE.MeshStandardMaterial({
+                color: 0x00f0ff,
+                emissive: 0x0088aa,
+                emissiveIntensity: 0.65,
+                wireframe: true,
+                transparent: true,
+                opacity: 0.52
+            });
+            torusKnotMesh = new THREE.Mesh(torusGeo, torusMat);
+            coreGroup.add(torusKnotMesh);
+
+            // 2. Outer Metatron Icosahedron Shell
+            const icoGeo = new THREE.IcosahedronGeometry(3.0, 1);
+            const icoMat = new THREE.MeshBasicMaterial({
+                color: 0xf5b841,
+                wireframe: true,
+                transparent: true,
+                opacity: 0.2
+            });
+            outerGeoMesh = new THREE.Mesh(icoGeo, icoMat);
+            coreGroup.add(outerGeoMesh);
+
+            // 3. Inner Bioluminescent Singularity Core
+            const innerGeo = new THREE.OctahedronGeometry(0.85, 2);
+            const innerMat = new THREE.MeshStandardMaterial({
+                color: 0x10b981,
+                emissive: 0x10b981,
+                emissiveIntensity: 0.9,
+                roughness: 0.2,
+                metalness: 0.8
+            });
+            innerOrbMesh = new THREE.Mesh(innerGeo, innerMat);
+            coreGroup.add(innerOrbMesh);
+
+            // 4. Orbiting 9 Ecosystem Node Beacons in 3D Space
+            const beaconGeo = new THREE.OctahedronGeometry(0.22, 0);
+            ECOSYSTEM_NODES.forEach((node) => {
+                const mat = new THREE.MeshBasicMaterial({
+                    color: new THREE.Color(node.color),
+                    wireframe: false
+                });
+                const mesh = new THREE.Mesh(beaconGeo, mat);
+                mesh.position.set(node.coords[0], node.coords[1], node.coords[2]);
+
+                const ringGeo = new THREE.RingGeometry(0.32, 0.38, 24);
+                const ringMat = new THREE.MeshBasicMaterial({
+                    color: new THREE.Color(node.color),
+                    side: THREE.DoubleSide,
+                    transparent: true,
+                    opacity: 0.6
+                });
+                const ring = new THREE.Mesh(ringGeo, ringMat);
+                mesh.add(ring);
+
+                coreGroup.add(mesh);
+                nodeBeacons.push({ mesh, ring, basePos: new THREE.Vector3(...node.coords) });
+            });
+
+            // 5. Build Distinguished Thoughts Upright 3D Book Pedestals & Cyber Dragon
+            buildBookPedestals();
+            buildCyberDragon();
+
+            // 6. Ferns & Flows Bioluminescent Spore Particles
+            const particleCount = 900;
+            const positions = new Float32Array(particleCount * 3);
+            const colors = new Float32Array(particleCount * 3);
+            const palette = [
+                new THREE.Color(0x00f0ff),
+                new THREE.Color(0x10b981),
+                new THREE.Color(0xf5b841)
+            ];
+
+            for (let i = 0; i < particleCount; i++) {
+                positions[i * 3] = (Math.random() - 0.5) * 36;
+                positions[i * 3 + 1] = (Math.random() - 0.5) * 24;
+                positions[i * 3 + 2] = (Math.random() - 0.5) * 36;
+
+                const c = palette[i % palette.length];
+                colors[i * 3] = c.r;
+                colors[i * 3 + 1] = c.g;
+                colors[i * 3 + 2] = c.b;
+            }
+
+            const particleGeo = new THREE.BufferGeometry();
+            particleGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            particleGeo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+            const particleMat = new THREE.PointsMaterial({
+                size: 0.09,
+                vertexColors: true,
+                transparent: true,
+                opacity: 0.8
+            });
+
+            particleSystem = new THREE.Points(particleGeo, particleMat);
+            scene.add(particleSystem);
+
+            // 7. Spatial Floor Grid
+            gridHelper = new THREE.GridHelper(52, 52, 0x00f0ff, 0x0f172a);
+            gridHelper.position.y = -5.1;
+            gridHelper.material.transparent = true;
+            gridHelper.material.opacity = 0.25;
+            scene.add(gridHelper);
+
+            setup3DControls(canvas);
+            window.addEventListener('resize', onWindowResize);
+        }
+
+        function update3DHarmonicColor(hexColor) {
+            targetCoreColor.setHex(hexColor);
+        }
+
+        function updatePointerRaycast(clientX, clientY) {
+            pointerNDC.x = (clientX / window.innerWidth) * 2 - 1;
+            pointerNDC.y = -(clientY / window.innerHeight) * 2 + 1;
+
+            raycaster.setFromCamera(pointerNDC, camera);
+            const intersects = raycaster.intersectObjects(interactiveMeshes, false);
+
+            const tooltip = document.getElementById('raycast-tooltip');
+            const tooltipTitle = document.getElementById('tooltip-title');
+            const tooltipSub = document.getElementById('tooltip-sub');
+            const canvas = document.getElementById('webgl-canvas');
+
+            // Reset book rim highlights
+            bookPedestals.forEach(bp => {
+                bp.rimMat.opacity = 0.42;
+            });
+
+            if (intersects.length > 0) {
+                const hit = intersects[0].object;
+                hoveredInteractiveObj = hit;
+                canvas.style.cursor = 'pointer';
+
+                if (hit.userData.type === 'book') {
+                    const b = hit.userData.bookData;
+                    bookPedestals[hit.userData.bookIndex].rimMat.opacity = 1.0;
+                    tooltipTitle.textContent = `${b.title} ($${b.price})`;
+                    tooltipSub.textContent = `${b.author} • Click to Inspect`;
+                } else if (hit.userData.type === 'dragon') {
+                    tooltipTitle.textContent = 'Cyber Dragon • Super Puff';
+                    tooltipSub.textContent = 'Click for Harmonic Roar & Telemetry';
+                }
+
+                tooltip.style.left = `${Math.min(window.innerWidth - 220, clientX + 16)}px`;
+                tooltip.style.top = `${Math.max(16, clientY - 12)}px`;
+                tooltip.classList.remove('hidden');
+            } else {
+                hoveredInteractiveObj = null;
+                canvas.style.cursor = isDragging ? 'grabbing' : 'grab';
+                tooltip.classList.add('hidden');
+            }
+        }
+
+        function setup3DControls(canvas) {
+            // Mouse Drag Orbit & Click Detection
+            canvas.addEventListener('mousedown', (e) => {
+                isDragging = true;
+                dragDistance = 0;
+                previousMousePos = { x: e.clientX, y: e.clientY };
+            });
+
+            window.addEventListener('mousemove', (e) => {
+                updatePointerRaycast(e.clientX, e.clientY);
+
+                if (!isDragging) return;
+                const deltaX = e.clientX - previousMousePos.x;
+                const deltaY = e.clientY - previousMousePos.y;
+                dragDistance += Math.hypot(deltaX, deltaY);
+                previousMousePos = { x: e.clientX, y: e.clientY };
+
+                if (cameraMode === 'dragon' || cameraMode === 'focusBook') {
+                    cameraMode = 'core';
+                }
+
+                sphericalAngles.theta -= deltaX * 0.006;
+                sphericalAngles.phi = Math.max(0.32, Math.min(Math.PI - 0.32, sphericalAngles.phi - deltaY * 0.006));
+            });
+
+            window.addEventListener('mouseup', (e) => {
+                if (isDragging && dragDistance < 6 && e.target === canvas) {
+                    handleCanvasClick(e.clientX, e.clientY);
+                }
+                isDragging = false;
+            });
+
+            // Touch Drag Orbit & Tap Detection
+            canvas.addEventListener('touchstart', (e) => {
+                if (e.touches.length === 1) {
+                    isDragging = true;
+                    dragDistance = 0;
+                    previousMousePos = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+                }
+            }, { passive: true });
+
+            window.addEventListener('touchmove', (e) => {
+                if (!isDragging || e.touches.length !== 1) return;
+                const deltaX = e.touches[0].clientX - previousMousePos.x;
+                const deltaY = e.touches[0].clientY - previousMousePos.y;
+                dragDistance += Math.hypot(deltaX, deltaY);
+                previousMousePos = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+
+                if (cameraMode === 'dragon' || cameraMode === 'focusBook') {
+                    cameraMode = 'core';
+                }
+
+                sphericalAngles.theta -= deltaX * 0.007;
+                sphericalAngles.phi = Math.max(0.32, Math.min(Math.PI - 0.32, sphericalAngles.phi - deltaY * 0.007));
+            }, { passive: true });
+
+            window.addEventListener('touchend', (e) => {
+                if (isDragging && dragDistance < 8 && e.changedTouches.length === 1) {
+                    handleCanvasClick(e.changedTouches[0].clientX, e.changedTouches[0].clientY);
+                }
+                isDragging = false;
+            });
+
+            // Scroll Zoom
+            canvas.addEventListener('wheel', (e) => {
+                sphericalAngles.radius = Math.max(4.5, Math.min(22, sphericalAngles.radius + e.deltaY * 0.008));
+            }, { passive: true });
+        }
+
+        function handleCanvasClick(clientX, clientY) {
+            pointerNDC.x = (clientX / window.innerWidth) * 2 - 1;
+            pointerNDC.y = -(clientY / window.innerHeight) * 2 + 1;
+            raycaster.setFromCamera(pointerNDC, camera);
+            const intersects = raycaster.intersectObjects(interactiveMeshes, false);
+
+            if (intersects.length > 0) {
+                const hit = intersects[0].object;
+                if (hit.userData.type === 'book') {
+                    focusAndOpenBook(hit.userData.bookIndex);
+                } else if (hit.userData.type === 'dragon') {
+                    triggerDragonRoar(true);
+                    openDragonModal();
+                }
+            }
+        }
+
+        function setCameraPreset(mode) {
+            cameraMode = mode;
+
+            // Highlight active preset pill
+            document.querySelectorAll('.cam-preset-btn').forEach(btn => {
+                btn.classList.remove('bg-cyan-500/25', 'text-cyan-200', 'border-cyan-400/50');
+                btn.classList.add('text-slate-300', 'border-transparent');
+            });
+            const activeBtn = document.getElementById(`cam-btn-${mode}`);
+            if (activeBtn) {
+                activeBtn.classList.add('bg-cyan-500/25', 'text-cyan-200', 'border-cyan-400/50');
+                activeBtn.classList.remove('text-slate-300', 'border-transparent');
+            }
+
+            if (mode === 'core') {
+                targetLookAt.set(0, 0, 0);
+                sphericalAngles.theta = 0;
+                sphericalAngles.phi = Math.PI / 2.25;
+                sphericalAngles.radius = 12.2;
+                showToast('Camera View: Central 432 Hz Core Nexus');
+            } else if (mode === 'books') {
+                targetLookAt.set(0, -1.65, 6.2);
+                sphericalAngles.theta = 0;
+                sphericalAngles.phi = Math.PI / 2.15;
+                sphericalAngles.radius = 5.4;
+                showToast('Camera View: Distinguished Thoughts 3D Book Pedestals');
+            } else if (mode === 'dragon') {
+                showToast('Camera Tracking: Cyber Dragon Orbital Flight');
+            } else if (mode === 'matrix') {
+                targetLookAt.set(0, -0.5, 0);
+                sphericalAngles.theta = 0.45;
+                sphericalAngles.phi = 0.85;
+                sphericalAngles.radius = 17.5;
+                showToast('Camera View: Sovereign Spatial Matrix Overview');
+            }
+        }
+
+        function focusAndOpenBook(bookIndex) {
+            const bp = bookPedestals[bookIndex];
+            const book = DISTINGUISHED_BOOKS[bookIndex];
+
+            // Compute world position of the upright book
+            const worldPos = new THREE.Vector3();
+            bp.bookGroup.getWorldPosition(worldPos);
+            focusedBookPos.copy(worldPos);
+            cameraMode = 'focusBook';
+
+            // Populate & open Distinguished Thoughts Book Modal
+            document.getElementById('book-modal-title').textContent = book.title;
+            document.getElementById('book-modal-author').textContent = book.author;
+            document.getElementById('book-modal-price').textContent = `$${book.price} USD`;
+            document.getElementById('book-modal-synopsis').textContent = book.synopsis;
+
+            const paypalBtn = document.getElementById('book-paypal-link');
+            paypalBtn.textContent = `Checkout via PayPal ($${book.price}) ↗`;
+            paypalBtn.href = `https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=fluidmotion.tv%40gmail.com&item_name=${encodeURIComponent(book.title)}&amount=${book.price}&currency_code=USD`;
+
+            const modal = document.getElementById('book-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeBookModal() {
+            const modal = document.getElementById('book-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+            if (cameraMode === 'focusBook') {
+                setCameraPreset('books');
+            }
+        }
+
+        function openDragonModal() {
+            const modal = document.getElementById('dragon-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeDragonModal() {
+            const modal = document.getElementById('dragon-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function triggerDragonRoar(playAudioSweep = false) {
+            dragonRoarPulse = 1.0;
+            showToast('🐉 Cyber Dragon Harmonic Roar Pulse Emitted!');
+
+            if (playAudioSweep && audioCtx && filterNode) {
+                const now = audioCtx.currentTime;
+                filterNode.frequency.cancelScheduledValues(now);
+                filterNode.frequency.setValueAtTime(1800, now);
+                filterNode.frequency.exponentialRampToValueAtTime(640, now + 0.9);
+            }
+        }
+
+        function onWindowResize() {
+            if (!camera || !renderer) return;
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        function animate3D() {
+            requestAnimationFrame(animate3D);
+
+            const elapsed = performance.now() * 0.001;
+
+            // Compute Audio Reactivity Factor
+            let audioPulse = 0;
+            if (isDroneActive && analyserNode && frequencyDataArray) {
+                analyserNode.getByteFrequencyData(frequencyDataArray);
+                let lowSum = 0;
+                for (let i = 0; i < 16; i++) lowSum += frequencyDataArray[i];
+                audioPulse = (lowSum / 16) / 255;
+            }
+
+            // Smoothly interpolate 3D core color
+            torusKnotMesh.material.color.lerp(targetCoreColor, 0.06);
+            torusKnotMesh.material.emissive.lerp(targetCoreColor, 0.06);
+
+            // Rotate Sacred Geometry
+            const speedBoost = 1 + audioPulse * 1.8;
+            torusKnotMesh.rotation.x = elapsed * 0.18 * speedBoost;
+            torusKnotMesh.rotation.y = elapsed * 0.24 * speedBoost;
+
+            const targetScale = 1 + Math.sin(elapsed * 2) * 0.03 + audioPulse * 0.26;
+            torusKnotMesh.scale.lerp(new THREE.Vector3(targetScale, targetScale, targetScale), 0.12);
+
+            outerGeoMesh.rotation.y = -elapsed * 0.12;
+            outerGeoMesh.rotation.z = elapsed * 0.08;
+
+            innerOrbMesh.rotation.y = elapsed * 0.6;
+            const innerScale = 1 + audioPulse * 0.45;
+            innerOrbMesh.scale.set(innerScale, innerScale, innerScale);
+
+            // Gentle Core Orbit
+            if (!isDragging) {
+                coreGroup.rotation.y = Math.sin(elapsed * 0.15) * 0.35;
+            }
+
+            // Billboard Beacon Rings toward Camera
+            nodeBeacons.forEach((b, idx) => {
+                b.ring.lookAt(camera.position);
+                b.mesh.position.y = b.basePos.y + Math.sin(elapsed * 1.6 + idx) * 0.15;
+            });
+
+            // Animate Distinguished Thoughts Upright 3D Book Pedestals (Breathing Levitation)
+            bookPedestals.forEach((bp) => {
+                bp.bookGroup.position.y = bp.baseBookY + Math.sin(elapsed * 1.8 + bp.phase) * 0.08;
+                bp.bookGroup.rotation.y = Math.sin(elapsed * 0.9 + bp.phase) * 0.09;
+                bp.holoRing.scale.setScalar(1 + Math.sin(elapsed * 2.5 + bp.phase) * 0.04 + audioPulse * 0.08);
+            });
+
+            // Animate Cyber Dragon Figure-8 Harmonic Flight & Wing Flap
+            if (dragonGroup) {
+                const t = elapsed * 0.42;
+                const orbitRadiusX = 7.4;
+                const orbitRadiusZ = 5.6;
+
+                // Lemniscate / Figure-8 Spatial Path around Core & Book Pedestals
+                const nextT = t + 0.04;
+                const posX = Math.sin(t) * orbitRadiusX;
+                const posY = 1.9 + Math.sin(t * 2) * 1.15;
+                const posZ = Math.sin(t * 2) * (orbitRadiusZ * 0.65) - 0.6;
+
+                const nextX = Math.sin(nextT) * orbitRadiusX;
+                const nextY = 1.9 + Math.sin(nextT * 2) * 1.15;
+                const nextZ = Math.sin(nextT * 2) * (orbitRadiusZ * 0.65) - 0.6;
+
+                dragonGroup.position.set(posX, posY, posZ);
+                dragonGroup.lookAt(nextX, nextY, nextZ);
+                // Bank into turns
+                dragonGroup.rotateZ(-Math.cos(t) * 0.32);
+
+                // Wing Flap synchronized to 432 Hz Audio Pulse
+                const flapSpeed = 5.2 + audioPulse * 5.5 + dragonRoarPulse * 6.0;
+                const flapAngle = Math.sin(elapsed * flapSpeed) * (0.52 + audioPulse * 0.25);
+                dragonLeftWing.rotation.z = flapAngle;
+                dragonRightWing.rotation.z = -flapAngle;
+
+                // Undulating Spine & Tail Wave
+                dragonSpineSegments.forEach((seg) => {
+                    seg.mesh.position.y = Math.sin(elapsed * 5.0 - seg.index * 0.55) * 0.11;
+                    seg.mesh.position.x = Math.cos(elapsed * 3.5 - seg.index * 0.45) * 0.07;
+                });
+                dragonTailTip.position.y = Math.sin(elapsed * 5.0 - 4.8) * 0.16;
+
+                // Roar Shockwave Expansion
+                if (dragonRoarPulse > 0.01) {
+                    dragonRoarPulse *= 0.94;
+                    const waveScale = 1 + (1 - dragonRoarPulse) * 9.5;
+                    roarShockwaveMesh.scale.set(waveScale, waveScale, waveScale);
+                    roarShockwaveMesh.material.opacity = dragonRoarPulse * 0.85;
+                } else {
+                    roarShockwaveMesh.material.opacity = 0;
+                }
+            }
+
+            // Drift Bioluminescent Spores
+            particleSystem.rotation.y = elapsed * 0.025;
+
+            // Camera Positioning per Active Mode
+            if (cameraMode === 'dragon' && dragonGroup) {
+                const offset = new THREE.Vector3(0, 1.4, -3.8).applyQuaternion(dragonGroup.quaternion);
+                targetCameraPos.copy(dragonGroup.position).add(offset);
+                targetLookAt.copy(dragonGroup.position);
+            } else if (cameraMode === 'focusBook') {
+                // Position camera directly in front of the selected upright book cover
+                const toCenter = new THREE.Vector3(0, focusedBookPos.y, 0).sub(focusedBookPos).normalize();
+                targetCameraPos.copy(focusedBookPos).sub(toCenter.multiplyScalar(2.65));
+                targetCameraPos.y += 0.15;
+                targetLookAt.copy(focusedBookPos);
+            } else {
+                targetCameraPos.x = targetLookAt.x + sphericalAngles.radius * Math.sin(sphericalAngles.phi) * Math.sin(sphericalAngles.theta);
+                targetCameraPos.y = targetLookAt.y + sphericalAngles.radius * Math.cos(sphericalAngles.phi);
+                targetCameraPos.z = targetLookAt.z + sphericalAngles.radius * Math.sin(sphericalAngles.phi) * Math.cos(sphericalAngles.theta);
+            }
+
+            camera.position.lerp(targetCameraPos, 0.08);
+            currentLookAt.lerp(targetLookAt, 0.1);
+            camera.lookAt(currentLookAt);
+
+            renderer.render(scene, camera);
+        }
+
+        // =========================================================================
+        // 6. INTERACTIVE MODALS, WALKTHROUGH MODE & NOTIFICATIONS
+        // =========================================================================
+        // Dawn Engine Synthesizer Controls
+        function toggleDrone() {
+            isDroneActive = !isDroneActive;
+            const btnText = document.getElementById('drone-btn-text');
+            const btnIcon = document.getElementById('drone-btn-icon');
+            const audioLed = document.getElementById('audio-led');
+            const statusPill = document.getElementById('audio-status-pill');
+
+            if (isDroneActive) {
+                if (!audioCtx) {
+                    const AudioContext = window.AudioContext || window.webkitAudioContext;
+                    audioCtx = new AudioContext();
+                }
+                if (audioCtx.state === 'suspended') {
+                    audioCtx.resume();
+                }
+
+                const chord = D9_CHORDS[currentChordIndex];
+
+                masterGainNode = audioCtx.createGain();
+                masterGainNode.gain.setValueAtTime(0.18, audioCtx.currentTime);
+
+                filterNode = audioCtx.createBiquadFilter();
+                filterNode.type = 'lowpass';
+                filterNode.frequency.setValueAtTime(1200, audioCtx.currentTime);
+                filterNode.Q.setValueAtTime(4.5, audioCtx.currentTime);
+
+                analyserNode = audioCtx.createAnalyser();
+                analyserNode.fftSize = 64;
+                frequencyDataArray = new Uint8Array(analyserNode.frequencyBinCount);
+
+                // Fundamental 432Hz / Root
+                droneOsc1 = audioCtx.createOscillator();
+                droneOsc1.type = 'sawtooth';
+                droneOsc1.frequency.setValueAtTime(chord.root, audioCtx.currentTime);
+
+                // Fifth / Octave
+                droneOsc2 = audioCtx.createOscillator();
+                droneOsc2.type = 'sine';
+                droneOsc2.frequency.setValueAtTime(chord.fifth, audioCtx.currentTime);
+
+                // Sub-Bass drone
+                droneSub = audioCtx.createOscillator();
+                droneSub.type = 'triangle';
+                droneSub.frequency.setValueAtTime(chord.sub, audioCtx.currentTime);
+
+                droneOsc1.connect(filterNode);
+                droneOsc2.connect(filterNode);
+                droneSub.connect(filterNode);
+
+                filterNode.connect(masterGainNode);
+                masterGainNode.connect(analyserNode);
+                analyserNode.connect(audioCtx.destination);
+
+                droneOsc1.start();
+                droneOsc2.start();
+                droneSub.start();
+
+                btnText.textContent = 'Mute 432 Hz Drone';
+                btnIcon.textContent = '❚❚';
+                if (audioLed) audioLed.classList.replace('bg-slate-600', 'bg-emerald-400');
+                if (statusPill) statusPill.classList.add('border-emerald-400/50');
+                showToast(`Engaged Dawn Engine: ${chord.name}`);
+            } else {
+                if (droneOsc1) { droneOsc1.stop(); droneOsc1.disconnect(); }
+                if (droneOsc2) { droneOsc2.stop(); droneOsc2.disconnect(); }
+                if (droneSub) { droneSub.stop(); droneSub.disconnect(); }
+                if (masterGainNode) masterGainNode.disconnect();
+
+                btnText.textContent = 'Engage 432 Hz Drone';
+                btnIcon.textContent = '▶';
+                if (audioLed) audioLed.classList.replace('bg-emerald-400', 'bg-slate-600');
+                if (statusPill) statusPill.classList.remove('border-emerald-400/50');
+                showToast('Dawn Engine Drone Muted');
+            }
+        }
+
+        function shiftD9Chord() {
+            currentChordIndex = (currentChordIndex + 1) % D9_CHORDS.length;
+            const chord = D9_CHORDS[currentChordIndex];
+
+            document.getElementById('chord-name-label').textContent = chord.name;
+            document.getElementById('freq-hz-badge').textContent = `${chord.root.toFixed(1)} Hz`;
+            document.getElementById('chord-readout').textContent = `D9 RATIO ${chord.ratioText} • ${chord.root} Hz`;
+
+            update3DHarmonicColor(chord.colorHex);
+
+            if (isDroneActive && audioCtx && droneOsc1 && droneOsc2 && droneSub) {
+                const now = audioCtx.currentTime;
+                droneOsc1.frequency.exponentialRampToValueAtTime(chord.root, now + 0.4);
+                droneOsc2.frequency.exponentialRampToValueAtTime(chord.fifth, now + 0.4);
+                droneSub.frequency.exponentialRampToValueAtTime(chord.sub, now + 0.4);
+            }
+
+            showToast(`Shifted D9 Chord: ${chord.name} (${chord.ratioText})`);
+        }
+
+        function drawWaveform() {
+            const canvas = document.getElementById('waveform-canvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            const w = canvas.width = canvas.parentElement.clientWidth || 300;
+            const h = canvas.height = 64;
+
+            ctx.clearRect(0, 0, w, h);
+            ctx.beginPath();
+            ctx.strokeStyle = '#00f0ff';
+            ctx.lineWidth = 2;
+
+            const sliceWidth = w / 32;
+            let x = 0;
+
+            for (let i = 0; i < 32; i++) {
+                const v = isDroneActive && frequencyDataArray ? (frequencyDataArray[i] / 128.0) : (1.0 + Math.sin(performance.now() * 0.005 + i * 0.4) * 0.25);
+                const y = (v * h) / 2;
+
+                if (i === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+                x += sliceWidth;
+            }
+            ctx.stroke();
+            requestAnimationFrame(drawWaveform);
+        }
+
+        let selectedNodeIndex = 0;
+
+        function openNodeModal(index) {
+            selectedNodeIndex = index;
+            const node = ECOSYSTEM_NODES[index];
+            document.getElementById('modal-node-badge').textContent = node.tag.toUpperCase();
+            document.getElementById('modal-node-title').textContent = node.title;
+            document.getElementById('modal-node-desc').textContent = node.desc;
+            document.getElementById('modal-node-coords').textContent = `X: ${node.coords[0].toFixed(2)} • Y: ${node.coords[1].toFixed(2)} • Z: ${node.coords[2].toFixed(2)}`;
+            document.getElementById('modal-node-freq').textContent = `${node.freq} LOCKED`;
+            document.getElementById('modal-node-details').textContent = node.details;
+
+            const modal = document.getElementById('node-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeNodeModal() {
+            const modal = document.getElementById('node-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function focusNodeIn3D() {
+            const node = ECOSYSTEM_NODES[selectedNodeIndex];
+            closeNodeModal();
+
+            // Enable Pure 3D View and swing camera toward the node's sector
+            if (!document.body.classList.contains('walkthrough-active')) {
+                toggleWalkthroughMode();
+            }
+            sphericalAngles.theta = Math.atan2(node.coords[0], node.coords[2]);
+            sphericalAngles.radius = 8.2;
+            update3DHarmonicColor(new THREE.Color(node.color).getHex());
+            showToast(`Camera Locked to ${node.tag}: ${node.title}`);
+        }
+
+        function launchNodeSimulation() {
+            const node = ECOSYSTEM_NODES[selectedNodeIndex];
+            closeNodeModal();
+            showToast(`Initializing Sovereign Terminal → ${node.title} (${node.freq})`);
+        }
+
+        let selectedTierIndex = 0;
+
+        function openCheckoutModal(index) {
+            selectedTierIndex = index;
+            const tier = STOREFRONT_TIERS[index];
+            document.getElementById('checkout-tier-title').textContent = tier.tier;
+            document.getElementById('checkout-tier-price').textContent = tier.price;
+            document.getElementById('checkout-tier-desc').textContent = tier.desc;
+
+            const link = document.getElementById('confirm-paypal-link');
+            const label = document.getElementById('confirm-paypal-label');
+            label.textContent = `Proceed to PayPal (${tier.price}) ↗`;
+            link.href = `https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=fluidmotion.tv%40gmail.com&item_name=${encodeURIComponent(tier.tier)}&amount=${tier.numericPrice}&currency_code=USD`;
+
+            const modal = document.getElementById('checkout-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeCheckoutModal() {
+            const modal = document.getElementById('checkout-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function processSimulatedPayPal() {
+            const tier = STOREFRONT_TIERS[selectedTierIndex];
+            closeCheckoutModal();
+            showToast(`Opening PayPal Checkout (${tier.price}) → fluidmotion.tv@gmail.com`);
+        }
+
+        function toggleWalkthroughMode() {
+            const isWalkthrough = document.body.classList.toggle('walkthrough-active');
+            const label = document.getElementById('walkthrough-btn-label');
+            const hint = document.getElementById('walkthrough-hint');
+
+            if (isWalkthrough) {
+                label.textContent = 'Restore Spatial HUD';
+                hint.classList.remove('opacity-0');
+                hint.classList.add('opacity-100');
+            } else {
+                label.textContent = '3D Spatial View';
+                hint.classList.remove('opacity-100');
+                hint.classList.add('opacity-0');
+            }
+        }
+
+        let toastTimeout;
+        function showToast(msg) {
+            const banner = document.getElementById('toast-banner');
+            const textEl = document.getElementById('toast-message');
+            textEl.textContent = msg;
+
+            banner.classList.remove('translate-y-24', 'opacity-0');
+            banner.classList.add('translate-y-0', 'opacity-100');
+
+            clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => {
+                banner.classList.add('translate-y-24', 'opacity-0');
+                banner.classList.remove('translate-y-0', 'opacity-100');
+            }, 3400);
+        }
+
+        // Start Everything on Window Load
+        window.onload = function () {
+            renderSpatialCards();
+            updateHarmonicClock();
+            initThreeJS();
+            animate3D();
+            drawWaveform();
+        };
+    </script>
 </body>
 </html>
